@@ -198,9 +198,11 @@ const getStatusChangeLabel = (status) => {
                                 </TableCell>
                                 <TableCell>
                                     <Badge
-                                        :variant="getStatusVariant(item.status)"
+                                        :variant="
+                                            getStatusVariant(item?.status)
+                                        "
                                     >
-                                        {{ getStatusLabel(item.status) }}
+                                        {{ getStatusLabel(item?.status) }}
                                     </Badge>
                                 </TableCell>
                                 <TableCell class="text-center">
@@ -272,7 +274,7 @@ const getStatusChangeLabel = (status) => {
                         <template v-else>
                             <TableRow>
                                 <TableCell colspan="6" class="text-center py-6">
-                                    <strong> Tidak ada data ditemukan </strong>
+                                    <strong> Tidak ada data </strong>
                                 </TableCell>
                             </TableRow>
                         </template>

@@ -18,6 +18,7 @@ import {
     Banknote,
     BookOpenCheck,
     Bookmark,
+    UserCog,
 } from "lucide-vue-next";
 import AppLogo from "./AppLogo.vue";
 import usePermissions from "@/composables/usePermissions";
@@ -68,6 +69,15 @@ const masterNavItems = [
         permission: "period.index",
     },
 ];
+
+const dataNavItems = [
+    {
+        title: "Pelatih",
+        href: "/coach",
+        icon: UserCog,
+        permission: "coach.index",
+    },
+];
 </script>
 
 <template>
@@ -101,6 +111,11 @@ const masterNavItems = [
                 "
                 group-label="Master"
                 :items="masterNavItems"
+            />
+            <NavMain
+                v-if="canAny('coach.index')"
+                group-label="Data"
+                :items="dataNavItems"
             />
         </SidebarContent>
 

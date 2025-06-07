@@ -203,7 +203,7 @@ const handleDelete = (id) => {
                                             class="text-center py-6"
                                         >
                                             <strong v-if="search">
-                                                Tidak ada data ditemukan
+                                                Tidak ada data
                                             </strong>
                                             <strong v-else>
                                                 Belum ada data

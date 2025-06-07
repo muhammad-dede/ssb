@@ -44,7 +44,7 @@ const { can, canAny } = usePermissions();
 
 const props = defineProps({
     statuses: Object,
-    periods: Object,
+    coaches: Object,
     search_term: String,
     per_page_term: String,
     filter_term: String,
@@ -52,18 +52,18 @@ const props = defineProps({
 
 const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Periode", href: "/period" },
+    { title: "Pelatih", href: "/coach" },
 ];
 
 const search = ref(props.search_term);
 const perPage = ref(props.per_page_term);
 const filter = ref(props.filter_term);
-const periodToDelete = ref(null);
-const periodToStatus = ref(null);
+const coachToDelete = ref(null);
+const coachToStatus = ref(null);
 
 const dataControl = () => {
     router.get(
-        route("period.index"),
+        route("coach.index"),
         {
             search: search.value,
             per_page: perPage.value,
@@ -85,30 +85,30 @@ watch([perPage, filter], () => {
     dataControl();
 });
 
-const confirmDelete = (period) => {
-    periodToDelete.value = period;
+const confirmDelete = (coach) => {
+    coachToDelete.value = coach;
 };
 const destroy = () => {
-    if (!periodToDelete.value) return;
-    const periodId = periodToDelete.value.id;
-    router.delete(route("period.destroy", periodId), {
+    if (!coachToDelete.value) return;
+    const coachId = coachToDelete.value.id;
+    router.delete(route("coach.destroy", coachId), {
         preserveScroll: true,
         onFinish: () => {
-            periodToDelete.value = null;
+            coachToDelete.value = null;
         },
     });
 };
 
-const confirmStatus = (period) => {
-    periodToStatus.value = period;
+const confirmStatus = (coach) => {
+    coachToStatus.value = coach;
 };
 const changeStatus = () => {
-    if (!periodToStatus.value) return;
-    const periodId = periodToStatus.value.id;
-    router.post(route("period.status", periodId), {
+    if (!coachToStatus.value) return;
+    const coachId = coachToStatus.value.id;
+    router.post(route("coach.status", coachId), {
         preserveScroll: true,
     });
-    periodToStatus.value = null;
+    coachToStatus.value = null;
 };
 
 const getStatusLabel = (status) => {
@@ -138,26 +138,20 @@ const getStatusChangeLabel = (status) => {
             return "Aktifkan";
     }
 };
-
-const dateFormat = (date) => {
-    if (!date) return "-";
-    const options = { day: "numeric", month: "long", year: "numeric" };
-    return new Date(date).toLocaleDateString("id-ID", options);
-};
 </script>
 
 <template>
-    <Head title="Periode" />
+    <Head title="Pelatih" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <MainContent>
             <HeadingGroup>
                 <Heading
-                    title="Data Periode"
-                    description="Lihat dan kelola data periode yang tersedia"
+                    title="Data Pelatih"
+                    description="Lihat dan kelola data pelatih yang tersedia"
                 />
                 <Link
-                    v-if="can('period.create')"
-                    :href="route('period.create')"
+                    v-if="can('coach.create')"
+                    :href="route('coach.create')"
                     :class="buttonVariants({ variant: 'default' })"
                 >
                     <SquarePlus class="w-4 h-4" />Tambah
@@ -177,30 +171,31 @@ const dateFormat = (date) => {
                     <TableHeader>
                         <TableRow>
                             <TableHead class="w-[10px]">No</TableHead>
-                            <TableHead>Nama Periode</TableHead>
-                            <TableHead>Tanggal Mulai</TableHead>
-                            <TableHead>Tanggal Akhir</TableHead>
+                            <TableHead>Nama</TableHead>
+                            <TableHead>No. Identitas</TableHead>
+                            <TableHead>Lisensi Kepelatihan</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead class="w-[10px]"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <template v-if="periods.data.length > 0">
+                        <template v-if="coaches.data.length > 0">
                             <TableRow
-                                v-for="(item, index) in periods.data"
+                                v-for="(item, index) in coaches.data"
                                 :key="item.id"
                             >
                                 <TableCell class="font-medium">
-                                    {{ periods.from + index }}
+                                    {{ coaches.from + index }}
                                 </TableCell>
                                 <TableCell>
                                     {{ item.name }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ dateFormat(item.start_date) }}
+                                    {{ item.national_id_number }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ dateFormat(item.end_date) }}
+                                    {{ item.coaching_license }} -
+                                    {{ item.license_number }}
                                 </TableCell>
                                 <TableCell>
                                     <Badge
@@ -215,8 +210,9 @@ const dateFormat = (date) => {
                                     <DropdownMenu
                                         v-if="
                                             canAny(
-                                                'period.edit',
-                                                'period.delete'
+                                                'coach.edit',
+                                                'coach.delete',
+                                                'coach.show'
                                             )
                                         "
                                     >
@@ -236,7 +232,7 @@ const dateFormat = (date) => {
                                             </DropdownMenuLabel>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
-                                                v-if="can('period.edit')"
+                                                v-if="can('coach.edit')"
                                                 @select="
                                                     () => confirmStatus(item)
                                                 "
@@ -249,12 +245,12 @@ const dateFormat = (date) => {
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
                                                 asChild
-                                                v-if="can('period.edit')"
+                                                v-if="can('coach.edit')"
                                             >
                                                 <Link
                                                     :href="
                                                         route(
-                                                            'period.edit',
+                                                            'coach.edit',
                                                             item.id
                                                         )
                                                     "
@@ -263,7 +259,22 @@ const dateFormat = (date) => {
                                                 </Link>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
-                                                v-if="can('period.delete')"
+                                                asChild
+                                                v-if="can('coach.show')"
+                                            >
+                                                <Link
+                                                    :href="
+                                                        route(
+                                                            'coach.show',
+                                                            item.id
+                                                        )
+                                                    "
+                                                >
+                                                    Detail
+                                                </Link>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                v-if="can('coach.delete')"
                                                 @select="
                                                     () => confirmDelete(item)
                                                 "
@@ -285,10 +296,10 @@ const dateFormat = (date) => {
                     </TableBody>
                 </Table>
             </div>
-            <PaginationLinks :paginator="periods" />
+            <PaginationLinks :paginator="coaches" />
         </MainContent>
     </AppLayout>
-    <AlertDialog :open="!!periodToDelete">
+    <AlertDialog :open="!!coachToDelete">
         <AlertDialogContent>
             <AlertDialogHeader>
                 <AlertDialogTitle>
@@ -300,31 +311,31 @@ const dateFormat = (date) => {
                 </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-                <AlertDialogCancel @click="periodToDelete = null">
+                <AlertDialogCancel @click="coachToDelete = null">
                     Batal
                 </AlertDialogCancel>
                 <AlertDialogAction @click="destroy">Hapus</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
-    <AlertDialog :open="!!periodToStatus">
+    <AlertDialog :open="!!coachToStatus">
         <AlertDialogContent>
             <AlertDialogHeader>
                 <AlertDialogTitle>
                     Apakah Anda benar-benar yakin?
                 </AlertDialogTitle>
                 <AlertDialogDescription>
-                    Status Periode akan di-{{
-                        getStatusChangeLabel(periodToStatus?.status ?? null)
+                    Status Pelatih akan di-{{
+                        getStatusChangeLabel(coachToStatus?.status ?? null)
                     }}.
                 </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-                <AlertDialogCancel @click="periodToStatus = null">
+                <AlertDialogCancel @click="coachToStatus = null">
                     Batal
                 </AlertDialogCancel>
                 <AlertDialogAction @click="changeStatus">{{
-                    getStatusChangeLabel(periodToStatus?.status ?? null)
+                    getStatusChangeLabel(coachToStatus?.status ?? null)
                 }}</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>

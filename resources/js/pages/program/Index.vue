@@ -287,7 +287,7 @@ const breadcrumbs = [
                         <template v-else>
                             <TableRow>
                                 <TableCell colspan="6" class="text-center py-6">
-                                    <strong> Tidak ada data ditemukan </strong>
+                                    <strong> Tidak ada data </strong>
                                 </TableCell>
                             </TableRow>
                         </template>
