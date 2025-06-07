@@ -23,6 +23,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Program
     Route::post('program/{program}/status', [App\Http\Controllers\ProgramController::class, 'status'])->name('program.status');
     Route::resource('program', App\Http\Controllers\ProgramController::class)->except('show');
+    // Period
+    Route::post('period/{period}/status', [App\Http\Controllers\PeriodController::class, 'status'])->name('period.status');
+    Route::resource('period', App\Http\Controllers\PeriodController::class)->except('show');
 });
 
 require __DIR__ . '/auth.php';

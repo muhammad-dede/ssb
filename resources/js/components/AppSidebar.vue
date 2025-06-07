@@ -12,19 +12,12 @@ import {
 } from "@/components/ui/sidebar";
 import { Link } from "@inertiajs/vue3";
 import {
-    BookOpen,
     LayoutGrid,
     ShieldCheck,
     User,
-    UserCog,
-    CalendarRange,
-    Group,
-    FileUser,
-    Receipt,
-    GitCompare,
-    FileBadge2,
     Banknote,
     BookOpenCheck,
+    Bookmark,
 } from "lucide-vue-next";
 import AppLogo from "./AppLogo.vue";
 import usePermissions from "@/composables/usePermissions";
@@ -68,6 +61,12 @@ const masterNavItems = [
         icon: BookOpenCheck,
         permission: "program.index",
     },
+    {
+        title: "Periode",
+        href: "/period",
+        icon: Bookmark,
+        permission: "period.index",
+    },
 ];
 </script>
 
@@ -93,7 +92,13 @@ const masterNavItems = [
                 :items="manageUserNavItems"
             />
             <NavMain
-                v-if="canAny('bank-account.index', 'program.index')"
+                v-if="
+                    canAny(
+                        'bank-account.index',
+                        'program.index',
+                        'period.index'
+                    )
+                "
                 group-label="Master"
                 :items="masterNavItems"
             />

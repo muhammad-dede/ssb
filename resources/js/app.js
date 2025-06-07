@@ -7,7 +7,7 @@ import { ZiggyVue } from "../../vendor/tightenco/ziggy";
 import { initializeTheme } from "./composables/useAppearance";
 
 createInertiaApp({
-    title: (title) => (title ? `${title} | SSB` : "SSB"),
+    title: (title) => (title ? `${title} - SSB` : "SSB"),
     resolve: (name) => {
         const pages = import.meta.glob("./pages/**/*.vue", { eager: true });
         return pages[`./pages/${name}.vue`];

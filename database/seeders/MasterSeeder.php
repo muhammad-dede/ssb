@@ -74,12 +74,12 @@ class MasterSeeder extends Seeder
             [
                 'bank_code' => '014',
                 'account_number' => '012387654567',
-                'account_holder_name' => 'Riwan Febrianto',
+                'account_holder_name' => 'RIWAN FEBRIANTO',
             ],
             [
                 'bank_code' => '009',
                 'account_number' => '076543217654',
-                'account_holder_name' => 'Riwan Febrianto',
+                'account_holder_name' => 'RIWAN FEBRIANTO',
             ],
         ];
         foreach ($bank_accounts as $key => $value) {
@@ -89,21 +89,21 @@ class MasterSeeder extends Seeder
         $assessments = [
             [
                 'code' => 'AS1',
-                'name' => 'Teknik Dasar',
+                'name' => 'TEKNIK DASAR',
                 'description' => 'Latihan kontrol bola, dribbling, passing, shooting.',
                 'percentage' => 40,
                 'order' => 1,
             ],
             [
                 'code' => 'AS2',
-                'name' => 'Taktik Tim',
+                'name' => 'TAKTIK TIM',
                 'description' => 'Pemahaman formasi, strategi bertahan dan menyerang.',
                 'percentage' => 30,
                 'order' => 2,
             ],
             [
                 'code' => 'AS3',
-                'name' => 'Fisik & Mental',
+                'name' => 'FISIK & MENTAL',
                 'description' => 'Latihan fisik, kecepatan, dan membangun karakter atlet.',
                 'percentage' => 30,
                 'order' => 3,
@@ -185,13 +185,13 @@ class MasterSeeder extends Seeder
 
         $periods = [
             [
-                'name' => 'Januari-Juni 2025',
+                'name' => 'JANUARI-JUNI 2025',
                 'start_date' => '2025-01-01',
                 'end_date' => '2025-06-30',
                 'status' => Status::ACTIVE,
             ],
             [
-                'name' => 'Juli-Desember 2025',
+                'name' => 'JULI-DESEMBER 2025',
                 'start_date' => '2025-07-01',
                 'end_date' => '2025-12-31',
                 'status' => Status::INACTIVE,
