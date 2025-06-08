@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\DominantFoot;
 use App\Enums\Gender;
 use App\Enums\Status;
-use App\Models\Coach;
+use App\Models\Student;
 use App\Models\User;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
@@ -13,12 +14,13 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 
-class CoachController extends Controller
+class StudentController extends Controller
 {
     use HasPermissionCheck;
 
     protected $genders;
     protected $statuses;
+    protected $dominant_foots;
     protected $attributes = [
         'name' => 'Nama',
         'place_of_birth' => 'Tempat Lahir',
@@ -28,11 +30,9 @@ class CoachController extends Controller
         'phone' => 'Telepon',
         'national_id_number' => 'No. Identitas',
         'photo' => 'Foto',
-        'coaching_license' => 'Lisensi Kepelatihan',
-        'license_number' => 'Nomor Lisensi',
-        'license_issued_at' => 'Tanggal Terbit',
-        'license_expired_at' => 'Tanggal Berakhir',
-        'license_issuer' => 'Lembaga Kepelatihan',
+        'dominant_foot' => 'Kaki Dominan',
+        'height_cm' => 'Tinggi Badan',
+        'weight_kg' => 'Berat Badan',
         'email' => 'Email',
         'password' => 'Password',
     ];
@@ -41,6 +41,7 @@ class CoachController extends Controller
     {
         $this->genders = Gender::options();
         $this->statuses = Status::options();
+        $this->dominant_foots = DominantFoot::options();
     }
 
     /**
@@ -48,13 +49,13 @@ class CoachController extends Controller
      */
     public function index(Request $request)
     {
-        $this->checkPermission('coach.index');
+        $this->checkPermission('student.index');
 
         $search = $request->search;
         $per_page = $request->per_page ?? "5";
         $filter = $request->filter ?? 'desc';
 
-        $coaches = Coach::query()
+        $students = Student::query()
             ->with(['user'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
@@ -67,14 +68,15 @@ class CoachController extends Controller
             ->paginate($per_page)
             ->withQueryString();
 
-        $coaches->getCollection()->transform(function ($coach) {
-            $coach->photo_url = $coach->photo ? asset('storage/' . $coach->photo) : null;
-            return $coach;
+        $students->getCollection()->transform(function ($student) {
+            $student->photo_url = $student->photo ? asset('storage/' . $student->photo) : null;
+            return $student;
         });
 
-        return Inertia::render('coach/Index', [
+        return Inertia::render('student/Index', [
+            'genders' => $this->genders,
             'statuses' => $this->statuses,
-            'coaches' => $coaches,
+            'students' => $students,
             'search_term' => $search,
             'per_page_term' => $per_page,
             'filter_term' => $filter,
@@ -86,9 +88,10 @@ class CoachController extends Controller
      */
     public function create()
     {
-        $this->checkPermission('coach.create');
+        $this->checkPermission('student.create');
 
-        return Inertia::render('coach/Create', [
+        return Inertia::render('student/Create', [
+            'dominant_foots' => $this->dominant_foots,
             'genders' => $this->genders,
         ]);
     }
@@ -98,7 +101,7 @@ class CoachController extends Controller
      */
     public function store(Request $request)
     {
-        $this->checkPermission('coach.create');
+        $this->checkPermission('student.create');
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -109,11 +112,9 @@ class CoachController extends Controller
             'phone' => ['required', 'string', 'max:255'],
             'national_id_number' => ['required', 'string', 'max:255'],
             'photo' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
-            'coaching_license' => ['required', 'string', 'max:255'],
-            'license_number' => ['required', 'string', 'max:255'],
-            'license_issued_at' => ['required', 'date'],
-            'license_expired_at' => ['required', 'date'],
-            'license_issuer' => ['required', 'string', 'max:255'],
+            'dominant_foot' => ['required', 'string', new Enum(DominantFoot::class)],
+            'height_cm' => ['required', 'numeric', 'min:100', 'max:300'],
+            'weight_kg' => ['required', 'numeric', 'min:20', 'max:300'],
             'email' => ['required', 'email', 'max:255', 'unique:user,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ], [], $this->attributes);
@@ -125,8 +126,8 @@ class CoachController extends Controller
                 'email' => strtolower($request->email),
                 'password' => bcrypt($request->password),
             ]);
-            $user->syncRoles('Coach');
-            $coach = Coach::create([
+            $user->syncRoles('Student');
+            $student = Student::create([
                 'name' => strtoupper($request->name),
                 'place_of_birth' => strtoupper($request->place_of_birth),
                 'date_of_birth' => $request->date_of_birth,
@@ -135,22 +136,19 @@ class CoachController extends Controller
                 'phone' => $request->phone,
                 'national_id_number' => $request->national_id_number,
                 'photo' => null,
-                'coaching_license' => $request->coaching_license,
-                'license_number' => $request->license_number,
-                'license_issued_at' => $request->license_issued_at,
-                'license_expired_at' => $request->license_expired_at,
-                'license_issuer' => $request->license_issuer,
-                'status' => Status::INACTIVE,
+                'dominant_foot' => $request->dominant_foot,
+                'height_cm' => $request->height_cm,
+                'weight_kg' => $request->weight_kg,
                 'user_id' => $user->id,
             ]);
             if ($request->hasFile('photo')) {
-                $path = Storage::disk('public')->put('coach', $request->photo);
-                $coach->update([
+                $path = Storage::disk('public')->put('student', $request->photo);
+                $student->update([
                     'photo' => $path,
                 ]);
             }
             DB::commit();
-            return redirect()->route('coach.show', $coach->id)->with('success', 'Pelatih berhasil ditambahkan');
+            return redirect()->route('student.show', $student->id)->with('success', 'Siswa berhasil ditambahkan');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -162,14 +160,15 @@ class CoachController extends Controller
      */
     public function show(string $id)
     {
-        $this->checkPermission('coach.show');
+        $this->checkPermission('student.show');
 
-        $coach = Coach::with(['user'])->findOrFail($id);
-        $coach->photo_url = asset('storage/' . $coach->photo);
-        return Inertia::render('coach/Show', [
+        $student = Student::with(['user'])->findOrFail($id);
+        $student->photo_url = asset('storage/' . $student->photo);
+        return Inertia::render('student/Show', [
             'genders' => $this->genders,
+            'dominant_foots' => $this->dominant_foots,
             'statuses' => $this->statuses,
-            'coach' => $coach,
+            'student' => $student,
         ]);
     }
 
@@ -178,13 +177,14 @@ class CoachController extends Controller
      */
     public function edit(string $id)
     {
-        $this->checkPermission('coach.edit');
+        $this->checkPermission('student.edit');
 
-        $coach = Coach::with(['user'])->findOrFail($id);
-        $coach->photo_url = asset('storage/' . $coach->photo);
-        return Inertia::render('coach/Edit', [
+        $student = Student::with(['user'])->findOrFail($id);
+        $student->photo_url = asset('storage/' . $student->photo);
+        return Inertia::render('student/Edit', [
+            'dominant_foots' => $this->dominant_foots,
             'genders' => $this->genders,
-            'coach' => $coach,
+            'student' => $student,
         ]);
     }
 
@@ -193,9 +193,9 @@ class CoachController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $this->checkPermission('coach.edit');
+        $this->checkPermission('student.edit');
 
-        $coach = Coach::with('user')->findOrFail($id);
+        $student = Student::findOrFail($id);
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'place_of_birth' => ['required', 'string', 'max:255'],
@@ -205,18 +205,16 @@ class CoachController extends Controller
             'phone' => ['required', 'string', 'max:255'],
             'national_id_number' => ['required', 'string', 'max:255'],
             'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
-            'coaching_license' => ['required', 'string', 'max:255'],
-            'license_number' => ['required', 'string', 'max:255'],
-            'license_issued_at' => ['required', 'date'],
-            'license_expired_at' => ['required', 'date'],
-            'license_issuer' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:user,email,' . $coach->user?->id . ',id'],
+            'dominant_foot' => ['required', 'string', new Enum(DominantFoot::class)],
+            'height_cm' => ['required', 'numeric', 'min:100', 'max:300'],
+            'weight_kg' => ['required', 'numeric', 'min:20', 'max:300'],
+            'email' => ['required', 'email', 'max:255', 'unique:user,email,' . $student->user?->id . ',id'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ], [], $this->attributes);
 
         try {
             DB::beginTransaction();
-            $coach->update([
+            $student->update([
                 'name' => strtoupper($request->name),
                 'place_of_birth' => strtoupper($request->place_of_birth),
                 'date_of_birth' => $request->date_of_birth,
@@ -224,29 +222,23 @@ class CoachController extends Controller
                 'address' => strtoupper($request->address),
                 'phone' => $request->phone,
                 'national_id_number' => $request->national_id_number,
-                'coaching_license' => $request->coaching_license,
-                'license_number' => $request->license_number,
-                'license_issued_at' => $request->license_issued_at,
-                'license_expired_at' => $request->license_expired_at,
-                'license_issuer' => $request->license_issuer,
+                'dominant_foot' => $request->dominant_foot,
+                'height_cm' => $request->height_cm,
+                'weight_kg' => $request->weight_kg,
             ]);
-            $coach->user->update([
-                'name' => strtoupper($request->name),
-                'email' => strtolower($request->email),
-                'password' => $request->password ? bcrypt($request->password) : $coach->user?->password,
-            ]);
-
             if ($request->hasFile('photo')) {
-                if ($coach->photo && Storage::disk('public')->exists($coach->photo)) {
-                    Storage::disk('public')->delete($coach->photo);
-                }
-                $path = Storage::disk('public')->put('coach', $request->photo);
-                $coach->update([
+                $path = Storage::disk('public')->put('student', $request->photo);
+                $student->update([
                     'photo' => $path,
                 ]);
             }
+            $student->user()->update([
+                'name' => strtoupper($request->name),
+                'email' => strtolower($request->email),
+                'password' => $request->password ? bcrypt($request->password) : $student->user->password,
+            ]);
             DB::commit();
-            return redirect()->route('coach.show', $coach->id)->with('success', 'Pelatih berhasil diubah');
+            return redirect()->route('student.show', $student->id)->with('success', 'Siswa berhasil diubah');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -258,40 +250,19 @@ class CoachController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->checkPermission('coach.delete');
+        $this->checkPermission('student.delete');
 
         try {
             DB::beginTransaction();
-            $coach = Coach::findOrFail($id);
-            $user = User::findOrFail($coach->user_id);
-            if ($coach->photo && Storage::disk('public')->exists($coach->photo)) {
-                Storage::disk('public')->delete($coach->photo);
+            $student = Student::findOrFail($id);
+            $user = User::findOrFail($student->user_id);
+            if ($student->photo && Storage::disk('public')->exists($student->photo)) {
+                Storage::disk('public')->delete($student->photo);
             }
             $user->delete();
-            $coach->delete();
+            $student->delete();
             DB::commit();
-            return redirect()->route('coach.index')->with('success', 'Pelatih berhasil dihapus');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
-    }
-
-    /**
-     * Change Status the specified resource from storage.
-     */
-    public function status(string $id)
-    {
-        $this->checkPermission('coach.edit');
-
-        try {
-            DB::beginTransaction();
-            $coach = Coach::findOrFail($id);
-            $coach->update([
-                'status' => $coach->status === Status::ACTIVE ? Status::INACTIVE : Status::ACTIVE,
-            ]);
-            DB::commit();
-            return redirect()->back()->with('success', 'Status Pelatih berhasil diubah');
+            return redirect()->route('student.index')->with('success', 'Siswa berhasil dihapus');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;

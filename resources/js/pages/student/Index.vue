@@ -43,8 +43,9 @@ import usePermissions from "@/composables/usePermissions";
 const { can, canAny } = usePermissions();
 
 const props = defineProps({
+    genders: Object,
     statuses: Object,
-    coaches: Object,
+    students: Object,
     search_term: String,
     per_page_term: String,
     filter_term: String,
@@ -52,18 +53,17 @@ const props = defineProps({
 
 const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Pelatih", href: "/coach" },
+    { title: "Siswa", href: "/student" },
 ];
 
 const search = ref(props.search_term);
 const perPage = ref(props.per_page_term);
 const filter = ref(props.filter_term);
-const coachToDelete = ref(null);
-const coachToStatus = ref(null);
+const studentToDelete = ref(null);
 
 const dataControl = () => {
     router.get(
-        route("coach.index"),
+        route("student.index"),
         {
             search: search.value,
             per_page: perPage.value,
@@ -85,30 +85,24 @@ watch([perPage, filter], () => {
     dataControl();
 });
 
-const confirmDelete = (coach) => {
-    coachToDelete.value = coach;
+const confirmDelete = (student) => {
+    studentToDelete.value = student;
 };
 const destroy = () => {
-    if (!coachToDelete.value) return;
-    const coachId = coachToDelete.value.id;
-    router.delete(route("coach.destroy", coachId), {
+    if (!studentToDelete.value) return;
+    const studentId = studentToDelete.value.id;
+    router.delete(route("student.destroy", studentId), {
         preserveScroll: true,
         onFinish: () => {
-            coachToDelete.value = null;
+            studentToDelete.value = null;
         },
     });
 };
 
-const confirmStatus = (coach) => {
-    coachToStatus.value = coach;
-};
-const changeStatus = () => {
-    if (!coachToStatus.value) return;
-    const coachId = coachToStatus.value.id;
-    router.post(route("coach.status", coachId), {
-        preserveScroll: true,
-    });
-    coachToStatus.value = null;
+const getGenderLabel = (gender) => {
+    if (!gender) return "-";
+    const found = props.genders?.find((item) => item.value === gender);
+    return found?.label ?? "-";
 };
 
 const getStatusLabel = (status) => {
@@ -127,31 +121,32 @@ const getStatusVariant = (status) => {
             return "outline";
     }
 };
-const getStatusChangeLabel = (status) => {
-    if (!status) return "Aktifkan";
-    switch (status) {
-        case "ACTIVE":
-            return "Nonaktifkan";
-        case "INACTIVE":
-            return "Aktifkan";
-        default:
-            return "Aktifkan";
+
+const getAge = (birthDate) => {
+    if (!birthDate) return "-";
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+        age--;
     }
+    return age + " Tahun";
 };
 </script>
 
 <template>
-    <Head title="Pelatih" />
+    <Head title="Siswa" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <MainContent>
             <HeadingGroup>
                 <Heading
-                    title="Data Pelatih"
-                    description="Lihat dan kelola data pelatih yang tersedia"
+                    title="Data Siswa"
+                    description="Lihat dan kelola data siswa yang tersedia"
                 />
                 <Link
-                    v-if="can('coach.create')"
-                    :href="route('coach.create')"
+                    v-if="can('student.create')"
+                    :href="route('student.create')"
                     :class="buttonVariants({ variant: 'default' })"
                 >
                     <SquarePlus class="w-4 h-4" />Tambah
@@ -172,30 +167,29 @@ const getStatusChangeLabel = (status) => {
                         <TableRow>
                             <TableHead class="w-[10px]">No</TableHead>
                             <TableHead>Nama</TableHead>
-                            <TableHead>No. Identitas</TableHead>
-                            <TableHead>Lisensi Kepelatihan</TableHead>
+                            <TableHead>Jenis Kelamin</TableHead>
+                            <TableHead>Usia</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead class="w-[10px]"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <template v-if="coaches.data.length > 0">
+                        <template v-if="students.data.length > 0">
                             <TableRow
-                                v-for="(item, index) in coaches.data"
+                                v-for="(item, index) in students.data"
                                 :key="item.id"
                             >
                                 <TableCell class="font-medium">
-                                    {{ coaches.from + index }}
+                                    {{ students.from + index }}
                                 </TableCell>
                                 <TableCell>
                                     {{ item.name }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ item.national_id_number }}
+                                    {{ getGenderLabel(item?.gender) }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ item.coaching_license }} -
-                                    {{ item.license_number }}
+                                    {{ getAge(item?.date_of_birth) }}
                                 </TableCell>
                                 <TableCell>
                                     <Badge
@@ -210,9 +204,9 @@ const getStatusChangeLabel = (status) => {
                                     <DropdownMenu
                                         v-if="
                                             canAny(
-                                                'coach.edit',
-                                                'coach.delete',
-                                                'coach.show'
+                                                'student.edit',
+                                                'student.delete',
+                                                'student.show'
                                             )
                                         "
                                     >
@@ -232,25 +226,13 @@ const getStatusChangeLabel = (status) => {
                                             </DropdownMenuLabel>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
-                                                v-if="can('coach.edit')"
-                                                @select="
-                                                    () => confirmStatus(item)
-                                                "
-                                            >
-                                                {{
-                                                    getStatusChangeLabel(
-                                                        item?.status
-                                                    )
-                                                }}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
                                                 asChild
-                                                v-if="can('coach.show')"
+                                                v-if="can('student.show')"
                                             >
                                                 <Link
                                                     :href="
                                                         route(
-                                                            'coach.show',
+                                                            'student.show',
                                                             item.id
                                                         )
                                                     "
@@ -260,12 +242,12 @@ const getStatusChangeLabel = (status) => {
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
                                                 asChild
-                                                v-if="can('coach.edit')"
+                                                v-if="can('student.edit')"
                                             >
                                                 <Link
                                                     :href="
                                                         route(
-                                                            'coach.edit',
+                                                            'student.edit',
                                                             item.id
                                                         )
                                                     "
@@ -274,7 +256,7 @@ const getStatusChangeLabel = (status) => {
                                                 </Link>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
-                                                v-if="can('coach.delete')"
+                                                v-if="can('student.delete')"
                                                 @select="
                                                     () => confirmDelete(item)
                                                 "
@@ -296,10 +278,10 @@ const getStatusChangeLabel = (status) => {
                     </TableBody>
                 </Table>
             </div>
-            <PaginationLinks :paginator="coaches" />
+            <PaginationLinks :paginator="students" />
         </MainContent>
     </AppLayout>
-    <AlertDialog :open="!!coachToDelete">
+    <AlertDialog :open="!!studentToDelete">
         <AlertDialogContent>
             <AlertDialogHeader>
                 <AlertDialogTitle>
@@ -311,32 +293,10 @@ const getStatusChangeLabel = (status) => {
                 </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-                <AlertDialogCancel @click="coachToDelete = null">
+                <AlertDialogCancel @click="studentToDelete = null">
                     Batal
                 </AlertDialogCancel>
                 <AlertDialogAction @click="destroy">Hapus</AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
-    <AlertDialog :open="!!coachToStatus">
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>
-                    Apakah Anda benar-benar yakin?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                    Status Pelatih akan di-{{
-                        getStatusChangeLabel(coachToStatus?.status ?? null)
-                    }}.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogCancel @click="coachToStatus = null">
-                    Batal
-                </AlertDialogCancel>
-                <AlertDialogAction @click="changeStatus">{{
-                    getStatusChangeLabel(coachToStatus?.status ?? null)
-                }}</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
