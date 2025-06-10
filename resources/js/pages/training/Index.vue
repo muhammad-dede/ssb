@@ -52,19 +52,14 @@ const { can, canAny } = usePermissions();
 
 const props = defineProps({
     periods: Object,
-    status_student_programs: Object,
-    status_billings: Object,
-    student_programs: Object,
+    status_trainings: Object,
+    variants: Object,
+    trainings: Object,
     period_id_terms: Number,
     search_term: String,
     per_page_term: String,
     filter_term: String,
 });
-
-const breadcrumbs = [
-    { title: "Dashboard", href: "/dashboard" },
-    { title: "Registrasi", href: "/registration-student" },
-];
 
 const period_id = ref(props.period_id_terms);
 const search = ref(props.search_term);
@@ -73,7 +68,7 @@ const filter = ref(props.filter_term);
 
 const dataControl = () => {
     router.get(
-        route("registration-student.index"),
+        route("training.index"),
         {
             period_id: period_id.value,
             search: search.value,
@@ -98,51 +93,83 @@ watch([period_id, perPage, filter], () => {
 
 const getStatusLabel = (status) => {
     if (!status) return "-";
-    const found = props.status_student_programs?.find(
-        (item) => item.value === status
-    );
+    const found = props.status_trainings?.find((item) => item.value === status);
     return found?.label?.toUpperCase() ?? "-";
 };
 const getStatusVariant = (status) => {
     if (!status) return "outline";
-    switch (status) {
-        case "ACTIVE":
-            return "default";
-        case "INACTIVE":
-            return "destructive";
-        default:
-            return "outline";
-    }
+    const found = props.variants?.find((item) => item.value === status);
+    return found?.label ?? "outline";
 };
 
-const studentProgramToDelete = ref(null);
-const confirmDelete = (studentProgram) => {
-    studentProgramToDelete.value = studentProgram;
+const trainingToStatus = ref(null);
+const confirmStatus = (training) => {
+    trainingToStatus.value = training;
+};
+const changeStatus = () => {
+    if (!trainingToStatus.value) return;
+    const trainingId = trainingToStatus.value.id;
+    router.post(route("training.status", trainingId), {
+        preserveScroll: true,
+    });
+    trainingToStatus.value = null;
+};
+
+const trainingToDelete = ref(null);
+const confirmDelete = (training) => {
+    trainingToDelete.value = training;
 };
 const destroy = () => {
-    if (!studentProgramToDelete.value) return;
-    const studentProgramId = studentProgramToDelete.value.id;
-    router.delete(route("registration-student.destroy", studentProgramId), {
+    if (!trainingToDelete.value) return;
+    const trainingId = trainingToDelete.value.id;
+    router.delete(route("training.destroy", trainingId), {
         preserveScroll: true,
         onFinish: () => {
-            studentProgramToDelete.value = null;
+            trainingToDelete.value = null;
         },
     });
 };
+
+const setTrainingTime = (training) => {
+    if (!training?.training_date) return "-";
+    const date = new Date(training?.training_date).toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    });
+    const formatTime = (time) => {
+        if (!time) return "-";
+        const [hours, minutes] = time.split(":");
+        const dateObj = new Date();
+        dateObj.setHours(hours, minutes);
+        return dateObj.toLocaleTimeString("id-ID", {
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    };
+    const startTime = formatTime(training?.start_time);
+    const endTime = formatTime(training?.end_time);
+    return `${date}, ${startTime} - ${endTime}`;
+};
+
+const breadcrumbs = [
+    { title: "Dashboard", href: "/dashboard" },
+    { title: "Latihan", href: "/training" },
+];
 </script>
 
 <template>
-    <Head title="Registrasi" />
+    <Head title="Latihan" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <MainContent>
             <HeadingGroup>
                 <Heading
-                    title="Data Registrasi"
-                    description="Lihat dan kelola data registrasi siswa yang tersedia"
+                    title="Data Latihan"
+                    description="Lihat dan kelola data latihan siswa yang tersedia"
                 />
                 <Link
-                    v-if="can('registration-student.create')"
-                    :href="route('registration-student.create')"
+                    v-if="can('training.create')"
+                    :href="route('training.create')"
                     :class="buttonVariants({ variant: 'default' })"
                 >
                     <SquarePlus class="w-4 h-4" />Tambah
@@ -182,30 +209,34 @@ const destroy = () => {
                     <TableHeader>
                         <TableRow>
                             <TableHead class="w-[10px]">No</TableHead>
-                            <TableHead>Nama Siswa</TableHead>
-                            <TableHead>Periode</TableHead>
                             <TableHead>Program</TableHead>
+                            <TableHead>Periode</TableHead>
+                            <TableHead>Pelatih</TableHead>
+                            <TableHead>Waktu</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead class="w-[10px]"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <template v-if="student_programs.data.length > 0">
+                        <template v-if="trainings.data.length > 0">
                             <TableRow
-                                v-for="(item, index) in student_programs.data"
+                                v-for="(item, index) in trainings.data"
                                 :key="item.id"
                             >
                                 <TableCell class="font-medium">
-                                    {{ student_programs.from + index }}
+                                    {{ trainings.from + index }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ item.student?.name }}
+                                    {{ item.program?.name ?? "-" }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ item.period?.name }}
+                                    {{ item.period?.name ?? "-" }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ item.program?.name }}
+                                    {{ item.coach?.name ?? "-" }}
+                                </TableCell>
+                                <TableCell>
+                                    {{ setTrainingTime(item) }}
                                 </TableCell>
                                 <TableCell>
                                     <Badge
@@ -220,9 +251,9 @@ const destroy = () => {
                                     <DropdownMenu
                                         v-if="
                                             canAny(
-                                                'registration-student.edit',
-                                                'registration-student.show',
-                                                'registration-student.delete'
+                                                'training.edit',
+                                                'training.show',
+                                                'training.delete'
                                             )
                                         "
                                     >
@@ -242,17 +273,21 @@ const destroy = () => {
                                             </DropdownMenuLabel>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
-                                                asChild
-                                                v-if="
-                                                    can(
-                                                        'registration-student.show'
-                                                    )
+                                                v-if="can('training.edit')"
+                                                @select="
+                                                    () => confirmStatus(item)
                                                 "
+                                            >
+                                                Ubah Status
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                asChild
+                                                v-if="can('training.show')"
                                             >
                                                 <Link
                                                     :href="
                                                         route(
-                                                            'registration-student.show',
+                                                            'training.show',
                                                             item.id
                                                         )
                                                     "
@@ -262,16 +297,12 @@ const destroy = () => {
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
                                                 asChild
-                                                v-if="
-                                                    can(
-                                                        'registration-student.edit'
-                                                    )
-                                                "
+                                                v-if="can('training.edit')"
                                             >
                                                 <Link
                                                     :href="
                                                         route(
-                                                            'registration-student.edit',
+                                                            'training.edit',
                                                             item.id
                                                         )
                                                     "
@@ -280,11 +311,7 @@ const destroy = () => {
                                                 </Link>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
-                                                v-if="
-                                                    can(
-                                                        'registration-student.delete'
-                                                    )
-                                                "
+                                                v-if="can('training.delete')"
                                                 @select="
                                                     () => confirmDelete(item)
                                                 "
@@ -298,7 +325,7 @@ const destroy = () => {
                         </template>
                         <template v-else>
                             <TableRow>
-                                <TableCell colspan="6" class="text-center py-6">
+                                <TableCell colspan="7" class="text-center py-6">
                                     <strong> Tidak ada data </strong>
                                 </TableCell>
                             </TableRow>
@@ -306,10 +333,10 @@ const destroy = () => {
                     </TableBody>
                 </Table>
             </div>
-            <PaginationLinks :paginator="student_programs" />
+            <PaginationLinks :paginator="trainings" />
         </MainContent>
     </AppLayout>
-    <AlertDialog :open="!!studentProgramToDelete">
+    <AlertDialog :open="!!trainingToDelete">
         <AlertDialogContent>
             <AlertDialogHeader>
                 <AlertDialogTitle>
@@ -321,10 +348,30 @@ const destroy = () => {
                 </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-                <AlertDialogCancel @click="studentProgramToDelete = null">
+                <AlertDialogCancel @click="trainingToDelete = null">
                     Batal
                 </AlertDialogCancel>
                 <AlertDialogAction @click="destroy">Hapus</AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
+    <AlertDialog :open="!!trainingToStatus">
+        <AlertDialogContent>
+            <AlertDialogHeader>
+                <AlertDialogTitle>
+                    Apakah Anda benar-benar yakin?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                    Status Pelatih akan diubah.
+                </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+                <AlertDialogCancel @click="trainingToStatus = null">
+                    Batal
+                </AlertDialogCancel>
+                <AlertDialogAction @click="changeStatus"
+                    >Ubah Status</AlertDialogAction
+                >
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>

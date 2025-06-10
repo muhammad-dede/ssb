@@ -26,7 +26,7 @@ class RoleController extends Controller
 
         $search = $request->search;
         $per_page = $request->per_page ?? "5";
-        $filter = $request->filter ?? 'desc';
+        $filter = in_array(strtolower($request->filter), ['asc', 'desc']) ? strtolower($request->filter) : 'desc';
 
         $roles = Role::query()
             ->withCount('permissions')

@@ -82,7 +82,7 @@ class RegistrationStudentController extends Controller
         $period_id = (int) ($request->period_id ?? $this->period_active->id);
         $search = $request->search;
         $per_page = $request->per_page ?? "5";
-        $filter = $request->filter ?? 'desc';
+        $filter = in_array(strtolower($request->filter), ['asc', 'desc']) ? strtolower($request->filter) : 'desc';
 
         $student_programs = StudentProgram::query()
             ->with(['student', 'program', 'period', 'billing'])

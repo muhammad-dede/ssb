@@ -21,6 +21,8 @@ import {
     UserCog,
     PersonStanding,
     FileDiff,
+    SlidersHorizontal,
+    Clock,
 } from "lucide-vue-next";
 import AppLogo from "./AppLogo.vue";
 import usePermissions from "@/composables/usePermissions";
@@ -92,6 +94,21 @@ const dataNavItems = [
         permission: "registration-student.index",
     },
 ];
+
+const activityNavItems = [
+    {
+        title: "Latihan",
+        href: "/training",
+        icon: Clock,
+        permission: "training.index",
+    },
+    {
+        title: "Pertandingan",
+        href: "/match-event",
+        icon: SlidersHorizontal,
+        permission: "match-event.index",
+    },
+];
 </script>
 
 <template>
@@ -136,6 +153,11 @@ const dataNavItems = [
                 "
                 group-label="Data"
                 :items="dataNavItems"
+            />
+            <NavMain
+                v-if="canAny('training.index', 'match-event.index')"
+                group-label="Aktifitas"
+                :items="activityNavItems"
             />
         </SidebarContent>
 

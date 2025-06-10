@@ -38,6 +38,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('registration-student/{student_program}/payment', [App\Http\Controllers\RegistrationStudentController::class, 'payment'])->name('registration-student.payment');
     Route::post('registration-student/{student_program}/payment/status', [App\Http\Controllers\RegistrationStudentController::class, 'paymentStatus'])->name('registration-student.payment.status');
     Route::resource('registration-student', App\Http\Controllers\RegistrationStudentController::class);
+    // Training
+    Route::post('training/{training}/status', [App\Http\Controllers\TrainingController::class, 'status'])->name('training.status');
+    Route::resource('training', App\Http\Controllers\TrainingController::class);
 });
 
 require __DIR__ . '/auth.php';
