@@ -43,7 +43,7 @@ import usePermissions from "@/composables/usePermissions";
 const { can, canAny } = usePermissions();
 
 const props = defineProps({
-    statuses: Object,
+    status_coaches: Object,
     coaches: Object,
     search_term: String,
     per_page_term: String,
@@ -113,7 +113,7 @@ const changeStatus = () => {
 
 const getStatusLabel = (status) => {
     if (!status) return "-";
-    const found = props.statuses?.find((item) => item.value === status);
+    const found = props.status_coaches?.find((item) => item.value === status);
     return found?.label?.toUpperCase() ?? "-";
 };
 const getStatusVariant = (status) => {

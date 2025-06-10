@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Gender;
-use App\Enums\Status;
+use App\Enums\StatusCoach;
 use App\Models\Coach;
 use App\Models\User;
 use App\Traits\HasPermissionCheck;
@@ -18,7 +18,7 @@ class CoachController extends Controller
     use HasPermissionCheck;
 
     protected $genders;
-    protected $statuses;
+    protected $status_coaches;
     protected $attributes = [
         'name' => 'Nama',
         'place_of_birth' => 'Tempat Lahir',
@@ -40,7 +40,7 @@ class CoachController extends Controller
     public function __construct()
     {
         $this->genders = Gender::options();
-        $this->statuses = Status::options();
+        $this->status_coaches = StatusCoach::options();
     }
 
     /**
@@ -73,7 +73,7 @@ class CoachController extends Controller
         });
 
         return Inertia::render('coach/Index', [
-            'statuses' => $this->statuses,
+            'status_coaches' => $this->status_coaches,
             'coaches' => $coaches,
             'search_term' => $search,
             'per_page_term' => $per_page,
@@ -140,7 +140,7 @@ class CoachController extends Controller
                 'license_issued_at' => $request->license_issued_at,
                 'license_expired_at' => $request->license_expired_at,
                 'license_issuer' => $request->license_issuer,
-                'status' => Status::INACTIVE,
+                'status' => StatusCoach::INACTIVE,
                 'user_id' => $user->id,
             ]);
             if ($request->hasFile('photo')) {
@@ -168,7 +168,7 @@ class CoachController extends Controller
         $coach->photo_url = asset('storage/' . $coach->photo);
         return Inertia::render('coach/Show', [
             'genders' => $this->genders,
-            'statuses' => $this->statuses,
+            'status_coaches' => $this->status_coaches,
             'coach' => $coach,
         ]);
     }
@@ -288,7 +288,7 @@ class CoachController extends Controller
             DB::beginTransaction();
             $coach = Coach::findOrFail($id);
             $coach->update([
-                'status' => $coach->status === Status::ACTIVE ? Status::INACTIVE : Status::ACTIVE,
+                'status' => $coach->status === StatusCoach::ACTIVE ? StatusCoach::INACTIVE : StatusCoach::ACTIVE,
             ]);
             DB::commit();
             return redirect()->back()->with('success', 'Status Pelatih berhasil diubah');

@@ -60,6 +60,12 @@ class UserSeeder extends Seeder
             ['guard_name' => 'web', 'name' => 'student.edit'],
             ['guard_name' => 'web', 'name' => 'student.show'],
             ['guard_name' => 'web', 'name' => 'student.delete'],
+            // Registration Student
+            ['guard_name' => 'web', 'name' => 'registration-student.index'],
+            ['guard_name' => 'web', 'name' => 'registration-student.create'],
+            ['guard_name' => 'web', 'name' => 'registration-student.edit'],
+            ['guard_name' => 'web', 'name' => 'registration-student.show'],
+            ['guard_name' => 'web', 'name' => 'registration-student.delete'],
             // Training
             ['guard_name' => 'web', 'name' => 'training.index'],
             ['guard_name' => 'web', 'name' => 'training.create'],
@@ -72,12 +78,6 @@ class UserSeeder extends Seeder
             ['guard_name' => 'web', 'name' => 'match-event.edit'],
             ['guard_name' => 'web', 'name' => 'match-event.show'],
             ['guard_name' => 'web', 'name' => 'match-event.delete'],
-            // Billing
-            ['guard_name' => 'web', 'name' => 'billing.index'],
-            ['guard_name' => 'web', 'name' => 'billing.create'],
-            ['guard_name' => 'web', 'name' => 'billing.edit'],
-            ['guard_name' => 'web', 'name' => 'billing.show'],
-            ['guard_name' => 'web', 'name' => 'billing.delete'],
             // Report Student
             ['guard_name' => 'web', 'name' => 'report-student.index'],
             ['guard_name' => 'web', 'name' => 'report-student.create'],
@@ -146,6 +146,12 @@ class UserSeeder extends Seeder
                 $role->givePermissionTo('student.edit');
                 $role->givePermissionTo('student.show');
                 $role->givePermissionTo('student.delete');
+                // Registration
+                $role->givePermissionTo('registration-student.index');
+                $role->givePermissionTo('registration-student.create');
+                $role->givePermissionTo('registration-student.edit');
+                $role->givePermissionTo('registration-student.show');
+                $role->givePermissionTo('registration-student.delete');
                 // Training
                 $role->givePermissionTo('training.index');
                 $role->givePermissionTo('training.create');
@@ -158,12 +164,6 @@ class UserSeeder extends Seeder
                 $role->givePermissionTo('match-event.edit');
                 $role->givePermissionTo('match-event.show');
                 $role->givePermissionTo('match-event.delete');
-                // Billing
-                $role->givePermissionTo('billing.index');
-                $role->givePermissionTo('billing.create');
-                $role->givePermissionTo('billing.edit');
-                $role->givePermissionTo('billing.show');
-                $role->givePermissionTo('billing.delete');
                 // Report Student
                 $role->givePermissionTo('report-student.index');
                 $role->givePermissionTo('report-student.create');
@@ -186,6 +186,12 @@ class UserSeeder extends Seeder
                 $role->givePermissionTo('student.edit');
                 $role->givePermissionTo('student.show');
                 $role->givePermissionTo('student.delete');
+                // Registration
+                $role->givePermissionTo('registration-student.index');
+                $role->givePermissionTo('registration-student.create');
+                $role->givePermissionTo('registration-student.edit');
+                $role->givePermissionTo('registration-student.show');
+                $role->givePermissionTo('registration-student.delete');
                 // Training
                 $role->givePermissionTo('training.index');
                 $role->givePermissionTo('training.create');
@@ -198,12 +204,6 @@ class UserSeeder extends Seeder
                 $role->givePermissionTo('match-event.edit');
                 $role->givePermissionTo('match-event.show');
                 $role->givePermissionTo('match-event.delete');
-                // Billing
-                $role->givePermissionTo('billing.index');
-                $role->givePermissionTo('billing.create');
-                $role->givePermissionTo('billing.edit');
-                $role->givePermissionTo('billing.show');
-                $role->givePermissionTo('billing.delete');
                 // Report Student
                 $role->givePermissionTo('report-student.index');
                 $role->givePermissionTo('report-student.create');

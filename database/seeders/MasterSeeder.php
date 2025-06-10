@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\Status;
+use App\Enums\StatusPeriod;
 use App\Models\Assessment;
 use App\Models\Bank;
 use App\Models\BankAccount;
@@ -188,13 +188,13 @@ class MasterSeeder extends Seeder
                 'name' => 'JANUARI-JUNI 2025',
                 'start_date' => '2025-01-01',
                 'end_date' => '2025-06-30',
-                'status' => Status::ACTIVE,
+                'status' => StatusPeriod::ACTIVE,
             ],
             [
                 'name' => 'JULI-DESEMBER 2025',
                 'start_date' => '2025-07-01',
                 'end_date' => '2025-12-31',
-                'status' => Status::INACTIVE,
+                'status' => StatusPeriod::INACTIVE,
             ],
         ];
         foreach ($periods as $key => $value) {

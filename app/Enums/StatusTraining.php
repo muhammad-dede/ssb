@@ -2,20 +2,16 @@
 
 namespace App\Enums;
 
-enum StatusBilling: string
+enum StatusTraining: string
 {
-    case UNPAID = 'UNPAID';
-    case PAID = 'PAID';
-    case PARTIAL = 'PARTIAL';
-    case OVERDUE = 'OVERDUE';
+    case ACTIVE = 'ACTIVE';
+    case INACTIVE = 'INACTIVE';
 
     public function label(): string
     {
         return match ($this) {
-            self::UNPAID => 'Belum Bayar',
-            self::PAID => 'Sudah Bayar',
-            self::PARTIAL => 'Cicil',
-            self::OVERDUE => 'Jatuh Tempo',
+            self::ACTIVE => 'Aktif',
+            self::INACTIVE => 'Nonaktif',
         };
     }
 

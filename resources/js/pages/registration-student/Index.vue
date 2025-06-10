@@ -16,16 +16,6 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
     Table,
     TableBody,
     TableCell,
@@ -33,6 +23,14 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table/index";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge/index";
 import SearchInput from "@/components/SearchInput.vue";
 import FilterControl from "@/components/FilterControl.vue";
@@ -43,8 +41,11 @@ import usePermissions from "@/composables/usePermissions";
 const { can, canAny } = usePermissions();
 
 const props = defineProps({
-    status_users: Object,
-    users: Object,
+    periods: Object,
+    status_student_programs: Object,
+    status_billings: Object,
+    student_programs: Object,
+    period_id_terms: Number,
     search_term: String,
     per_page_term: String,
     filter_term: String,
@@ -52,19 +53,19 @@ const props = defineProps({
 
 const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Pengguna", href: "/user" },
+    { title: "Registrasi", href: "/registration-student" },
 ];
 
+const period_id = ref(props.period_id_terms);
 const search = ref(props.search_term);
 const perPage = ref(props.per_page_term);
 const filter = ref(props.filter_term);
-const userToDelete = ref(null);
-const userToStatus = ref(null);
 
 const dataControl = () => {
     router.get(
-        route("user.index"),
+        route("registration-student.index"),
         {
+            period_id: period_id.value,
             search: search.value,
             per_page: perPage.value,
             filter: filter.value,
@@ -81,39 +82,15 @@ watch(
         dataControl();
     }, 1000)
 );
-watch([perPage, filter], () => {
+watch([period_id, perPage, filter], () => {
     dataControl();
 });
 
-const confirmDelete = (user) => {
-    userToDelete.value = user;
-};
-const destroy = () => {
-    if (!userToDelete.value) return;
-    const userId = userToDelete.value.id;
-    router.delete(route("user.destroy", userId), {
-        preserveScroll: true,
-        onFinish: () => {
-            userToDelete.value = null;
-        },
-    });
-};
-
-const confirmStatus = (user) => {
-    userToStatus.value = user;
-};
-const changeStatus = () => {
-    if (!userToStatus.value) return;
-    const userId = userToStatus.value.id;
-    router.post(route("user.status", userId), {
-        preserveScroll: true,
-    });
-    userToStatus.value = null;
-};
-
 const getStatusLabel = (status) => {
     if (!status) return "-";
-    const found = props.status_users?.find((item) => item.value === status);
+    const found = props.status_student_programs?.find(
+        (item) => item.value === status
+    );
     return found?.label?.toUpperCase() ?? "-";
 };
 const getStatusVariant = (status) => {
@@ -127,38 +104,47 @@ const getStatusVariant = (status) => {
             return "outline";
     }
 };
-const getStatusChangeLabel = (status) => {
-    if (!status) return "Aktifkan";
-    switch (status) {
-        case "ACTIVE":
-            return "Nonaktifkan";
-        case "INACTIVE":
-            return "Aktifkan";
-        default:
-            return "Aktifkan";
-    }
-};
 </script>
 
 <template>
-    <Head title="Pengguna" />
+    <Head title="Registrasi" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <MainContent>
             <HeadingGroup>
                 <Heading
-                    title="Data Pengguna"
-                    description="Lihat dan kelola data pengguna yang tersedia"
+                    title="Data Registrasi"
+                    description="Lihat dan kelola data registrasi siswa yang tersedia"
                 />
                 <Link
-                    v-if="can('user.create')"
-                    :href="route('user.create')"
+                    v-if="can('registration-student.create')"
+                    :href="route('registration-student.create')"
                     :class="buttonVariants({ variant: 'default' })"
                 >
                     <SquarePlus class="w-4 h-4" />Tambah
                 </Link>
             </HeadingGroup>
-            <div class="flex justify-between items-center gap-4 mb-4">
-                <SearchInput v-model="search" />
+            <div
+                class="flex flex-col lg:flex-row lg:justify-between items-center gap-4 mb-4"
+            >
+                <div class="grid w-full lg:grid-cols-2 lg:w-xl gap-4">
+                    <Select v-model="period_id" name="period_id">
+                        <SelectTrigger id="period_id" class="w-full">
+                            <SelectValue placeholder="Pilih Periode" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="(period, index) in periods"
+                                    :key="index"
+                                    :value="period.id"
+                                >
+                                    {{ period.name }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <SearchInput v-model="search" class="max-w-full" />
+                </div>
                 <FilterControl
                     :per-page="perPage"
                     :filter="filter"
@@ -171,30 +157,31 @@ const getStatusChangeLabel = (status) => {
                     <TableHeader>
                         <TableRow>
                             <TableHead class="w-[10px]">No</TableHead>
-                            <TableHead>Nama</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Role</TableHead>
+                            <TableHead>Nama Siswa</TableHead>
+                            <TableHead>Periode</TableHead>
+                            <TableHead>Program</TableHead>
                             <TableHead>Status</TableHead>
+                            <TableHead>Keterangan</TableHead>
                             <TableHead class="w-[10px]"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <template v-if="users.data.length > 0">
+                        <template v-if="student_programs.data.length > 0">
                             <TableRow
-                                v-for="(item, index) in users.data"
+                                v-for="(item, index) in student_programs.data"
                                 :key="item.id"
                             >
                                 <TableCell class="font-medium">
-                                    {{ users.from + index }}
+                                    {{ student_programs.from + index }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ item.name }}
+                                    {{ item.student?.name }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ item.email }}
+                                    {{ item.period?.name }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ item.roles?.[0]?.name || "-" }}
+                                    {{ item.program?.name }}
                                 </TableCell>
                                 <TableCell>
                                     <Badge
@@ -205,10 +192,14 @@ const getStatusChangeLabel = (status) => {
                                         {{ getStatusLabel(item?.status) }}
                                     </Badge>
                                 </TableCell>
+                                <TableCell> Keterangan </TableCell>
                                 <TableCell class="text-center">
                                     <DropdownMenu
                                         v-if="
-                                            canAny('user.edit', 'user.delete')
+                                            canAny(
+                                                'registration-student.edit',
+                                                'registration-student.show'
+                                            )
                                         "
                                     >
                                         <DropdownMenuTrigger as-child>
@@ -227,39 +218,42 @@ const getStatusChangeLabel = (status) => {
                                             </DropdownMenuLabel>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
-                                                v-if="can('user.edit')"
-                                                @select="
-                                                    () => confirmStatus(item)
-                                                "
-                                            >
-                                                {{
-                                                    getStatusChangeLabel(
-                                                        item?.status
-                                                    )
-                                                }}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
                                                 asChild
-                                                v-if="can('user.edit')"
+                                                v-if="
+                                                    can(
+                                                        'registration-student.show'
+                                                    )
+                                                "
                                             >
                                                 <Link
                                                     :href="
                                                         route(
-                                                            'user.edit',
+                                                            'registration-student.show',
+                                                            item.id
+                                                        )
+                                                    "
+                                                >
+                                                    Detail
+                                                </Link>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                asChild
+                                                v-if="
+                                                    can(
+                                                        'registration-student.edit'
+                                                    )
+                                                "
+                                            >
+                                                <Link
+                                                    :href="
+                                                        route(
+                                                            'registration-student.edit',
                                                             item.id
                                                         )
                                                     "
                                                 >
                                                     Ubah
                                                 </Link>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                                v-if="can('user.delete')"
-                                                @select="
-                                                    () => confirmDelete(item)
-                                                "
-                                            >
-                                                Hapus
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
@@ -268,7 +262,7 @@ const getStatusChangeLabel = (status) => {
                         </template>
                         <template v-else>
                             <TableRow>
-                                <TableCell colspan="6" class="text-center py-6">
+                                <TableCell colspan="7" class="text-center py-6">
                                     <strong> Tidak ada data </strong>
                                 </TableCell>
                             </TableRow>
@@ -276,48 +270,7 @@ const getStatusChangeLabel = (status) => {
                     </TableBody>
                 </Table>
             </div>
-            <PaginationLinks :paginator="users" />
+            <PaginationLinks :paginator="student_programs" />
         </MainContent>
     </AppLayout>
-    <AlertDialog :open="!!userToDelete">
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>
-                    Apakah Anda benar-benar yakin?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                    Tindakan ini tidak dapat dibatalkan. Ini akan secara
-                    permanen menghapus data terkait dari server kami.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogCancel @click="userToDelete = null">
-                    Batal
-                </AlertDialogCancel>
-                <AlertDialogAction @click="destroy">Hapus</AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
-    <AlertDialog :open="!!userToStatus">
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>
-                    Apakah Anda benar-benar yakin?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                    Status Pengguna akan di-{{
-                        getStatusChangeLabel(userToStatus?.status ?? null)
-                    }}.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogCancel @click="userToStatus = null">
-                    Batal
-                </AlertDialogCancel>
-                <AlertDialogAction @click="changeStatus">{{
-                    getStatusChangeLabel(userToStatus?.status ?? null)
-                }}</AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
 </template>

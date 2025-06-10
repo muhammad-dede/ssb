@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\Status;
+use App\Enums\StatusUser;
 use App\Models\User;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ class UserController extends Controller
 {
     use HasPermissionCheck;
 
-    protected $statuses;
+    protected $status_users;
     protected $roles;
     protected $attributes = [
         'name' => 'Nama',
@@ -25,7 +25,7 @@ class UserController extends Controller
 
     public function __construct()
     {
-        $this->statuses = Status::options();
+        $this->status_users = StatusUser::options();
         $this->roles = Role::whereNotIn('name', ['Super Admin', 'Student', 'Coach'])->get();
     }
 
@@ -58,7 +58,7 @@ class UserController extends Controller
             ->withQueryString();
 
         return Inertia::render('user/Index', [
-            'statuses' => $this->statuses,
+            'status_users' => $this->status_users,
             'users' => $users,
             'search_term' => $search,
             'per_page_term' => $per_page,
@@ -191,7 +191,7 @@ class UserController extends Controller
             DB::beginTransaction();
             $user = User::findOrFail($id);
             $user->update([
-                'status' => $user->status === Status::ACTIVE ? Status::INACTIVE : Status::ACTIVE,
+                'status' => $user->status === StatusUser::ACTIVE ? StatusUser::INACTIVE : StatusUser::ACTIVE,
             ]);
             DB::commit();
             return redirect()->back()->with('success', 'Status Pengguna berhasil diubah');

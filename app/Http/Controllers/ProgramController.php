@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\Status;
+use App\Enums\StatusProgram;
 use App\Models\Program;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
@@ -13,19 +13,19 @@ class ProgramController extends Controller
 {
     use HasPermissionCheck;
 
-    protected $statuses;
+    protected $status_programs;
     protected $attributes = [
         'code' => 'Kode',
         'name' => 'Nama',
         'age_min' => 'Minimal Usia',
         'age_max' => 'Maksimal Usia',
         'description' => 'Deskripsi',
-        'registration_fee' => 'Biaya Pendaftaran',
+        'registration_fee' => 'Biaya Registrasi',
     ];
 
     public function __construct()
     {
-        $this->statuses = Status::options();
+        $this->status_programs = StatusProgram::options();
     }
 
     /**
@@ -53,7 +53,7 @@ class ProgramController extends Controller
             ->withQueryString();
 
         return Inertia::render('program/Index', [
-            'statuses' => $this->statuses,
+            'status_programs' => $this->status_programs,
             'programs' => $programs,
             'search_term' => $search,
             'per_page_term' => $per_page,
@@ -98,7 +98,7 @@ class ProgramController extends Controller
                 'age_max' => $request->age_max,
                 'description' => $request->description,
                 'registration_fee' => $request->registration_fee,
-                'status' => Status::ACTIVE,
+                'status' => StatusProgram::ACTIVE,
             ]);
             DB::commit();
             return redirect()->route('program.index')->with('success', 'Program berhasil ditambahkan');
@@ -196,7 +196,7 @@ class ProgramController extends Controller
             DB::beginTransaction();
             $program = Program::findOrFail($id);
             $program->update([
-                'status' => $program->status === Status::ACTIVE ? Status::INACTIVE : Status::ACTIVE,
+                'status' => $program->status === StatusProgram::ACTIVE ? StatusProgram::INACTIVE : StatusProgram::ACTIVE,
             ]);
             DB::commit();
             return redirect()->back()->with('success', 'Status Program berhasil diubah');

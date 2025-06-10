@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\DominantFoot;
 use App\Enums\Gender;
-use App\Enums\Status;
+use App\Enums\StatusStudent;
 use App\Models\Student;
 use App\Models\User;
 use App\Traits\HasPermissionCheck;
@@ -19,7 +19,7 @@ class StudentController extends Controller
     use HasPermissionCheck;
 
     protected $genders;
-    protected $statuses;
+    protected $status_students;
     protected $dominant_foots;
     protected $attributes = [
         'name' => 'Nama',
@@ -40,7 +40,7 @@ class StudentController extends Controller
     public function __construct()
     {
         $this->genders = Gender::options();
-        $this->statuses = Status::options();
+        $this->status_students = StatusStudent::options();
         $this->dominant_foots = DominantFoot::options();
     }
 
@@ -75,7 +75,7 @@ class StudentController extends Controller
 
         return Inertia::render('student/Index', [
             'genders' => $this->genders,
-            'statuses' => $this->statuses,
+            'status_students' => $this->status_students,
             'students' => $students,
             'search_term' => $search,
             'per_page_term' => $per_page,
@@ -139,6 +139,7 @@ class StudentController extends Controller
                 'dominant_foot' => $request->dominant_foot,
                 'height_cm' => $request->height_cm,
                 'weight_kg' => $request->weight_kg,
+                'status' => StatusStudent::INACTIVE,
                 'user_id' => $user->id,
             ]);
             if ($request->hasFile('photo')) {
@@ -167,7 +168,7 @@ class StudentController extends Controller
         return Inertia::render('student/Show', [
             'genders' => $this->genders,
             'dominant_foots' => $this->dominant_foots,
-            'statuses' => $this->statuses,
+            'status_students' => $this->status_students,
             'student' => $student,
         ]);
     }

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\Status;
+use App\Enums\StatusProgram;
 use Illuminate\Database\Eloquent\Model;
 
 class Program extends Model
@@ -14,7 +14,7 @@ class Program extends Model
     protected function casts(): array
     {
         return [
-            'status' => Status::class,
+            'status' => StatusProgram::class,
         ];
     }
 }

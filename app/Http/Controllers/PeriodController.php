@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\Status;
+use App\Enums\StatusPeriod;
 use App\Models\Period;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
@@ -13,7 +13,7 @@ class PeriodController extends Controller
 {
     use HasPermissionCheck;
 
-    protected $statuses;
+    protected $status_periods;
     protected $attributes = [
         'name' => 'Nama Periode',
         'start_date' => 'Tanggal Mulai',
@@ -22,7 +22,7 @@ class PeriodController extends Controller
 
     public function __construct()
     {
-        $this->statuses = Status::options();
+        $this->status_periods = StatusPeriod::options();
     }
 
     /**
@@ -49,7 +49,7 @@ class PeriodController extends Controller
             ->withQueryString();
 
         return Inertia::render('period/Index', [
-            'statuses' => $this->statuses,
+            'status_periods' => $this->status_periods,
             'periods' => $periods,
             'search_term' => $search,
             'per_page_term' => $per_page,
@@ -88,7 +88,7 @@ class PeriodController extends Controller
                 'name' => strtoupper($request->name),
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
-                'status' => Status::INACTIVE,
+                'status' => StatusPeriod::INACTIVE,
             ]);
             DB::commit();
             return redirect()->route('period.index')->with('success', 'Periode berhasil ditambahkan');
@@ -179,11 +179,11 @@ class PeriodController extends Controller
         try {
             DB::beginTransaction();
             $period = Period::findOrFail($id);
-            Period::where('status', Status::ACTIVE)->update([
-                'status' => Status::INACTIVE,
+            Period::where('status', StatusPeriod::ACTIVE)->update([
+                'status' => StatusPeriod::INACTIVE,
             ]);
             $period->update([
-                'status' => $period->status === Status::ACTIVE ? Status::INACTIVE : Status::ACTIVE,
+                'status' => $period->status === StatusPeriod::ACTIVE ? StatusPeriod::INACTIVE : StatusPeriod::ACTIVE,
             ]);
             DB::commit();
             return redirect()->back()->with('success', 'Status Periode berhasil diubah');

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('invoice')->unique();
             $table->double('amount')->default(0);
             $table->date('due_date')->nullable();
-            $table->string('description')->nullable();
             $table->string('status')->nullable()->default('UNPAID');
             $table->timestamps();
         });

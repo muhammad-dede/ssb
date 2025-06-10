@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Gender;
-use App\Enums\Status;
+use App\Enums\StatusCoach;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -17,7 +17,7 @@ class Coach extends Model
     {
         return [
             'gender' => Gender::class,
-            'status' => Status::class,
+            'status' => StatusCoach::class,
         ];
     }
 

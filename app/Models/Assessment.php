@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\Status;
+use App\Enums\StatusAssessment;
 use Illuminate\Database\Eloquent\Model;
 
 class Assessment extends Model
@@ -14,7 +14,7 @@ class Assessment extends Model
     protected function casts(): array
     {
         return [
-            'status' => Status::class,
+            'status' => StatusAssessment::class,
         ];
     }
 }

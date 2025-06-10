@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\Status;
+use App\Enums\StatusPeriod;
 use Illuminate\Database\Eloquent\Model;
 
 class Period extends Model
@@ -14,7 +14,7 @@ class Period extends Model
     protected function casts(): array
     {
         return [
-            'status' => Status::class,
+            'status' => StatusPeriod::class,
         ];
     }
 }

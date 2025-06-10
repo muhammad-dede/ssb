@@ -5,19 +5,23 @@ namespace App\Enums;
 enum StatusPayment: string
 {
     case UNPAID = 'UNPAID';
+    case PENDING = 'PENDING';
     case PAID = 'PAID';
     case FAILED = 'FAILED';
     case EXPIRED = 'EXPIRED';
     case CANCELLED = 'CANCELLED';
+    case INVALID = 'INVALID';
 
     public function label(): string
     {
         return match ($this) {
             self::UNPAID => 'Belum Lunas',
+            self::PENDING => 'Menunggu Konfirmasi',
             self::PAID => 'Lunas',
             self::FAILED => 'Gagal',
             self::EXPIRED => 'Kadaluarsa',
             self::CANCELLED => 'Dibatalkan',
+            self::INVALID => 'Tidak Valid',
         };
     }
 

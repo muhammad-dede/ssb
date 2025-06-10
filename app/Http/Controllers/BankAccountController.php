@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\Status;
+use App\Enums\StatusBankAccount;
 use App\Models\Bank;
 use App\Models\BankAccount;
 use App\Traits\HasPermissionCheck;
@@ -14,7 +14,7 @@ class BankAccountController extends Controller
 {
     use HasPermissionCheck;
 
-    protected $statuses;
+    protected $status_bank_accounts;
     protected $banks;
     protected $attributes = [
         'bank_code' => 'Bank',
@@ -24,7 +24,7 @@ class BankAccountController extends Controller
 
     public function __construct()
     {
-        $this->statuses = Status::options();
+        $this->status_bank_accounts = StatusBankAccount::options();
         $this->banks = Bank::all();
     }
 
@@ -54,7 +54,7 @@ class BankAccountController extends Controller
             ->withQueryString();
 
         return Inertia::render('bank-account/Index', [
-            'statuses' => $this->statuses,
+            'status_bank_accounts' => $this->status_bank_accounts,
             'bank_accounts' => $bank_accounts,
             'search_term' => $search,
             'per_page_term' => $per_page,
@@ -93,7 +93,7 @@ class BankAccountController extends Controller
                 'bank_code' => $request->bank_code,
                 'account_number' => $request->account_number,
                 'account_holder_name' => strtoupper($request->account_holder_name),
-                'status' => Status::ACTIVE,
+                'status' => StatusBankAccount::ACTIVE,
             ]);
             DB::commit();
             return redirect()->route('bank-account.index')->with('success', 'Akun Bank berhasil ditambahkan');
@@ -182,7 +182,7 @@ class BankAccountController extends Controller
             DB::beginTransaction();
             $bank_account = BankAccount::findOrFail($id);
             $bank_account->update([
-                'status' => $bank_account->status === Status::ACTIVE ? Status::INACTIVE : Status::ACTIVE,
+                'status' => $bank_account->status === StatusBankAccount::ACTIVE ? StatusBankAccount::INACTIVE : StatusBankAccount::ACTIVE,
             ]);
             DB::commit();
             return redirect()->back()->with('success', 'Status Akun Bank berhasil diubah');

@@ -27,7 +27,7 @@ return new class extends Migration
             $table->date('license_issued_at')->nullable();
             $table->date('license_expired_at')->nullable();
             $table->string('license_issuer')->nullable();
-            $table->string('status')->nullable()->default('ACTIVE');
+            $table->string('status')->nullable()->default('INACTIVE');
             $table->unsignedBigInteger('user_id')->nullable()->index();
             $table->timestamps();
 

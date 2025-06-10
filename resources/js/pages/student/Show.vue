@@ -48,7 +48,7 @@ const { can } = usePermissions();
 const props = defineProps({
     genders: Object,
     dominant_foots: Object,
-    statuses: Object,
+    status_students: Object,
     student: Object,
 });
 
@@ -81,7 +81,7 @@ const getDominantFootLabel = (dominant_foot) => {
 
 const getStatusLabel = (status) => {
     if (!status) return "-";
-    const found = props.statuses?.find((item) => item.value === status);
+    const found = props.status_students?.find((item) => item.value === status);
     return found?.label?.toUpperCase() ?? "-";
 };
 const getStatusVariant = (status) => {

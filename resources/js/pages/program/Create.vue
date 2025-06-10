@@ -114,13 +114,13 @@ const breadcrumbs = [
                             </div>
                             <div class="w-full flex flex-col gap-2">
                                 <Label for="registration_fee"
-                                    >Biaya Pendaftaran</Label
+                                    >Biaya Registrasi</Label
                                 >
                                 <Input
                                     id="registration_fee"
                                     type="text"
                                     name="registration_fee"
-                                    placeholder="Input Biaya Pendaftaran"
+                                    placeholder="Input Biaya Registrasi"
                                     v-model="form.registration_fee"
                                 />
                                 <InputError

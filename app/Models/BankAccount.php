@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\Status;
+use App\Enums\StatusBankAccount;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -15,7 +15,7 @@ class BankAccount extends Model
     protected function casts(): array
     {
         return [
-            'status' => Status::class,
+            'status' => StatusBankAccount::class,
         ];
     }
 

@@ -43,7 +43,7 @@ import usePermissions from "@/composables/usePermissions";
 const { can, canAny } = usePermissions();
 
 const props = defineProps({
-    statuses: Object,
+    status_programs: Object,
     programs: Object,
     search_term: String,
     per_page_term: String,
@@ -108,7 +108,7 @@ const changeStatus = () => {
 
 const getStatusLabel = (status) => {
     if (!status) return "-";
-    const found = props.statuses?.find((item) => item.value === status);
+    const found = props.status_programs?.find((item) => item.value === status);
     return found?.label?.toUpperCase() ?? "-";
 };
 const getStatusVariant = (status) => {
@@ -184,7 +184,7 @@ const breadcrumbs = [
                             <TableHead>Kode</TableHead>
                             <TableHead>Nama</TableHead>
                             <TableHead>Tingkat Usia</TableHead>
-                            <TableHead>Biaya Pendaftaran</TableHead>
+                            <TableHead>Biaya Registrasi</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead class="w-[10px]"></TableHead>
                         </TableRow>

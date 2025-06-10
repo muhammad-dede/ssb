@@ -1,8 +1,9 @@
 <script setup>
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-vue-next";
 
-defineProps({
+const props = defineProps({
     name: {
         type: String,
         default: "search",
@@ -15,13 +16,17 @@ defineProps({
         type: String,
         default: "Cari...",
     },
+    class: {
+        type: String,
+        default: "",
+    },
 });
 
 const emit = defineEmits(["update:modelValue"]);
 </script>
 
 <template>
-    <div class="relative w-full max-w-sm items-center">
+    <div :class="cn('relative w-full max-w-sm items-center', props.class)">
         <Input
             :id="name"
             type="search"

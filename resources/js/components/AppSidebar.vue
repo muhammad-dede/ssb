@@ -20,6 +20,7 @@ import {
     Bookmark,
     UserCog,
     PersonStanding,
+    FileDiff,
 } from "lucide-vue-next";
 import AppLogo from "./AppLogo.vue";
 import usePermissions from "@/composables/usePermissions";
@@ -84,6 +85,12 @@ const dataNavItems = [
         icon: PersonStanding,
         permission: "student.index",
     },
+    {
+        title: "Registrasi",
+        href: "/registration-student",
+        icon: FileDiff,
+        permission: "registration-student.index",
+    },
 ];
 </script>
 
@@ -120,7 +127,13 @@ const dataNavItems = [
                 :items="masterNavItems"
             />
             <NavMain
-                v-if="canAny('coach.index', 'student.index')"
+                v-if="
+                    canAny(
+                        'coach.index',
+                        'student.index',
+                        'registration-student.index'
+                    )
+                "
                 group-label="Data"
                 :items="dataNavItems"
             />
