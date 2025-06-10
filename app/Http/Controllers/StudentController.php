@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\DominantFoot;
 use App\Enums\Gender;
-use App\Enums\StatusStudent;
+use App\Enums\StatusStudentProgram;
 use App\Models\Student;
 use App\Models\User;
 use App\Traits\HasPermissionCheck;
@@ -19,8 +19,8 @@ class StudentController extends Controller
     use HasPermissionCheck;
 
     protected $genders;
-    protected $status_students;
     protected $dominant_foots;
+    protected $status_student_programs;
     protected $attributes = [
         'name' => 'Nama',
         'place_of_birth' => 'Tempat Lahir',
@@ -40,8 +40,8 @@ class StudentController extends Controller
     public function __construct()
     {
         $this->genders = Gender::options();
-        $this->status_students = StatusStudent::options();
         $this->dominant_foots = DominantFoot::options();
+        $this->status_student_programs = StatusStudentProgram::options();
     }
 
     /**
@@ -56,7 +56,7 @@ class StudentController extends Controller
         $filter = $request->filter ?? 'desc';
 
         $students = Student::query()
-            ->with(['user'])
+            ->with(['user', 'programPeriodActive'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', '%' . $search . '%');
@@ -75,7 +75,7 @@ class StudentController extends Controller
 
         return Inertia::render('student/Index', [
             'genders' => $this->genders,
-            'status_students' => $this->status_students,
+            'status_student_programs' => $this->status_student_programs,
             'students' => $students,
             'search_term' => $search,
             'per_page_term' => $per_page,
@@ -139,7 +139,6 @@ class StudentController extends Controller
                 'dominant_foot' => $request->dominant_foot,
                 'height_cm' => $request->height_cm,
                 'weight_kg' => $request->weight_kg,
-                'status' => StatusStudent::INACTIVE,
                 'user_id' => $user->id,
             ]);
             if ($request->hasFile('photo')) {
@@ -163,12 +162,12 @@ class StudentController extends Controller
     {
         $this->checkPermission('student.show');
 
-        $student = Student::with(['user'])->findOrFail($id);
+        $student = Student::with(['user', 'programPeriodActive'])->findOrFail($id);
         $student->photo_url = asset('storage/' . $student->photo);
         return Inertia::render('student/Show', [
             'genders' => $this->genders,
+            'status_student_programs' => $this->status_student_programs,
             'dominant_foots' => $this->dominant_foots,
-            'status_students' => $this->status_students,
             'student' => $student,
         ]);
     }

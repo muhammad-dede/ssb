@@ -25,7 +25,6 @@ return new class extends Migration
             $table->enum('dominant_foot', ['RIGHT', 'LEFT', 'BOTH']);
             $table->float('height_cm')->nullable();
             $table->float('weight_kg')->nullable();
-            $table->string('status')->nullable()->default('INACTIVE');
             $table->unsignedBigInteger('user_id')->nullable()->index();
             $table->timestamps();
 

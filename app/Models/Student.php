@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use App\Enums\Gender;
-use App\Enums\StatusStudent;
+use App\Enums\StatusPeriod;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Student extends Model
 {
@@ -18,7 +19,6 @@ class Student extends Model
     {
         return [
             'gender' => Gender::class,
-            'status' => StatusStudent::class,
         ];
     }
 
@@ -30,5 +30,11 @@ class Student extends Model
     public function programs(): HasMany
     {
         return $this->hasMany(StudentProgram::class, 'student_id', 'id');
+    }
+
+    public function programPeriodActive(): HasOne
+    {
+        return $this->hasOne(StudentProgram::class, 'student_id', 'id')
+            ->whereHas('period', fn($query) => $query->where('status', StatusPeriod::ACTIVE));
     }
 }

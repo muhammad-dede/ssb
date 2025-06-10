@@ -31,6 +31,16 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge/index";
 import SearchInput from "@/components/SearchInput.vue";
 import FilterControl from "@/components/FilterControl.vue";
@@ -103,6 +113,21 @@ const getStatusVariant = (status) => {
         default:
             return "outline";
     }
+};
+
+const studentProgramToDelete = ref(null);
+const confirmDelete = (studentProgram) => {
+    studentProgramToDelete.value = studentProgram;
+};
+const destroy = () => {
+    if (!studentProgramToDelete.value) return;
+    const studentProgramId = studentProgramToDelete.value.id;
+    router.delete(route("registration-student.destroy", studentProgramId), {
+        preserveScroll: true,
+        onFinish: () => {
+            studentProgramToDelete.value = null;
+        },
+    });
 };
 </script>
 
@@ -255,6 +280,18 @@ const getStatusVariant = (status) => {
                                                     Ubah
                                                 </Link>
                                             </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                v-if="
+                                                    can(
+                                                        'registration-student.delete'
+                                                    )
+                                                "
+                                                @select="
+                                                    () => confirmDelete(item)
+                                                "
+                                            >
+                                                Hapus
+                                            </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>
@@ -273,4 +310,23 @@ const getStatusVariant = (status) => {
             <PaginationLinks :paginator="student_programs" />
         </MainContent>
     </AppLayout>
+    <AlertDialog :open="!!studentProgramToDelete">
+        <AlertDialogContent>
+            <AlertDialogHeader>
+                <AlertDialogTitle>
+                    Apakah Anda benar-benar yakin?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                    Tindakan ini tidak dapat dibatalkan. Ini akan secara
+                    permanen menghapus data terkait dari server kami.
+                </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+                <AlertDialogCancel @click="studentProgramToDelete = null">
+                    Batal
+                </AlertDialogCancel>
+                <AlertDialogAction @click="destroy">Hapus</AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
 </template>

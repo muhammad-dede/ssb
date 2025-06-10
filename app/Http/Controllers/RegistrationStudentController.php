@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\UpdatePaymentStatusEffect;
 use App\Enums\PaymentMethod;
 use App\Enums\StatusBankAccount;
 use App\Enums\StatusBilling;
 use App\Enums\StatusPayment;
 use App\Enums\StatusPeriod;
 use App\Enums\StatusProgram;
-use App\Enums\StatusStudent;
 use App\Enums\StatusStudentProgram;
 use App\Enums\Variant;
 use App\Models\Bank;
@@ -253,6 +251,28 @@ class RegistrationStudentController extends Controller
     }
 
     /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        $this->checkPermission('registration-student.delete');
+
+        try {
+            DB::beginTransaction();
+            $student_program = StudentProgram::findOrFail($id);
+            if ($student_program->billing?->payment?->proof_file && Storage::disk('public')->exists($student_program->billing?->payment?->proof_file)) {
+                Storage::disk('public')->delete($student_program->billing?->payment?->proof_file);
+            }
+            $student_program->delete();
+            DB::commit();
+            return redirect()->route('registration-student.index')->with('success', 'Registrasi berhasil dihapus');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+    }
+
+    /**
      * Store or update a resource in storage.
      */
     public function payment(Request $request, string $student_program_id)
@@ -325,10 +345,8 @@ class RegistrationStudentController extends Controller
             }
             if ($is_edit) {
                 $existing_payment->update($payment_data);
-                UpdatePaymentStatusEffect::handle($existing_payment, $payment_data['status']);
             } else {
-                $payment = $student_program->billing?->payment()->create($payment_data);
-                UpdatePaymentStatusEffect::handle($payment, $payment_data['status']);
+                $student_program->billing?->payment()->create($payment_data);
             }
             DB::commit();
             return redirect()->back()->with('success', 'Pembayaran berhasil disimpan');
@@ -357,7 +375,6 @@ class RegistrationStudentController extends Controller
                 'status' => StatusPayment::from($request->status),
                 'notes' => $request->notes,
             ]);
-            UpdatePaymentStatusEffect::handle($payment, StatusPayment::from($request->status));
             DB::commit();
             return redirect()->back()->with('success', 'Pembayaran berhasil dikonfirmasi');
         } catch (\Throwable $th) {

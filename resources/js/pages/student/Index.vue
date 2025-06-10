@@ -44,7 +44,7 @@ const { can, canAny } = usePermissions();
 
 const props = defineProps({
     genders: Object,
-    status_students: Object,
+    status_student_programs: Object,
     students: Object,
     search_term: String,
     per_page_term: String,
@@ -106,12 +106,14 @@ const getGenderLabel = (gender) => {
 };
 
 const getStatusLabel = (status) => {
-    if (!status) return "-";
-    const found = props.status_students?.find((item) => item.value === status);
+    if (!status) return "Belum Terdaftar Diperiode Ini";
+    const found = props.status_student_programs?.find(
+        (item) => item.value === status
+    );
     return found?.label?.toUpperCase() ?? "-";
 };
 const getStatusVariant = (status) => {
-    if (!status) return "outline";
+    if (!status) return "destructive";
     switch (status) {
         case "ACTIVE":
             return "default";
@@ -169,7 +171,7 @@ const getAge = (birthDate) => {
                             <TableHead>Nama</TableHead>
                             <TableHead>Jenis Kelamin</TableHead>
                             <TableHead>Usia</TableHead>
-                            <TableHead>Status</TableHead>
+                            <TableHead>Status Registrasi</TableHead>
                             <TableHead class="w-[10px]"></TableHead>
                         </TableRow>
                     </TableHeader>
@@ -194,10 +196,18 @@ const getAge = (birthDate) => {
                                 <TableCell>
                                     <Badge
                                         :variant="
-                                            getStatusVariant(item?.status)
+                                            getStatusVariant(
+                                                item.program_period_active
+                                                    ?.status
+                                            )
                                         "
                                     >
-                                        {{ getStatusLabel(item?.status) }}
+                                        {{
+                                            getStatusLabel(
+                                                item.program_period_active
+                                                    ?.status
+                                            )
+                                        }}
                                     </Badge>
                                 </TableCell>
                                 <TableCell class="text-center">

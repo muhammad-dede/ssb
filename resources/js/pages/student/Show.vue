@@ -48,7 +48,7 @@ const { can } = usePermissions();
 const props = defineProps({
     genders: Object,
     dominant_foots: Object,
-    status_students: Object,
+    status_student_programs: Object,
     student: Object,
 });
 
@@ -80,12 +80,14 @@ const getDominantFootLabel = (dominant_foot) => {
 };
 
 const getStatusLabel = (status) => {
-    if (!status) return "-";
-    const found = props.status_students?.find((item) => item.value === status);
+    if (!status) return "Belum Terdaftar Diperiode Ini";
+    const found = props.status_student_programs?.find(
+        (item) => item.value === status
+    );
     return found?.label?.toUpperCase() ?? "-";
 };
 const getStatusVariant = (status) => {
-    if (!status) return "outline";
+    if (!status) return "destructive";
     switch (status) {
         case "ACTIVE":
             return "default";
@@ -170,10 +172,18 @@ const breadcrumbs = [
                                 </div>
                             </template>
                             <Badge
-                                :variant="getStatusVariant(student?.status)"
+                                :variant="
+                                    getStatusVariant(
+                                        student.program_period_active?.status
+                                    )
+                                "
                                 class="py-2 px-3 rounded-full h-fit"
                             >
-                                {{ getStatusLabel(student?.status) }}
+                                {{
+                                    getStatusLabel(
+                                        student.program_period_active?.status
+                                    )
+                                }}
                             </Badge>
                         </div>
                         <div class="grid divide-y divide-gray-100">
