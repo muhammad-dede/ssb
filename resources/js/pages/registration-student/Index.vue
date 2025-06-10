@@ -186,7 +186,6 @@ const destroy = () => {
                             <TableHead>Periode</TableHead>
                             <TableHead>Program</TableHead>
                             <TableHead>Status</TableHead>
-                            <TableHead>Keterangan</TableHead>
                             <TableHead class="w-[10px]"></TableHead>
                         </TableRow>
                     </TableHeader>
@@ -217,7 +216,6 @@ const destroy = () => {
                                         {{ getStatusLabel(item?.status) }}
                                     </Badge>
                                 </TableCell>
-                                <TableCell> Keterangan </TableCell>
                                 <TableCell class="text-center">
                                     <DropdownMenu
                                         v-if="
@@ -299,7 +297,7 @@ const destroy = () => {
                         </template>
                         <template v-else>
                             <TableRow>
-                                <TableCell colspan="7" class="text-center py-6">
+                                <TableCell colspan="6" class="text-center py-6">
                                     <strong> Tidak ada data </strong>
                                 </TableCell>
                             </TableRow>
