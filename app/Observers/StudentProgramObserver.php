@@ -32,14 +32,13 @@ class StudentProgramObserver
             return;
         }
 
-        $activeProgram = $student->programs()
-            ->where('status', StatusStudentProgram::ACTIVE)
+        $currentProgram = $student->programs()
             ->whereHas('period', fn($q) => $q->where('status', StatusPeriod::ACTIVE))
             ->first();
 
         $student->update([
-            'status' => $activeProgram
-                ? StatusStudent::ACTIVE
+            'status' => $currentProgram && $currentProgram->status instanceof StatusStudentProgram
+                ? StatusStudent::tryFrom($currentProgram->status->value) ?? StatusStudent::ACTIVE
                 : StatusStudent::INACTIVE,
         ]);
     }
