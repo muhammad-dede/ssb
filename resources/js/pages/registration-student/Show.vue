@@ -3,19 +3,16 @@ import AppLayout from "@/layouts/AppLayout.vue";
 import { Head, Link, router } from "@inertiajs/vue3";
 import MainContent from "@/components/MainContent.vue";
 import { Card, CardContent } from "@/components/ui/card/index";
-import { Button, buttonVariants } from "@/components/ui/button/index";
+import { Button } from "@/components/ui/button/index";
 import {
     Phone,
     Calendar,
-    Mail,
-    Mars,
     MapPinCheck,
     IdCard,
     MoreHorizontal,
     Trash2,
     Pencil,
     Undo2,
-    Footprints,
     Ruler,
     Weight,
     Bookmark,
@@ -453,21 +450,17 @@ const breadcrumbs = [
                                     <PaymentStatus
                                         label="Konfirmasi Pembayaran"
                                         :student_program="student_program"
+                                        :status_payments="status_payments"
                                         :bank_accounts="bank_accounts"
                                         :banks="banks"
                                         :payment_methods="payment_methods"
                                     />
                                 </div>
-                                <div
-                                    v-if="
-                                        student_program?.billing?.payment
-                                            ?.status === 'PAID'
-                                    "
-                                    class="pt-4"
-                                >
+                                <div v-else class="pt-4">
                                     <Payment
                                         label="Ubah Pembayaran"
                                         :student_program="student_program"
+                                        :status_payments="status_payments"
                                         :bank_accounts="bank_accounts"
                                         :banks="banks"
                                         :payment_methods="payment_methods"
@@ -489,6 +482,7 @@ const breadcrumbs = [
                                 <Payment
                                     label="Bayar"
                                     :student_program="student_program"
+                                    :status_payments="status_payments"
                                     :bank_accounts="bank_accounts"
                                     :banks="banks"
                                     :payment_methods="payment_methods"

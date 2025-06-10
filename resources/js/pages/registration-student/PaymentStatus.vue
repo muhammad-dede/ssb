@@ -22,26 +22,16 @@ const props = defineProps({
     bank_accounts: Object,
     payment_methods: Object,
     banks: Object,
+    status_payments: Object,
     student_program: Object,
 });
 
 const form = useForm({
-    status: "",
-    notes: "",
+    notes: props.student_program?.billing?.payment?.notes ?? "",
+    status: props.student_program?.billing?.payment?.status ?? "",
 });
 
 const isDialogOpen = ref(false);
-
-const statuses = [
-    {
-        value: "PAID",
-        label: "Lunas",
-    },
-    {
-        value: "INVALID",
-        label: "Tidak Valid",
-    },
-];
 
 const submit = () => {
     form.post(
@@ -71,11 +61,11 @@ const submit = () => {
             </DialogHeader>
             <div class="grid">
                 <div class="flex flex-col gap-2 py-4">
-                    <LabelSpan label="Konfirmasi Status" />
+                    <LabelSpan label="Pilih Status" />
                     <RadioGroup :orientation="'vertical'" v-model="form.status">
                         <div
                             class="flex items-center space-x-2"
-                            v-for="(item, index) in statuses"
+                            v-for="(item, index) in status_payments"
                             :key="index"
                         >
                             <RadioGroupItem

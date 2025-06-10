@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\UpdatePaymentStatusEffect;
 use App\Enums\PaymentMethod;
 use App\Enums\StatusBankAccount;
 use App\Enums\StatusBilling;
@@ -13,7 +14,6 @@ use App\Enums\StatusStudentProgram;
 use App\Enums\Variant;
 use App\Models\Bank;
 use App\Models\BankAccount;
-use App\Models\Billing;
 use App\Models\Period;
 use App\Models\Program;
 use App\Models\Student;
@@ -162,7 +162,7 @@ class RegistrationStudentController extends Controller
                 'status' => StatusBilling::UNPAID,
             ]);
             DB::commit();
-            return redirect()->route('registration-student.index')->with('success', 'Registrasi Siswa berhasil ditambahkan');
+            return redirect()->route('registration-student.show', $student_program->id)->with('success', 'Registrasi Siswa berhasil ditambahkan');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -245,7 +245,7 @@ class RegistrationStudentController extends Controller
                 ]);
             }
             DB::commit();
-            return redirect()->route('registration-student.index')->with('success', 'Registrasi Siswa berhasil diubah');
+            return redirect()->route('registration-student.show', $student_program->id)->with('success', 'Registrasi Siswa berhasil diubah');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -260,8 +260,8 @@ class RegistrationStudentController extends Controller
         $this->checkPermission('registration-student.show');
 
         $student_program = StudentProgram::with(['billing', 'billing.payment', 'student'])->findOrFail($student_program_id);
-        $isEdit = filled($student_program->billing->payment);
-        $existingPayment = $student_program->billing->payment;
+        $is_edit = filled($student_program->billing->payment);
+        $existing_payment = $student_program->billing->payment;
         $request->validate([
             'payment_date' => ['required', 'date'],
             'method' => ['required', 'string', 'in:CASH,TRANSFER'],
@@ -270,7 +270,7 @@ class RegistrationStudentController extends Controller
             'sender_account_number' => [Rule::requiredIf($request->method === 'TRANSFER'), 'nullable', 'string', 'max:255'],
             'sender_account_holder_name' => [Rule::requiredIf($request->method === 'TRANSFER'), 'nullable', 'string', 'max:255'],
             'proof_file' => [
-                Rule::requiredIf(!$isEdit && $request->method === 'TRANSFER'),
+                Rule::requiredIf(!$is_edit && $request->method === 'TRANSFER'),
                 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png',
@@ -278,19 +278,21 @@ class RegistrationStudentController extends Controller
             ],
             'reference_number' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string'],
+            'status' => ['required', new Enum(StatusPayment::class)],
         ], [], $this->attributes);
 
         try {
             DB::beginTransaction();
-            $paymentData = [
+            $payment_data = [
                 'amount' => $student_program->billing?->amount,
                 'payment_date' => $request->payment_date,
                 'method' => $request->method,
                 'notes' => $request->notes,
+                'status' => StatusPayment::from($request->status),
             ];
             if ($request->method === 'TRANSFER') {
                 $bank_account = BankAccount::findOrFail($request->receiver_id);
-                $paymentData = array_merge($paymentData, [
+                $payment_data = array_merge($payment_data, [
                     'receiver_bank_code' => $bank_account->bank_code,
                     'receiver_account_number' => $bank_account->account_number,
                     'receiver_account_holder_name' => $bank_account->account_holder_name,
@@ -300,17 +302,17 @@ class RegistrationStudentController extends Controller
                     'reference_number' => $request->reference_number,
                 ]);
                 if ($request->hasFile('proof_file')) {
-                    if ($isEdit && $existingPayment?->proof_file && Storage::disk('public')->exists($existingPayment->proof_file)) {
-                        Storage::disk('public')->delete($existingPayment->proof_file);
+                    if ($is_edit && $existing_payment?->proof_file && Storage::disk('public')->exists($existing_payment->proof_file)) {
+                        Storage::disk('public')->delete($existing_payment->proof_file);
                     }
                     $path = Storage::disk('public')->put('payment', $request->file('proof_file'));
-                    $paymentData['proof_file'] = $path;
+                    $payment_data['proof_file'] = $path;
                 }
             } else {
-                if ($isEdit && $existingPayment?->proof_file && Storage::disk('public')->exists($existingPayment->proof_file)) {
-                    Storage::disk('public')->delete($existingPayment->proof_file);
+                if ($is_edit && $existing_payment?->proof_file && Storage::disk('public')->exists($existing_payment->proof_file)) {
+                    Storage::disk('public')->delete($existing_payment->proof_file);
                 }
-                $paymentData = array_merge($paymentData, [
+                $payment_data = array_merge($payment_data, [
                     'receiver_bank_code' => null,
                     'receiver_account_number' => null,
                     'receiver_account_holder_name' => null,
@@ -321,22 +323,12 @@ class RegistrationStudentController extends Controller
                     'proof_file' => null,
                 ]);
             }
-            if ($isEdit) {
-                $existingPayment->update($paymentData);
+            if ($is_edit) {
+                $existing_payment->update($payment_data);
+                UpdatePaymentStatusEffect::handle($existing_payment, $payment_data['status']);
             } else {
-                $student_program->billing->payment()->create($paymentData);
-                $student_program->billing->payment()->update([
-                    'status' => StatusPayment::PAID,
-                ]);
-                $student_program->billing()->update([
-                    'status' => StatusBilling::PAID,
-                ]);
-                $student_program->update([
-                    'status' => StatusStudentProgram::ACTIVE,
-                ]);
-                $student_program->student()->update([
-                    'status' => StatusStudent::ACTIVE,
-                ]);
+                $payment = $student_program->billing?->payment()->create($payment_data);
+                UpdatePaymentStatusEffect::handle($payment, $payment_data['status']);
             }
             DB::commit();
             return redirect()->back()->with('success', 'Pembayaran berhasil disimpan');
@@ -360,27 +352,12 @@ class RegistrationStudentController extends Controller
         ], [], $this->attributes);
         try {
             DB::beginTransaction();
-            if ($request->status === 'PAID') {
-                $student_program->billing->payment()->update([
-                    'status' => StatusPayment::PAID,
-                    'notes' => $request->notes,
-                ]);
-                $student_program->billing()->update([
-                    'status' => StatusBilling::PAID,
-                ]);
-                $student_program->update([
-                    'status' => StatusStudentProgram::ACTIVE,
-                ]);
-                $student_program->student()->update([
-                    'status' => StatusStudent::ACTIVE,
-                ]);
-            }
-            if ($request->status === 'INVALID') {
-                $student_program->billing->payment()->update([
-                    'status' => StatusPayment::INVALID,
-                    'notes' => $request->notes,
-                ]);
-            }
+            $payment = $student_program->billing->payment;
+            $payment->update([
+                'status' => StatusPayment::from($request->status),
+                'notes' => $request->notes,
+            ]);
+            UpdatePaymentStatusEffect::handle($payment, StatusPayment::from($request->status));
             DB::commit();
             return redirect()->back()->with('success', 'Pembayaran berhasil dikonfirmasi');
         } catch (\Throwable $th) {

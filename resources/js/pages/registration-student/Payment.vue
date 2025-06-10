@@ -31,6 +31,7 @@ const props = defineProps({
     bank_accounts: Object,
     payment_methods: Object,
     banks: Object,
+    status_payments: Object,
     student_program: Object,
 });
 
@@ -81,6 +82,7 @@ const form = useForm({
     reference_number:
         props.student_program?.billing?.payment?.reference_number ?? "",
     notes: props.student_program?.billing?.payment?.notes ?? "",
+    status: props.student_program?.billing?.payment?.status ?? "",
 });
 
 const handleFileChange = (event) => {
@@ -271,6 +273,26 @@ const submit = () => {
                         v-model="form.notes"
                     />
                     <InputError :message="form.errors.notes" />
+                </div>
+                <div class="flex flex-col gap-2 py-4">
+                    <Label for="status">Status Pembayaran</Label>
+                    <Select v-model="form.status" name="status">
+                        <SelectTrigger id="status" class="w-full">
+                            <SelectValue placeholder="Pilih Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="(item, index) in status_payments"
+                                    :key="index"
+                                    :value="item.value"
+                                >
+                                    {{ item.label }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <InputError :message="form.errors.status" />
                 </div>
             </div>
             <DialogFooter>

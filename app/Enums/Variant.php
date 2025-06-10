@@ -14,7 +14,6 @@ enum Variant: string
     case CANCELLED = 'CANCELLED';
     case PARTIAL = 'PARTIAL';
     case OVERDUE = 'OVERDUE';
-    case INVALID = 'INVALID';
 
     public function label(): string
     {
@@ -29,7 +28,6 @@ enum Variant: string
             self::CANCELLED => 'outline',
             self::PARTIAL => 'outline',
             self::OVERDUE => 'destructive',
-            self::INVALID => 'destructive',
         };
     }
 

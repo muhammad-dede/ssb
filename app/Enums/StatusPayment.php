@@ -10,7 +10,6 @@ enum StatusPayment: string
     case FAILED = 'FAILED';
     case EXPIRED = 'EXPIRED';
     case CANCELLED = 'CANCELLED';
-    case INVALID = 'INVALID';
 
     public function label(): string
     {
@@ -21,7 +20,6 @@ enum StatusPayment: string
             self::FAILED => 'Gagal',
             self::EXPIRED => 'Kadaluarsa',
             self::CANCELLED => 'Dibatalkan',
-            self::INVALID => 'Tidak Valid',
         };
     }
 
