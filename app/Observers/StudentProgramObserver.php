@@ -19,6 +19,11 @@ class StudentProgramObserver
         $this->syncStudentStatus($studentProgram);
     }
 
+    public function deleting(StudentProgram $studentProgram): void
+    {
+        $studentProgram->billing()?->delete();
+    }
+
     protected function syncStudentStatus(StudentProgram $studentProgram): void
     {
         $student = $studentProgram->student;
