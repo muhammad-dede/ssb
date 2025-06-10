@@ -18,6 +18,10 @@ return new class extends Migration
             $table->unsignedBigInteger('period_id')->nullable()->index();
             $table->string('status')->nullable()->default('INACTIVE');
             $table->timestamps();
+
+            $table->foreign('student_id')->references('id')->on('student')->onDelete('cascade');
+            $table->foreign('program_code')->references('code')->on('program')->onDelete('set null')->onUpdate('cascade');
+            $table->foreign('period_id')->references('id')->on('period')->onDelete('cascade');
         });
     }
 

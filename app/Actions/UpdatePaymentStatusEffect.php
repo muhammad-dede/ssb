@@ -5,7 +5,6 @@ namespace App\Actions;
 use App\Models\Payment;
 use App\Enums\StatusBilling;
 use App\Enums\StatusPayment;
-use App\Enums\StatusStudent;
 use App\Enums\StatusStudentProgram;
 
 class UpdatePaymentStatusEffect
@@ -22,14 +21,12 @@ class UpdatePaymentStatusEffect
 
         // Default status
         $statusStudentProgram = StatusStudentProgram::INACTIVE;
-        $statusStudent = StatusStudent::INACTIVE;
 
         // Update billing status
         switch ($status) {
             case StatusPayment::PAID:
                 $billing->update(['status' => StatusBilling::PAID]);
                 $statusStudentProgram = StatusStudentProgram::ACTIVE;
-                $statusStudent = StatusStudent::ACTIVE;
                 break;
 
             case StatusPayment::PENDING:
@@ -59,11 +56,6 @@ class UpdatePaymentStatusEffect
 
         if ($studentProgram instanceof \App\Models\StudentProgram) {
             $studentProgram->update(['status' => $statusStudentProgram]);
-
-            $student = $studentProgram->student;
-            if ($student) {
-                $student->update(['status' => $statusStudent]);
-            }
         }
     }
 }
