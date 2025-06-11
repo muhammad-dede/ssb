@@ -29,7 +29,7 @@ const page = usePage();
                 <SidebarMenuButton
                     v-if="can(item.permission)"
                     as-child
-                    :is-active="page.url.startsWith(item.href)"
+                    :is-active="new RegExp(`^${item.href}(/|$)`).test(page.url)"
                     :tooltip="item.title"
                 >
                     <Link :href="item.href">
