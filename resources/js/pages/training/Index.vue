@@ -51,9 +51,9 @@ import usePermissions from "@/composables/usePermissions";
 const { can, canAny } = usePermissions();
 
 const props = defineProps({
-    periods: Object,
-    status_trainings: Object,
     variants: Object,
+    status_trainings: Object,
+    periods: Object,
     trainings: Object,
     period_id_terms: Number,
     search_term: String,
@@ -65,6 +65,7 @@ const period_id = ref(props.period_id_terms);
 const search = ref(props.search_term);
 const perPage = ref(props.per_page_term);
 const filter = ref(props.filter_term);
+const trainingToDelete = ref(null);
 
 const dataControl = () => {
     router.get(
@@ -81,12 +82,14 @@ const dataControl = () => {
         }
     );
 };
+
 watch(
     search,
     debounce(() => {
         dataControl();
     }, 1000)
 );
+
 watch([period_id, perPage, filter], () => {
     dataControl();
 });
@@ -96,29 +99,17 @@ const getStatusLabel = (status) => {
     const found = props.status_trainings?.find((item) => item.value === status);
     return found?.label?.toUpperCase() ?? "-";
 };
+
 const getStatusVariant = (status) => {
     if (!status) return "outline";
     const found = props.variants?.find((item) => item.value === status);
     return found?.label ?? "outline";
 };
 
-const trainingToStatus = ref(null);
-const confirmStatus = (training) => {
-    trainingToStatus.value = training;
-};
-const changeStatus = () => {
-    if (!trainingToStatus.value) return;
-    const trainingId = trainingToStatus.value.id;
-    router.post(route("training.status", trainingId), {
-        preserveScroll: true,
-    });
-    trainingToStatus.value = null;
-};
-
-const trainingToDelete = ref(null);
 const confirmDelete = (training) => {
     trainingToDelete.value = training;
 };
+
 const destroy = () => {
     if (!trainingToDelete.value) return;
     const trainingId = trainingToDelete.value.id;
@@ -273,14 +264,6 @@ const breadcrumbs = [
                                             </DropdownMenuLabel>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
-                                                v-if="can('training.edit')"
-                                                @select="
-                                                    () => confirmStatus(item)
-                                                "
-                                            >
-                                                Ubah Status
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
                                                 asChild
                                                 v-if="can('training.show')"
                                             >
@@ -326,7 +309,7 @@ const breadcrumbs = [
                         <template v-else>
                             <TableRow>
                                 <TableCell colspan="7" class="text-center py-6">
-                                    <strong> Tidak ada data </strong>
+                                    <strong>Tidak ada data</strong>
                                 </TableCell>
                             </TableRow>
                         </template>
@@ -336,6 +319,7 @@ const breadcrumbs = [
             <PaginationLinks :paginator="trainings" />
         </MainContent>
     </AppLayout>
+
     <AlertDialog :open="!!trainingToDelete">
         <AlertDialogContent>
             <AlertDialogHeader>
@@ -352,26 +336,6 @@ const breadcrumbs = [
                     Batal
                 </AlertDialogCancel>
                 <AlertDialogAction @click="destroy">Hapus</AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
-    <AlertDialog :open="!!trainingToStatus">
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>
-                    Apakah Anda benar-benar yakin?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                    Status Pelatih akan diubah.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogCancel @click="trainingToStatus = null">
-                    Batal
-                </AlertDialogCancel>
-                <AlertDialogAction @click="changeStatus"
-                    >Ubah Status</AlertDialogAction
-                >
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>

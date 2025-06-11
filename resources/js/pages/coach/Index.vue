@@ -43,6 +43,7 @@ import usePermissions from "@/composables/usePermissions";
 const { can, canAny } = usePermissions();
 
 const props = defineProps({
+    variants: Object,
     status_coaches: Object,
     coaches: Object,
     search_term: String,
@@ -50,16 +51,10 @@ const props = defineProps({
     filter_term: String,
 });
 
-const breadcrumbs = [
-    { title: "Dashboard", href: "/dashboard" },
-    { title: "Pelatih", href: "/coach" },
-];
-
 const search = ref(props.search_term);
 const perPage = ref(props.per_page_term);
 const filter = ref(props.filter_term);
 const coachToDelete = ref(null);
-const coachToStatus = ref(null);
 
 const dataControl = () => {
     router.get(
@@ -75,12 +70,14 @@ const dataControl = () => {
         }
     );
 };
+
 watch(
     search,
     debounce(() => {
         dataControl();
     }, 1000)
 );
+
 watch([perPage, filter], () => {
     dataControl();
 });
@@ -88,6 +85,7 @@ watch([perPage, filter], () => {
 const confirmDelete = (coach) => {
     coachToDelete.value = coach;
 };
+
 const destroy = () => {
     if (!coachToDelete.value) return;
     const coachId = coachToDelete.value.id;
@@ -99,45 +97,22 @@ const destroy = () => {
     });
 };
 
-const confirmStatus = (coach) => {
-    coachToStatus.value = coach;
-};
-const changeStatus = () => {
-    if (!coachToStatus.value) return;
-    const coachId = coachToStatus.value.id;
-    router.post(route("coach.status", coachId), {
-        preserveScroll: true,
-    });
-    coachToStatus.value = null;
-};
-
 const getStatusLabel = (status) => {
     if (!status) return "-";
     const found = props.status_coaches?.find((item) => item.value === status);
     return found?.label?.toUpperCase() ?? "-";
 };
+
 const getStatusVariant = (status) => {
     if (!status) return "outline";
-    switch (status) {
-        case "ACTIVE":
-            return "default";
-        case "INACTIVE":
-            return "destructive";
-        default:
-            return "outline";
-    }
+    const found = props.variants?.find((item) => item.value === status);
+    return found?.label ?? "outline";
 };
-const getStatusChangeLabel = (status) => {
-    if (!status) return "Aktifkan";
-    switch (status) {
-        case "ACTIVE":
-            return "Nonaktifkan";
-        case "INACTIVE":
-            return "Aktifkan";
-        default:
-            return "Aktifkan";
-    }
-};
+
+const breadcrumbs = [
+    { title: "Dashboard", href: "/dashboard" },
+    { title: "Pelatih", href: "/coach" },
+];
 </script>
 
 <template>
@@ -232,18 +207,6 @@ const getStatusChangeLabel = (status) => {
                                             </DropdownMenuLabel>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
-                                                v-if="can('coach.edit')"
-                                                @select="
-                                                    () => confirmStatus(item)
-                                                "
-                                            >
-                                                {{
-                                                    getStatusChangeLabel(
-                                                        item?.status
-                                                    )
-                                                }}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
                                                 asChild
                                                 v-if="can('coach.show')"
                                             >
@@ -289,7 +252,7 @@ const getStatusChangeLabel = (status) => {
                         <template v-else>
                             <TableRow>
                                 <TableCell colspan="6" class="text-center py-6">
-                                    <strong> Tidak ada data </strong>
+                                    <strong>Tidak ada data</strong>
                                 </TableCell>
                             </TableRow>
                         </template>
@@ -315,28 +278,6 @@ const getStatusChangeLabel = (status) => {
                     Batal
                 </AlertDialogCancel>
                 <AlertDialogAction @click="destroy">Hapus</AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
-    <AlertDialog :open="!!coachToStatus">
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>
-                    Apakah Anda benar-benar yakin?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                    Status Pelatih akan di-{{
-                        getStatusChangeLabel(coachToStatus?.status ?? null)
-                    }}.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogCancel @click="coachToStatus = null">
-                    Batal
-                </AlertDialogCancel>
-                <AlertDialogAction @click="changeStatus">{{
-                    getStatusChangeLabel(coachToStatus?.status ?? null)
-                }}</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>

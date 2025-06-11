@@ -18,11 +18,14 @@ import InputError from "@/components/InputError.vue";
 import { LoaderCircle } from "lucide-vue-next";
 import HeadingGroup from "@/components/HeadingGroup.vue";
 import Heading from "@/components/Heading.vue";
+import LabelSpan from "@/components/LabelSpan.vue";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import usePermissions from "@/composables/usePermissions";
 
 const { can } = usePermissions();
 
 const props = defineProps({
+    status_bank_accounts: Object,
     banks: Object,
     bank_account: Object,
 });
@@ -31,6 +34,7 @@ const form = useForm({
     bank_code: props.bank_account?.bank_code ?? "",
     account_number: props.bank_account?.account_number ?? "",
     account_holder_name: props.bank_account?.account_holder_name ?? "",
+    status: props.bank_account?.status ?? "",
 });
 
 const submit = () => {
@@ -57,6 +61,7 @@ const breadcrumbs = [
             <form @submit.prevent="submit">
                 <Card>
                     <CardContent>
+                        <Heading title="Informasi Akun Bank" />
                         <div
                             class="grid grid-cols-1 md:grid-cols-2 gap-x-2 gap-y-6 mb-4"
                         >
@@ -117,6 +122,30 @@ const breadcrumbs = [
                                 <InputError
                                     :message="form.errors.account_holder_name"
                                 />
+                            </div>
+                            <div class="flex flex-col gap-2 md:col-span-2">
+                                <LabelSpan label="Pilih Status" />
+                                <RadioGroup
+                                    :orientation="'vertical'"
+                                    v-model="form.status"
+                                >
+                                    <div
+                                        class="flex items-center space-x-2"
+                                        v-for="(
+                                            item, index
+                                        ) in status_bank_accounts"
+                                        :key="index"
+                                    >
+                                        <RadioGroupItem
+                                            :id="`status-${index}`"
+                                            :value="item.value"
+                                        />
+                                        <Label :for="`status-${index}`">
+                                            {{ item.label }}
+                                        </Label>
+                                    </div>
+                                </RadioGroup>
+                                <InputError :message="form.errors.status" />
                             </div>
                         </div>
                     </CardContent>

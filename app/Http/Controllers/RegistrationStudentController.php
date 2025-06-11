@@ -28,17 +28,20 @@ class RegistrationStudentController extends Controller
 {
     use HasPermissionCheck;
 
+    // Enums
+    protected $variants = [];
+    protected $status_student_programs = [];
+    protected $status_billings = [];
+    protected $status_payments = [];
+    protected $payment_methods = [];
+    // Models
     protected $period_active;
     protected $periods = [];
     protected $programs = [];
     protected $students = [];
-    protected $status_student_programs = [];
-    protected $status_billings = [];
-    protected $status_payments = [];
-    protected $variants = [];
     protected $bank_accounts = [];
     protected $banks = [];
-    protected $payment_methods = [];
+    // Validation
     protected $attributes = [
         'student_id' => 'Siswa',
         'program_code' => 'Program Yang Diikuti',
@@ -59,15 +62,17 @@ class RegistrationStudentController extends Controller
 
     public function __construct()
     {
+        // Enums
+        $this->variants = Variant::options();
+        $this->status_student_programs = StatusStudentProgram::options();
+        $this->status_billings = StatusBilling::options();
+        $this->status_payments = StatusPayment::options();
+        $this->payment_methods = PaymentMethod::options();
+        // Models
         $this->period_active = Period::where('status', StatusPeriod::ACTIVE)->first() ?? null;
         $this->periods = Period::orderBy('id', 'desc')->get();
         $this->programs = Program::where('status', StatusProgram::ACTIVE)->get();
         $this->students = Student::orderBy('id', 'desc')->get();
-        $this->status_student_programs = StatusStudentProgram::options();
-        $this->status_billings = StatusBilling::options();
-        $this->status_payments = StatusPayment::options();
-        $this->variants = Variant::options();
-        $this->payment_methods = PaymentMethod::options();
         $this->bank_accounts = BankAccount::with(['bank'])->where('status', StatusBankAccount::ACTIVE)->get();
         $this->banks = Bank::all();
     }
@@ -101,9 +106,10 @@ class RegistrationStudentController extends Controller
             ->withQueryString();
 
         return Inertia::render('registration-student/Index', [
-            'periods' => $this->periods,
+            'variants' => $this->variants,
             'status_student_programs' => $this->status_student_programs,
             'status_billings' => $this->status_billings,
+            'periods' => $this->periods,
             'student_programs' => $student_programs,
             'period_id_terms' => $period_id,
             'search_term' => $search,
@@ -176,10 +182,10 @@ class RegistrationStudentController extends Controller
 
         $student_program = StudentProgram::with(['student', 'program', 'period', 'billing', 'billing.payment', 'billing.payment.receiverBank', 'billing.payment.senderBank'])->findOrFail($id);
         return Inertia::render('registration-student/Show', [
+            'variants' => $this->variants,
             'status_student_programs' => $this->status_student_programs,
             'status_billings' => $this->status_billings,
             'status_payments' => $this->status_payments,
-            'variants' => $this->variants,
             'payment_methods' => $this->payment_methods,
             'bank_accounts' => $this->bank_accounts,
             'banks' => $this->banks,

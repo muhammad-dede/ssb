@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Enums\StatusUser;
+use App\Enums\Variant;
 use App\Models\User;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 
@@ -14,17 +16,23 @@ class UserController extends Controller
 {
     use HasPermissionCheck;
 
-    protected $status_users;
-    protected $roles;
+    // Enums
+    protected $variants = [];
+    protected $status_users = [];
+    // Models
+    protected $roles = [];
+    // Validation
     protected $attributes = [
         'name' => 'Nama',
         'email' => 'Email',
         'password' => 'Password',
         'role' => 'Role',
+        'status' => 'Status',
     ];
 
     public function __construct()
     {
+        $this->variants = Variant::options();
         $this->status_users = StatusUser::options();
         $this->roles = Role::whereNotIn('name', ['Super Admin', 'Student', 'Coach'])->get();
     }
@@ -58,6 +66,7 @@ class UserController extends Controller
             ->withQueryString();
 
         return Inertia::render('user/Index', [
+            'variants' => $this->variants,
             'status_users' => $this->status_users,
             'users' => $users,
             'search_term' => $search,
@@ -75,6 +84,7 @@ class UserController extends Controller
 
         return Inertia::render('user/Create', [
             'roles' => $this->roles,
+            'status_users' => $this->status_users,
         ]);
     }
 
@@ -90,6 +100,7 @@ class UserController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:user,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'role' => ['required', 'string', 'max:255', 'exists:roles,name'],
+            'status' => ['required', new Enum(StatusUser::class)],
         ], [], $this->attributes);
 
         try {
@@ -98,6 +109,7 @@ class UserController extends Controller
                 'name' => strtoupper($request->name),
                 'email' => strtolower($request->email),
                 'password' => bcrypt($request->password),
+                'status' => StatusUser::from($request->status),
             ]);
             $user->syncRoles($request->role);
             DB::commit();
@@ -126,6 +138,7 @@ class UserController extends Controller
         $user = User::with(['roles'])->findOrFail($id);
         return Inertia::render('user/Edit', [
             'roles' => $this->roles,
+            'status_users' => $this->status_users,
             'user' => $user,
         ]);
     }
@@ -142,6 +155,7 @@ class UserController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:user,email,' . $id . ',id'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'role' => ['required', 'string', 'max:255', 'exists:roles,name'],
+            'status' => ['required', new Enum(StatusUser::class)],
         ], [], $this->attributes);
 
         try {
@@ -151,6 +165,7 @@ class UserController extends Controller
                 'name' => strtoupper($request->name),
                 'email' => strtolower($request->email),
                 'password' => $request->password ? bcrypt($request->password) : $user->password,
+                'status' => StatusUser::from($request->status),
             ]);
             $user->syncRoles($request->role);
             DB::commit();
@@ -174,27 +189,6 @@ class UserController extends Controller
             $user->delete();
             DB::commit();
             return redirect()->back()->with('success', 'Pengguna berhasil dihapus');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
-    }
-
-    /**
-     * Change Status the specified resource from storage.
-     */
-    public function status(string $id)
-    {
-        $this->checkPermission('user.edit');
-
-        try {
-            DB::beginTransaction();
-            $user = User::findOrFail($id);
-            $user->update([
-                'status' => $user->status === StatusUser::ACTIVE ? StatusUser::INACTIVE : StatusUser::ACTIVE,
-            ]);
-            DB::commit();
-            return redirect()->back()->with('success', 'Status Pengguna berhasil diubah');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;

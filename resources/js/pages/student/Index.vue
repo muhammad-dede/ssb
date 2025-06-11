@@ -43,18 +43,14 @@ import usePermissions from "@/composables/usePermissions";
 const { can, canAny } = usePermissions();
 
 const props = defineProps({
-    genders: Object,
+    variants: Object,
     status_student_programs: Object,
+    genders: Object,
     students: Object,
     search_term: String,
     per_page_term: String,
     filter_term: String,
 });
-
-const breadcrumbs = [
-    { title: "Dashboard", href: "/dashboard" },
-    { title: "Siswa", href: "/student" },
-];
 
 const search = ref(props.search_term);
 const perPage = ref(props.per_page_term);
@@ -75,12 +71,14 @@ const dataControl = () => {
         }
     );
 };
+
 watch(
     search,
     debounce(() => {
         dataControl();
     }, 1000)
 );
+
 watch([perPage, filter], () => {
     dataControl();
 });
@@ -88,6 +86,7 @@ watch([perPage, filter], () => {
 const confirmDelete = (student) => {
     studentToDelete.value = student;
 };
+
 const destroy = () => {
     if (!studentToDelete.value) return;
     const studentId = studentToDelete.value.id;
@@ -110,18 +109,13 @@ const getStatusLabel = (status) => {
     const found = props.status_student_programs?.find(
         (item) => item.value === status
     );
-    return found?.label?.toUpperCase() ?? "-";
+    return found?.label?.toUpperCase() ?? "Belum Terdaftar Diperiode Ini";
 };
+
 const getStatusVariant = (status) => {
-    if (!status) return "destructive";
-    switch (status) {
-        case "ACTIVE":
-            return "default";
-        case "INACTIVE":
-            return "destructive";
-        default:
-            return "outline";
-    }
+    if (!status) return "outline";
+    const found = props.variants?.find((item) => item.value === status);
+    return found?.label ?? "outline";
 };
 
 const getAge = (birthDate) => {
@@ -135,6 +129,11 @@ const getAge = (birthDate) => {
     }
     return age + " Tahun";
 };
+
+const breadcrumbs = [
+    { title: "Dashboard", href: "/dashboard" },
+    { title: "Siswa", href: "/student" },
+];
 </script>
 
 <template>
@@ -281,7 +280,7 @@ const getAge = (birthDate) => {
                         <template v-else>
                             <TableRow>
                                 <TableCell colspan="6" class="text-center py-6">
-                                    <strong> Tidak ada data </strong>
+                                    <strong>Tidak ada data</strong>
                                 </TableCell>
                             </TableRow>
                         </template>

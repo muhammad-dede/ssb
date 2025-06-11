@@ -3,25 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Enums\StatusPeriod;
+use App\Enums\Variant;
 use App\Models\Period;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 
 class PeriodController extends Controller
 {
     use HasPermissionCheck;
 
-    protected $status_periods;
+    // Enums
+    protected $variants = [];
+    protected $status_periods = [];
+    // Validation
     protected $attributes = [
         'name' => 'Nama Periode',
         'start_date' => 'Tanggal Mulai',
         'end_date' => 'Tanggal Akhir',
+        'status' => 'Status',
     ];
 
     public function __construct()
     {
+        $this->variants = Variant::options();
         $this->status_periods = StatusPeriod::options();
     }
 
@@ -49,6 +56,7 @@ class PeriodController extends Controller
             ->withQueryString();
 
         return Inertia::render('period/Index', [
+            'variants' => $this->variants,
             'status_periods' => $this->status_periods,
             'periods' => $periods,
             'search_term' => $search,
@@ -64,7 +72,9 @@ class PeriodController extends Controller
     {
         $this->checkPermission('period.create');
 
-        return Inertia::render('period/Create');
+        return Inertia::render('period/Create', [
+            'status_periods' => $this->status_periods,
+        ]);
     }
 
     /**
@@ -78,6 +88,7 @@ class PeriodController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'status' => ['required', new Enum(StatusPeriod::class)],
         ], [
             'end_date.after_or_equal' => 'Tanggal akhir harus setelah atau sama dengan tanggal mulai.',
         ], $this->attributes);
@@ -88,7 +99,7 @@ class PeriodController extends Controller
                 'name' => strtoupper($request->name),
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
-                'status' => StatusPeriod::INACTIVE,
+                'status' => StatusPeriod::from($request->status),
             ]);
             DB::commit();
             return redirect()->route('period.index')->with('success', 'Periode berhasil ditambahkan');
@@ -115,6 +126,7 @@ class PeriodController extends Controller
 
         $period = Period::findOrFail($id);
         return Inertia::render('period/Edit', [
+            'status_periods' => $this->status_periods,
             'period' => $period,
         ]);
     }
@@ -130,6 +142,7 @@ class PeriodController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'status' => ['required', new Enum(StatusPeriod::class)],
         ], [
             'end_date.after_or_equal' => 'Tanggal akhir harus setelah atau sama dengan tanggal mulai.',
         ], $this->attributes);
@@ -141,6 +154,7 @@ class PeriodController extends Controller
                 'name' => strtoupper($request->name),
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
+                'status' => StatusPeriod::from($request->status),
             ]);
             DB::commit();
             return redirect()->route('period.index')->with('success', 'Periode berhasil diubah');
@@ -163,30 +177,6 @@ class PeriodController extends Controller
             $period->delete();
             DB::commit();
             return redirect()->back()->with('success', 'Periode berhasil dihapus');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
-    }
-
-    /**
-     * Change Status the specified resource from storage.
-     */
-    public function status(string $id)
-    {
-        $this->checkPermission('period.edit');
-
-        try {
-            DB::beginTransaction();
-            $period = Period::findOrFail($id);
-            Period::where('status', StatusPeriod::ACTIVE)->update([
-                'status' => StatusPeriod::INACTIVE,
-            ]);
-            $period->update([
-                'status' => $period->status === StatusPeriod::ACTIVE ? StatusPeriod::INACTIVE : StatusPeriod::ACTIVE,
-            ]);
-            DB::commit();
-            return redirect()->back()->with('success', 'Status Periode berhasil diubah');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;

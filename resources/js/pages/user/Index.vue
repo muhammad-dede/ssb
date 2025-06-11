@@ -43,6 +43,7 @@ import usePermissions from "@/composables/usePermissions";
 const { can, canAny } = usePermissions();
 
 const props = defineProps({
+    variants: Object,
     status_users: Object,
     users: Object,
     search_term: String,
@@ -50,16 +51,10 @@ const props = defineProps({
     filter_term: String,
 });
 
-const breadcrumbs = [
-    { title: "Dashboard", href: "/dashboard" },
-    { title: "Pengguna", href: "/user" },
-];
-
 const search = ref(props.search_term);
 const perPage = ref(props.per_page_term);
 const filter = ref(props.filter_term);
 const userToDelete = ref(null);
-const userToStatus = ref(null);
 
 const dataControl = () => {
     router.get(
@@ -99,45 +94,22 @@ const destroy = () => {
     });
 };
 
-const confirmStatus = (user) => {
-    userToStatus.value = user;
-};
-const changeStatus = () => {
-    if (!userToStatus.value) return;
-    const userId = userToStatus.value.id;
-    router.post(route("user.status", userId), {
-        preserveScroll: true,
-    });
-    userToStatus.value = null;
-};
-
 const getStatusLabel = (status) => {
     if (!status) return "-";
     const found = props.status_users?.find((item) => item.value === status);
     return found?.label?.toUpperCase() ?? "-";
 };
+
 const getStatusVariant = (status) => {
     if (!status) return "outline";
-    switch (status) {
-        case "ACTIVE":
-            return "default";
-        case "INACTIVE":
-            return "destructive";
-        default:
-            return "outline";
-    }
+    const found = props.variants?.find((item) => item.value === status);
+    return found?.label ?? "outline";
 };
-const getStatusChangeLabel = (status) => {
-    if (!status) return "Aktifkan";
-    switch (status) {
-        case "ACTIVE":
-            return "Nonaktifkan";
-        case "INACTIVE":
-            return "Aktifkan";
-        default:
-            return "Aktifkan";
-    }
-};
+
+const breadcrumbs = [
+    { title: "Dashboard", href: "/dashboard" },
+    { title: "Pengguna", href: "/user" },
+];
 </script>
 
 <template>
@@ -227,18 +199,6 @@ const getStatusChangeLabel = (status) => {
                                             </DropdownMenuLabel>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
-                                                v-if="can('user.edit')"
-                                                @select="
-                                                    () => confirmStatus(item)
-                                                "
-                                            >
-                                                {{
-                                                    getStatusChangeLabel(
-                                                        item?.status
-                                                    )
-                                                }}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
                                                 asChild
                                                 v-if="can('user.edit')"
                                             >
@@ -269,7 +229,7 @@ const getStatusChangeLabel = (status) => {
                         <template v-else>
                             <TableRow>
                                 <TableCell colspan="6" class="text-center py-6">
-                                    <strong> Tidak ada data </strong>
+                                    <strong>Tidak ada data</strong>
                                 </TableCell>
                             </TableRow>
                         </template>
@@ -295,28 +255,6 @@ const getStatusChangeLabel = (status) => {
                     Batal
                 </AlertDialogCancel>
                 <AlertDialogAction @click="destroy">Hapus</AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
-    <AlertDialog :open="!!userToStatus">
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>
-                    Apakah Anda benar-benar yakin?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                    Status Pengguna akan di-{{
-                        getStatusChangeLabel(userToStatus?.status ?? null)
-                    }}.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogCancel @click="userToStatus = null">
-                    Batal
-                </AlertDialogCancel>
-                <AlertDialogAction @click="changeStatus">{{
-                    getStatusChangeLabel(userToStatus?.status ?? null)
-                }}</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>

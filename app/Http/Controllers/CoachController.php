@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Enums\Gender;
 use App\Enums\StatusCoach;
+use App\Enums\StatusUser;
+use App\Enums\Variant;
 use App\Models\Coach;
 use App\Models\User;
 use App\Traits\HasPermissionCheck;
@@ -17,8 +19,11 @@ class CoachController extends Controller
 {
     use HasPermissionCheck;
 
-    protected $genders;
-    protected $status_coaches;
+    // Enums
+    protected $variants = [];
+    protected $status_coaches = [];
+    protected $genders = [];
+    // Validations
     protected $attributes = [
         'name' => 'Nama',
         'place_of_birth' => 'Tempat Lahir',
@@ -35,12 +40,14 @@ class CoachController extends Controller
         'license_issuer' => 'Lembaga Kepelatihan',
         'email' => 'Email',
         'password' => 'Password',
+        'status' => 'Status',
     ];
 
     public function __construct()
     {
-        $this->genders = Gender::options();
+        $this->variants = Variant::options();
         $this->status_coaches = StatusCoach::options();
+        $this->genders = Gender::options();
     }
 
     /**
@@ -73,6 +80,7 @@ class CoachController extends Controller
         });
 
         return Inertia::render('coach/Index', [
+            'variants' => $this->variants,
             'status_coaches' => $this->status_coaches,
             'coaches' => $coaches,
             'search_term' => $search,
@@ -89,6 +97,7 @@ class CoachController extends Controller
         $this->checkPermission('coach.create');
 
         return Inertia::render('coach/Create', [
+            'status_coaches' => $this->status_coaches,
             'genders' => $this->genders,
         ]);
     }
@@ -116,6 +125,7 @@ class CoachController extends Controller
             'license_issuer' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:user,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'status' => ['required', new Enum(StatusCoach::class)],
         ], [], $this->attributes);
 
         try {
@@ -124,6 +134,7 @@ class CoachController extends Controller
                 'name' => strtoupper($request->name),
                 'email' => strtolower($request->email),
                 'password' => bcrypt($request->password),
+                'status' => StatusUser::ACTIVE,
             ]);
             $user->syncRoles('Coach');
             $coach = Coach::create([
@@ -140,7 +151,7 @@ class CoachController extends Controller
                 'license_issued_at' => $request->license_issued_at,
                 'license_expired_at' => $request->license_expired_at,
                 'license_issuer' => $request->license_issuer,
-                'status' => StatusCoach::INACTIVE,
+                'status' => StatusCoach::from($request->status),
                 'user_id' => $user->id,
             ]);
             if ($request->hasFile('photo')) {
@@ -167,8 +178,9 @@ class CoachController extends Controller
         $coach = Coach::with(['user'])->findOrFail($id);
         $coach->photo_url = asset('storage/' . $coach->photo);
         return Inertia::render('coach/Show', [
-            'genders' => $this->genders,
+            'variants' => $this->variants,
             'status_coaches' => $this->status_coaches,
+            'genders' => $this->genders,
             'coach' => $coach,
         ]);
     }
@@ -183,6 +195,7 @@ class CoachController extends Controller
         $coach = Coach::with(['user'])->findOrFail($id);
         $coach->photo_url = asset('storage/' . $coach->photo);
         return Inertia::render('coach/Edit', [
+            'status_coaches' => $this->status_coaches,
             'genders' => $this->genders,
             'coach' => $coach,
         ]);
@@ -212,6 +225,7 @@ class CoachController extends Controller
             'license_issuer' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:user,email,' . $coach->user?->id . ',id'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'status' => ['required', new Enum(StatusCoach::class)],
         ], [], $this->attributes);
 
         try {
@@ -229,6 +243,7 @@ class CoachController extends Controller
                 'license_issued_at' => $request->license_issued_at,
                 'license_expired_at' => $request->license_expired_at,
                 'license_issuer' => $request->license_issuer,
+                'status' => StatusCoach::from($request->status),
             ]);
             $coach->user->update([
                 'name' => strtoupper($request->name),
@@ -271,27 +286,6 @@ class CoachController extends Controller
             $coach->delete();
             DB::commit();
             return redirect()->route('coach.index')->with('success', 'Pelatih berhasil dihapus');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
-    }
-
-    /**
-     * Change Status the specified resource from storage.
-     */
-    public function status(string $id)
-    {
-        $this->checkPermission('coach.edit');
-
-        try {
-            DB::beginTransaction();
-            $coach = Coach::findOrFail($id);
-            $coach->update([
-                'status' => $coach->status === StatusCoach::ACTIVE ? StatusCoach::INACTIVE : StatusCoach::ACTIVE,
-            ]);
-            DB::commit();
-            return redirect()->back()->with('success', 'Status Pelatih berhasil diubah');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;

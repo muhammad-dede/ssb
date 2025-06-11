@@ -208,7 +208,7 @@ const destroy = () => {
                         <template v-else>
                             <TableRow>
                                 <TableCell colspan="4" class="text-center py-6">
-                                    <strong> Tidak ada data </strong>
+                                    <strong>Tidak ada data</strong>
                                 </TableCell>
                             </TableRow>
                         </template>

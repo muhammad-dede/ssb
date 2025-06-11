@@ -19,11 +19,14 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import LabelSpan from "@/components/LabelSpan.vue";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import usePermissions from "@/composables/usePermissions";
 
 const { can } = usePermissions();
 
 const props = defineProps({
+    status_trainings: Object,
     periods: Object,
     programs: Object,
     coaches: Object,
@@ -44,6 +47,7 @@ const form = useForm({
     end_time: "",
     location: "",
     description: "",
+    status: "",
 });
 
 const submit = () => {
@@ -220,6 +224,30 @@ const breadcrumbs = [
                                 <InputError
                                     :message="form.errors.description"
                                 />
+                            </div>
+                            <div class="flex flex-col gap-2 md:col-span-2">
+                                <LabelSpan label="Pilih Status" />
+                                <RadioGroup
+                                    :orientation="'vertical'"
+                                    v-model="form.status"
+                                >
+                                    <div
+                                        class="flex items-center space-x-2"
+                                        v-for="(
+                                            item, index
+                                        ) in status_trainings"
+                                        :key="index"
+                                    >
+                                        <RadioGroupItem
+                                            :id="`status-${index}`"
+                                            :value="item.value"
+                                        />
+                                        <Label :for="`status-${index}`">
+                                            {{ item.label }}
+                                        </Label>
+                                    </div>
+                                </RadioGroup>
+                                <InputError :message="form.errors.status" />
                             </div>
                         </div>
                     </CardContent>

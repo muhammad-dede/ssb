@@ -6,7 +6,7 @@ import AppLayout from "@/layouts/AppLayout.vue";
 import MainContent from "@/components/MainContent.vue";
 import PaginationLinks from "@/components/PaginationLinks.vue";
 import { Button, buttonVariants } from "@/components/ui/button/index";
-import { SquarePlus, MoreHorizontal } from "lucide-vue-next";
+import { SquarePlus, MoreHorizontal, Bell } from "lucide-vue-next";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -38,11 +38,13 @@ import SearchInput from "@/components/SearchInput.vue";
 import FilterControl from "@/components/FilterControl.vue";
 import HeadingGroup from "@/components/HeadingGroup.vue";
 import Heading from "@/components/Heading.vue";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import usePermissions from "@/composables/usePermissions";
 
 const { can, canAny } = usePermissions();
 
 const props = defineProps({
+    variants: Object,
     status_periods: Object,
     periods: Object,
     search_term: String,
@@ -50,16 +52,10 @@ const props = defineProps({
     filter_term: String,
 });
 
-const breadcrumbs = [
-    { title: "Dashboard", href: "/dashboard" },
-    { title: "Periode", href: "/period" },
-];
-
 const search = ref(props.search_term);
 const perPage = ref(props.per_page_term);
 const filter = ref(props.filter_term);
 const periodToDelete = ref(null);
-const periodToStatus = ref(null);
 
 const dataControl = () => {
     router.get(
@@ -88,6 +84,7 @@ watch([perPage, filter], () => {
 const confirmDelete = (period) => {
     periodToDelete.value = period;
 };
+
 const destroy = () => {
     if (!periodToDelete.value) return;
     const periodId = periodToDelete.value.id;
@@ -99,44 +96,16 @@ const destroy = () => {
     });
 };
 
-const confirmStatus = (period) => {
-    periodToStatus.value = period;
-};
-const changeStatus = () => {
-    if (!periodToStatus.value) return;
-    const periodId = periodToStatus.value.id;
-    router.post(route("period.status", periodId), {
-        preserveScroll: true,
-    });
-    periodToStatus.value = null;
-};
-
 const getStatusLabel = (status) => {
     if (!status) return "-";
     const found = props.status_periods?.find((item) => item.value === status);
     return found?.label?.toUpperCase() ?? "-";
 };
+
 const getStatusVariant = (status) => {
     if (!status) return "outline";
-    switch (status) {
-        case "ACTIVE":
-            return "default";
-        case "INACTIVE":
-            return "destructive";
-        default:
-            return "outline";
-    }
-};
-const getStatusChangeLabel = (status) => {
-    if (!status) return "Aktifkan";
-    switch (status) {
-        case "ACTIVE":
-            return "Nonaktifkan";
-        case "INACTIVE":
-            return "Aktifkan";
-        default:
-            return "Aktifkan";
-    }
+    const found = props.variants?.find((item) => item.value === status);
+    return found?.label ?? "outline";
 };
 
 const dateFormat = (date) => {
@@ -144,6 +113,11 @@ const dateFormat = (date) => {
     const options = { day: "numeric", month: "long", year: "numeric" };
     return new Date(date).toLocaleDateString("id-ID", options);
 };
+
+const breadcrumbs = [
+    { title: "Dashboard", href: "/dashboard" },
+    { title: "Periode", href: "/period" },
+];
 </script>
 
 <template>
@@ -163,6 +137,14 @@ const dateFormat = (date) => {
                     <SquarePlus class="w-4 h-4" />Tambah
                 </Link>
             </HeadingGroup>
+            <Alert class="mb-4">
+                <Bell class="h-4 w-4" />
+                <AlertTitle>Peringatan!</AlertTitle>
+                <AlertDescription>
+                    Mengaktifkan salah satu periode akan menonaktifkan periode
+                    lain yang sedang aktif.
+                </AlertDescription>
+            </Alert>
             <div class="flex justify-between items-center gap-4 mb-4">
                 <SearchInput v-model="search" />
                 <FilterControl
@@ -236,18 +218,6 @@ const dateFormat = (date) => {
                                             </DropdownMenuLabel>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
-                                                v-if="can('period.edit')"
-                                                @select="
-                                                    () => confirmStatus(item)
-                                                "
-                                            >
-                                                {{
-                                                    getStatusChangeLabel(
-                                                        item?.status
-                                                    )
-                                                }}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
                                                 asChild
                                                 v-if="can('period.edit')"
                                             >
@@ -278,7 +248,7 @@ const dateFormat = (date) => {
                         <template v-else>
                             <TableRow>
                                 <TableCell colspan="6" class="text-center py-6">
-                                    <strong> Tidak ada data </strong>
+                                    <strong>Tidak ada data</strong>
                                 </TableCell>
                             </TableRow>
                         </template>
@@ -304,28 +274,6 @@ const dateFormat = (date) => {
                     Batal
                 </AlertDialogCancel>
                 <AlertDialogAction @click="destroy">Hapus</AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
-    <AlertDialog :open="!!periodToStatus">
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>
-                    Apakah Anda benar-benar yakin?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                    Status Periode akan di-{{
-                        getStatusChangeLabel(periodToStatus?.status ?? null)
-                    }}.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogCancel @click="periodToStatus = null">
-                    Batal
-                </AlertDialogCancel>
-                <AlertDialogAction @click="changeStatus">{{
-                    getStatusChangeLabel(periodToStatus?.status ?? null)
-                }}</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>

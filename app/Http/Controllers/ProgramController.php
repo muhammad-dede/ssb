@@ -3,17 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Enums\StatusProgram;
+use App\Enums\Variant;
 use App\Models\Program;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 
 class ProgramController extends Controller
 {
     use HasPermissionCheck;
 
-    protected $status_programs;
+    // Enums
+    protected $variants = [];
+    protected $status_programs = [];
+    // Validation
     protected $attributes = [
         'code' => 'Kode',
         'name' => 'Nama',
@@ -21,10 +26,12 @@ class ProgramController extends Controller
         'age_max' => 'Maksimal Usia',
         'description' => 'Deskripsi',
         'registration_fee' => 'Biaya Registrasi',
+        'status' => 'Status',
     ];
 
     public function __construct()
     {
+        $this->variants = Variant::options();
         $this->status_programs = StatusProgram::options();
     }
 
@@ -53,6 +60,7 @@ class ProgramController extends Controller
             ->withQueryString();
 
         return Inertia::render('program/Index', [
+            'variants' => $this->variants,
             'status_programs' => $this->status_programs,
             'programs' => $programs,
             'search_term' => $search,
@@ -68,7 +76,9 @@ class ProgramController extends Controller
     {
         $this->checkPermission('program.create');
 
-        return Inertia::render('program/Create');
+        return Inertia::render('program/Create', [
+            'status_programs' => $this->status_programs,
+        ]);
     }
 
     /**
@@ -85,6 +95,7 @@ class ProgramController extends Controller
             'age_max' => ['required', 'numeric', 'gte:age_min'],
             'description' => ['nullable', 'string'],
             'registration_fee' => ['required', 'numeric'],
+            'status' => ['required', new Enum(StatusProgram::class)],
         ], [
             'code.regex' => 'Kode tidak boleh mengandung spasi.',
         ], $this->attributes);
@@ -98,7 +109,7 @@ class ProgramController extends Controller
                 'age_max' => $request->age_max,
                 'description' => $request->description,
                 'registration_fee' => $request->registration_fee,
-                'status' => StatusProgram::ACTIVE,
+                'status' => StatusProgram::from($request->status),
             ]);
             DB::commit();
             return redirect()->route('program.index')->with('success', 'Program berhasil ditambahkan');
@@ -125,6 +136,7 @@ class ProgramController extends Controller
 
         $program = Program::findOrFail($id);
         return Inertia::render('program/Edit', [
+            'status_programs' => $this->status_programs,
             'program' => $program,
         ]);
     }
@@ -143,6 +155,7 @@ class ProgramController extends Controller
             'age_max' => ['required', 'numeric', 'gte:age_min'],
             'description' => ['nullable', 'string'],
             'registration_fee' => ['required', 'numeric'],
+            'status' => ['required', new Enum(StatusProgram::class)],
         ], [
             'code.regex' => 'Kode tidak boleh mengandung spasi.',
         ], $this->attributes);
@@ -157,6 +170,7 @@ class ProgramController extends Controller
                 'age_max' => $request->age_max,
                 'description' => $request->description,
                 'registration_fee' => $request->registration_fee,
+                'status' => StatusProgram::from($request->status),
             ]);
             DB::commit();
             return redirect()->route('program.index')->with('success', 'Program berhasil diubah');
@@ -179,27 +193,6 @@ class ProgramController extends Controller
             $program->delete();
             DB::commit();
             return redirect()->back()->with('success', 'Program berhasil dihapus');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
-    }
-
-    /**
-     * Change Status the specified resource from storage.
-     */
-    public function status(string $id)
-    {
-        $this->checkPermission('program.edit');
-
-        try {
-            DB::beginTransaction();
-            $program = Program::findOrFail($id);
-            $program->update([
-                'status' => $program->status === StatusProgram::ACTIVE ? StatusProgram::INACTIVE : StatusProgram::ACTIVE,
-            ]);
-            DB::commit();
-            return redirect()->back()->with('success', 'Status Program berhasil diubah');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;

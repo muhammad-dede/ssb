@@ -43,6 +43,7 @@ import usePermissions from "@/composables/usePermissions";
 const { can, canAny } = usePermissions();
 
 const props = defineProps({
+    variants: Object,
     status_bank_accounts: Object,
     bank_accounts: Object,
     search_term: String,
@@ -50,16 +51,10 @@ const props = defineProps({
     filter_term: String,
 });
 
-const breadcrumbs = [
-    { title: "Dashboard", href: "/dashboard" },
-    { title: "Akun Bank", href: "/bank-account" },
-];
-
 const search = ref(props.search_term);
 const perPage = ref(props.per_page_term);
 const filter = ref(props.filter_term);
 const bankAccountToDelete = ref(null);
-const bankAccountToStatus = ref(null);
 
 const dataControl = () => {
     router.get(
@@ -88,6 +83,7 @@ watch([perPage, filter], () => {
 const confirmDelete = (bankAccount) => {
     bankAccountToDelete.value = bankAccount;
 };
+
 const destroy = () => {
     if (!bankAccountToDelete.value) return;
     const bankAccountId = bankAccountToDelete.value.id;
@@ -99,18 +95,6 @@ const destroy = () => {
     });
 };
 
-const confirmStatus = (bankAccount) => {
-    bankAccountToStatus.value = bankAccount;
-};
-const changeStatus = () => {
-    if (!bankAccountToStatus.value) return;
-    const bankAccountId = bankAccountToStatus.value.id;
-    router.post(route("bank-account.status", bankAccountId), {
-        preserveScroll: true,
-    });
-    bankAccountToStatus.value = null;
-};
-
 const getStatusLabel = (status) => {
     if (!status) return "-";
     const found = props.status_bank_accounts?.find(
@@ -118,28 +102,17 @@ const getStatusLabel = (status) => {
     );
     return found?.label?.toUpperCase() ?? "-";
 };
+
 const getStatusVariant = (status) => {
     if (!status) return "outline";
-    switch (status) {
-        case "ACTIVE":
-            return "default";
-        case "INACTIVE":
-            return "destructive";
-        default:
-            return "outline";
-    }
+    const found = props.variants?.find((item) => item.value === status);
+    return found?.label ?? "outline";
 };
-const getStatusChangeLabel = (status) => {
-    if (!status) return "Aktifkan";
-    switch (status) {
-        case "ACTIVE":
-            return "Nonaktifkan";
-        case "INACTIVE":
-            return "Aktifkan";
-        default:
-            return "Aktifkan";
-    }
-};
+
+const breadcrumbs = [
+    { title: "Dashboard", href: "/dashboard" },
+    { title: "Akun Bank", href: "/bank-account" },
+];
 </script>
 
 <template>
@@ -232,18 +205,6 @@ const getStatusChangeLabel = (status) => {
                                             </DropdownMenuLabel>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
-                                                v-if="can('bank-account.edit')"
-                                                @select="
-                                                    () => confirmStatus(item)
-                                                "
-                                            >
-                                                {{
-                                                    getStatusChangeLabel(
-                                                        item?.status
-                                                    )
-                                                }}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
                                                 asChild
                                                 v-if="can('bank-account.edit')"
                                             >
@@ -276,7 +237,7 @@ const getStatusChangeLabel = (status) => {
                         <template v-else>
                             <TableRow>
                                 <TableCell colspan="6" class="text-center py-6">
-                                    <strong> Tidak ada data </strong>
+                                    <strong>Tidak ada data</strong>
                                 </TableCell>
                             </TableRow>
                         </template>
@@ -302,30 +263,6 @@ const getStatusChangeLabel = (status) => {
                     Batal
                 </AlertDialogCancel>
                 <AlertDialogAction @click="destroy">Hapus</AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
-    <AlertDialog :open="!!bankAccountToStatus">
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>
-                    Apakah Anda benar-benar yakin?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                    Status Akun Bank akan di-{{
-                        getStatusChangeLabel(
-                            bankAccountToStatus?.status ?? null
-                        )
-                    }}.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogCancel @click="bankAccountToStatus = null">
-                    Batal
-                </AlertDialogCancel>
-                <AlertDialogAction @click="changeStatus">{{
-                    getStatusChangeLabel(bankAccountToStatus?.status ?? null)
-                }}</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>

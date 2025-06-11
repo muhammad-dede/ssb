@@ -5,11 +5,6 @@ import MainContent from "@/components/MainContent.vue";
 import { Card, CardContent, CardFooter } from "@/components/ui/card/index";
 import { Label } from "@/components/ui/label/index";
 import { Input } from "@/components/ui/input/index";
-import InputError from "@/components/InputError.vue";
-import { LoaderCircle } from "lucide-vue-next";
-import { Button, buttonVariants } from "@/components/ui/button/index";
-import HeadingGroup from "@/components/HeadingGroup.vue";
-import Heading from "@/components/Heading.vue";
 import {
     Select,
     SelectContent,
@@ -18,32 +13,41 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Button, buttonVariants } from "@/components/ui/button/index";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import InputError from "@/components/InputError.vue";
+import { LoaderCircle } from "lucide-vue-next";
+import HeadingGroup from "@/components/HeadingGroup.vue";
+import Heading from "@/components/Heading.vue";
+import LabelSpan from "@/components/LabelSpan.vue";
 import usePermissions from "@/composables/usePermissions";
 
 const { can } = usePermissions();
 
 const props = defineProps({
     roles: Object,
+    status_users: Object,
     user: Object,
 });
-
-const breadcrumbs = [
-    { title: "Dashboard", href: "/dashboard" },
-    { title: "Pengguna", href: "/user" },
-    { title: "Ubah", href: "/user/edit" },
-];
 
 const form = useForm({
     name: props.user.name ?? "",
     email: props.user.email ?? "",
     password: "",
     password_confirmation: "",
-    role: props.user.roles[0].name ?? "",
+    role: props.user?.roles[0]?.name ?? "",
+    status: props.user?.status ?? "",
 });
 
 const submit = () => {
-    form.patch(route("user.update", props.user.id));
+    form.patch(route("user.update", props.user?.id));
 };
+
+const breadcrumbs = [
+    { title: "Dashboard", href: "/dashboard" },
+    { title: "Pengguna", href: "/user" },
+    { title: "Ubah", href: "/user/edit" },
+];
 </script>
 
 <template>
@@ -59,6 +63,7 @@ const submit = () => {
             <form @submit.prevent="submit">
                 <Card>
                     <CardContent>
+                        <Heading title="Informasi Pengguna" />
                         <div
                             class="grid grid-cols-1 md:grid-cols-2 gap-x-2 gap-y-6 mb-4"
                         >
@@ -87,6 +92,26 @@ const submit = () => {
                                 <InputError :message="form.errors.email" />
                             </div>
                             <div class="w-full flex flex-col gap-2">
+                                <Label for="role">Role</Label>
+                                <Select v-model="form.role" name="role">
+                                    <SelectTrigger id="role" class="w-full">
+                                        <SelectValue placeholder="Pilih Role" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem
+                                                v-for="role in roles"
+                                                :key="role.id"
+                                                :value="role.name"
+                                            >
+                                                {{ role.name }}
+                                            </SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                                <InputError :message="form.errors.role" />
+                            </div>
+                            <div class="w-full flex flex-col gap-2">
                                 <Label for="password">Password</Label>
                                 <Input
                                     id="password"
@@ -111,25 +136,27 @@ const submit = () => {
                                     v-model="form.password_confirmation"
                                 />
                             </div>
-                            <div class="w-full flex flex-col gap-2">
-                                <Label for="role">Role</Label>
-                                <Select v-model="form.role" name="role">
-                                    <SelectTrigger id="role" class="w-full">
-                                        <SelectValue placeholder="Pilih Role" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectItem
-                                                v-for="role in roles"
-                                                :key="role.id"
-                                                :value="role.name"
-                                            >
-                                                {{ role.name }}
-                                            </SelectItem>
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                                <InputError :message="form.errors.role" />
+                            <div class="flex flex-col gap-2 md:col-span-2">
+                                <LabelSpan label="Pilih Status" />
+                                <RadioGroup
+                                    :orientation="'vertical'"
+                                    v-model="form.status"
+                                >
+                                    <div
+                                        class="flex items-center space-x-2"
+                                        v-for="(item, index) in status_users"
+                                        :key="index"
+                                    >
+                                        <RadioGroupItem
+                                            :id="`status-${index}`"
+                                            :value="item.value"
+                                        />
+                                        <Label :for="`status-${index}`">
+                                            {{ item.label }}
+                                        </Label>
+                                    </div>
+                                </RadioGroup>
+                                <InputError :message="form.errors.status" />
                             </div>
                         </div>
                     </CardContent>

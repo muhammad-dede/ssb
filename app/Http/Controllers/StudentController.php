@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Enums\DominantFoot;
 use App\Enums\Gender;
 use App\Enums\StatusStudentProgram;
+use App\Enums\StatusUser;
+use App\Enums\Variant;
 use App\Models\Student;
 use App\Models\User;
 use App\Traits\HasPermissionCheck;
@@ -18,9 +20,12 @@ class StudentController extends Controller
 {
     use HasPermissionCheck;
 
-    protected $genders;
-    protected $dominant_foots;
-    protected $status_student_programs;
+    // Enums
+    protected $variants = [];
+    protected $status_student_programs = [];
+    protected $genders = [];
+    protected $dominant_foots = [];
+    // Validation
     protected $attributes = [
         'name' => 'Nama',
         'place_of_birth' => 'Tempat Lahir',
@@ -39,9 +44,10 @@ class StudentController extends Controller
 
     public function __construct()
     {
+        $this->variants = Variant::options();
+        $this->status_student_programs = StatusStudentProgram::options();
         $this->genders = Gender::options();
         $this->dominant_foots = DominantFoot::options();
-        $this->status_student_programs = StatusStudentProgram::options();
     }
 
     /**
@@ -74,8 +80,9 @@ class StudentController extends Controller
         });
 
         return Inertia::render('student/Index', [
-            'genders' => $this->genders,
+            'variants' => $this->variants,
             'status_student_programs' => $this->status_student_programs,
+            'genders' => $this->genders,
             'students' => $students,
             'search_term' => $search,
             'per_page_term' => $per_page,
@@ -125,6 +132,7 @@ class StudentController extends Controller
                 'name' => strtoupper($request->name),
                 'email' => strtolower($request->email),
                 'password' => bcrypt($request->password),
+                'status' => StatusUser::ACTIVE,
             ]);
             $user->syncRoles('Student');
             $student = Student::create([
@@ -165,8 +173,9 @@ class StudentController extends Controller
         $student = Student::with(['user', 'programPeriodActive'])->findOrFail($id);
         $student->photo_url = asset('storage/' . $student->photo);
         return Inertia::render('student/Show', [
-            'genders' => $this->genders,
+            'variants' => $this->variants,
             'status_student_programs' => $this->status_student_programs,
+            'genders' => $this->genders,
             'dominant_foots' => $this->dominant_foots,
             'student' => $student,
         ]);

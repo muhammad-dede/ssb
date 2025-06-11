@@ -44,20 +44,13 @@ import { Badge } from "@/components/ui/badge/index";
 const { can } = usePermissions();
 
 const props = defineProps({
-    status_trainings: Object,
     variants: Object,
+    status_trainings: Object,
     training: Object,
 });
 
-const showConfirmStatus = ref(false);
-const changeStatus = () => {
-    showConfirmStatus.value = false;
-    router.post(route("training.status", props.training.id), {
-        preserveScroll: true,
-    });
-};
-
 const showConfirmDelete = ref(false);
+
 const destroy = () => {
     showConfirmDelete.value = false;
     router.delete(route("training.destroy", props.training?.id), {
@@ -70,6 +63,7 @@ const getStatusLabel = (status) => {
     const found = props.status_trainings?.find((item) => item.value === status);
     return found?.label?.toUpperCase() ?? "-";
 };
+
 const getVariant = (status) => {
     if (!status) return "outline";
     const found = props.variants?.find((item) => item.value === status);
@@ -110,13 +104,6 @@ const breadcrumbs = [
                                 <Undo2 class="text-yellow-500" />
                                 Kembali
                             </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                            v-if="can('training.edit')"
-                            @select="showConfirmStatus = true"
-                        >
-                            <CirclePower class="text-blue-500" />
-                            Ubah Status
                         </DropdownMenuItem>
                         <DropdownMenuItem v-if="can('training.edit')" asChild>
                             <Link :href="route('training.edit', training.id)">
@@ -215,27 +202,6 @@ const breadcrumbs = [
                     Batal
                 </AlertDialogCancel>
                 <AlertDialogAction @click="destroy">Hapus</AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
-
-    <AlertDialog :open="!!showConfirmStatus">
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>
-                    Apakah Anda benar-benar yakin?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                    Status Pelatih akan diubah.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogCancel @click="showConfirmStatus = false">
-                    Batal
-                </AlertDialogCancel>
-                <AlertDialogAction @click="changeStatus"
-                    >Ubah Status</AlertDialogAction
-                >
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>

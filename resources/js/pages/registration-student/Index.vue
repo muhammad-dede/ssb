@@ -51,9 +51,10 @@ import usePermissions from "@/composables/usePermissions";
 const { can, canAny } = usePermissions();
 
 const props = defineProps({
-    periods: Object,
+    variants: Object,
     status_student_programs: Object,
     status_billings: Object,
+    periods: Object,
     student_programs: Object,
     period_id_terms: Number,
     search_term: String,
@@ -61,15 +62,11 @@ const props = defineProps({
     filter_term: String,
 });
 
-const breadcrumbs = [
-    { title: "Dashboard", href: "/dashboard" },
-    { title: "Registrasi", href: "/registration-student" },
-];
-
 const period_id = ref(props.period_id_terms);
 const search = ref(props.search_term);
 const perPage = ref(props.per_page_term);
 const filter = ref(props.filter_term);
+const studentProgramToDelete = ref(null);
 
 const dataControl = () => {
     router.get(
@@ -103,22 +100,17 @@ const getStatusLabel = (status) => {
     );
     return found?.label?.toUpperCase() ?? "-";
 };
+
 const getStatusVariant = (status) => {
     if (!status) return "outline";
-    switch (status) {
-        case "ACTIVE":
-            return "default";
-        case "INACTIVE":
-            return "destructive";
-        default:
-            return "outline";
-    }
+    const found = props.variants?.find((item) => item.value === status);
+    return found?.label ?? "outline";
 };
 
-const studentProgramToDelete = ref(null);
 const confirmDelete = (studentProgram) => {
     studentProgramToDelete.value = studentProgram;
 };
+
 const destroy = () => {
     if (!studentProgramToDelete.value) return;
     const studentProgramId = studentProgramToDelete.value.id;
@@ -129,6 +121,11 @@ const destroy = () => {
         },
     });
 };
+
+const breadcrumbs = [
+    { title: "Dashboard", href: "/dashboard" },
+    { title: "Registrasi", href: "/registration-student" },
+];
 </script>
 
 <template>
@@ -299,7 +296,7 @@ const destroy = () => {
                         <template v-else>
                             <TableRow>
                                 <TableCell colspan="6" class="text-center py-6">
-                                    <strong> Tidak ada data </strong>
+                                    <strong>Tidak ada data</strong>
                                 </TableCell>
                             </TableRow>
                         </template>

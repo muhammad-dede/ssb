@@ -55,17 +55,18 @@ import Payment from "./Payment.vue";
 const { can } = usePermissions();
 
 const props = defineProps({
+    variants: Object,
     status_student_programs: Object,
     status_billings: Object,
     status_payments: Object,
-    variants: Object,
+    payment_methods: Object,
     bank_accounts: Object,
     banks: Object,
-    payment_methods: Object,
     student_program: Object,
 });
 
 const showConfirmDelete = ref(false);
+
 const destroy = () => {
     showConfirmDelete.value = false;
     router.delete(

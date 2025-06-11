@@ -46,9 +46,10 @@ import {
 const { can } = usePermissions();
 
 const props = defineProps({
+    variants: Object,
+    status_student_programs: Object,
     genders: Object,
     dominant_foots: Object,
-    status_student_programs: Object,
     student: Object,
 });
 
@@ -84,18 +85,12 @@ const getStatusLabel = (status) => {
     const found = props.status_student_programs?.find(
         (item) => item.value === status
     );
-    return found?.label?.toUpperCase() ?? "-";
+    return found?.label?.toUpperCase() ?? "Belum Terdaftar Diperiode Ini";
 };
 const getStatusVariant = (status) => {
-    if (!status) return "destructive";
-    switch (status) {
-        case "ACTIVE":
-            return "default";
-        case "INACTIVE":
-            return "destructive";
-        default:
-            return "outline";
-    }
+    if (!status) return "outline";
+    const found = props.variants?.find((item) => item.value === status);
+    return found?.label ?? "outline";
 };
 
 const dateFormat = (date) => {

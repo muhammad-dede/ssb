@@ -43,6 +43,7 @@ import usePermissions from "@/composables/usePermissions";
 const { can, canAny } = usePermissions();
 
 const props = defineProps({
+    variants: Object,
     status_programs: Object,
     programs: Object,
     search_term: String,
@@ -54,7 +55,6 @@ const search = ref(props.search_term);
 const perPage = ref(props.per_page_term);
 const filter = ref(props.filter_term);
 const programToDelete = ref(null);
-const programToStatus = ref(null);
 
 const dataControl = () => {
     router.get(
@@ -83,6 +83,7 @@ watch([perPage, filter], () => {
 const confirmDelete = (program) => {
     programToDelete.value = program;
 };
+
 const destroy = () => {
     if (!programToDelete.value) return;
     const programId = programToDelete.value.id;
@@ -94,48 +95,20 @@ const destroy = () => {
     });
 };
 
-const confirmStatus = (program) => {
-    programToStatus.value = program;
-};
-const changeStatus = () => {
-    if (!programToStatus.value) return;
-    const programId = programToStatus.value.id;
-    router.post(route("program.status", programId), {
-        preserveScroll: true,
-    });
-    programToStatus.value = null;
-};
-
 const getStatusLabel = (status) => {
     if (!status) return "-";
     const found = props.status_programs?.find((item) => item.value === status);
     return found?.label?.toUpperCase() ?? "-";
 };
+
 const getStatusVariant = (status) => {
     if (!status) return "outline";
-    switch (status) {
-        case "ACTIVE":
-            return "default";
-        case "INACTIVE":
-            return "destructive";
-        default:
-            return "outline";
-    }
-};
-const getStatusChangeLabel = (status) => {
-    if (!status) return "Aktifkan";
-    switch (status) {
-        case "ACTIVE":
-            return "Nonaktifkan";
-        case "INACTIVE":
-            return "Aktifkan";
-        default:
-            return "Aktifkan";
-    }
+    const found = props.variants?.find((item) => item.value === status);
+    return found?.label ?? "outline";
 };
 
 const currency = (number) => {
-    if (isNaN(number)) return "Rp0";
+    if (isNaN(number)) return "Rp.0";
     return new Intl.NumberFormat("id-ID", {
         style: "currency",
         currency: "IDR",
@@ -245,18 +218,6 @@ const breadcrumbs = [
                                             </DropdownMenuLabel>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
-                                                v-if="can('program.edit')"
-                                                @select="
-                                                    () => confirmStatus(item)
-                                                "
-                                            >
-                                                {{
-                                                    getStatusChangeLabel(
-                                                        item?.status
-                                                    )
-                                                }}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
                                                 asChild
                                                 v-if="can('program.edit')"
                                             >
@@ -287,7 +248,7 @@ const breadcrumbs = [
                         <template v-else>
                             <TableRow>
                                 <TableCell colspan="6" class="text-center py-6">
-                                    <strong> Tidak ada data </strong>
+                                    <strong>Tidak ada data</strong>
                                 </TableCell>
                             </TableRow>
                         </template>
@@ -313,28 +274,6 @@ const breadcrumbs = [
                     Batal
                 </AlertDialogCancel>
                 <AlertDialogAction @click="destroy">Hapus</AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
-    <AlertDialog :open="!!programToStatus">
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>
-                    Apakah Anda benar-benar yakin?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                    Status Program akan di-{{
-                        getStatusChangeLabel(programToStatus?.status ?? null)
-                    }}.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogCancel @click="programToStatus = null">
-                    Batal
-                </AlertDialogCancel>
-                <AlertDialogAction @click="changeStatus">{{
-                    getStatusChangeLabel(programToStatus?.status ?? null)
-                }}</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>

@@ -17,7 +17,6 @@ import {
     MoreHorizontal,
     Trash2,
     Pencil,
-    CirclePower,
     Undo2,
 } from "lucide-vue-next";
 import HeadingGroup from "@/components/HeadingGroup.vue";
@@ -47,22 +46,15 @@ import {
 const { can } = usePermissions();
 
 const props = defineProps({
-    genders: Object,
+    variants: Object,
     status_coaches: Object,
+    genders: Object,
     coach: Object,
 });
 
 const showPhoto = ref(false);
 const togglePhoto = () => {
     showPhoto.value = !showPhoto.value;
-};
-
-const showConfirmStatus = ref(false);
-const changeStatus = () => {
-    showConfirmStatus.value = false;
-    router.post(route("coach.status", props.coach.id), {
-        preserveScroll: true,
-    });
 };
 
 const showConfirmDelete = ref(false);
@@ -84,27 +76,11 @@ const getStatusLabel = (status) => {
     const found = props.status_coaches?.find((item) => item.value === status);
     return found?.label?.toUpperCase() ?? "-";
 };
+
 const getStatusVariant = (status) => {
     if (!status) return "outline";
-    switch (status) {
-        case "ACTIVE":
-            return "default";
-        case "INACTIVE":
-            return "destructive";
-        default:
-            return "outline";
-    }
-};
-const getStatusChangeLabel = (status) => {
-    if (!status) return "Aktifkan";
-    switch (status) {
-        case "ACTIVE":
-            return "Nonaktifkan";
-        case "INACTIVE":
-            return "Aktifkan";
-        default:
-            return "Aktifkan";
-    }
+    const found = props.variants?.find((item) => item.value === status);
+    return found?.label ?? "outline";
 };
 
 const dateFormat = (date) => {
@@ -141,13 +117,6 @@ const breadcrumbs = [
                                 <Undo2 class="text-yellow-500" />
                                 Kembali
                             </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                            v-if="can('coach.edit')"
-                            @select="showConfirmStatus = true"
-                        >
-                            <CirclePower class="text-blue-500" />
-                            {{ getStatusChangeLabel(coach?.status) }}
                         </DropdownMenuItem>
                         <DropdownMenuItem v-if="can('coach.edit')" asChild>
                             <Link :href="route('coach.edit', coach.id)">
@@ -291,29 +260,6 @@ const breadcrumbs = [
         :image-url="coach.photo_url"
         @close="togglePhoto"
     />
-
-    <AlertDialog :open="!!showConfirmStatus">
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>
-                    Apakah Anda benar-benar yakin?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                    Status Pelatih akan di-{{
-                        getStatusChangeLabel(coach?.status ?? null)
-                    }}.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogCancel @click="showConfirmStatus = false">
-                    Batal
-                </AlertDialogCancel>
-                <AlertDialogAction @click="changeStatus">{{
-                    getStatusChangeLabel(coach?.status ?? null)
-                }}</AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
 
     <AlertDialog :open="!!showConfirmDelete">
         <AlertDialogContent>

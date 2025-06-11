@@ -20,6 +20,7 @@ import usePermissions from "@/composables/usePermissions";
 const { can } = usePermissions();
 
 defineProps({
+    status_coaches: Object,
     genders: Object,
 });
 
@@ -40,6 +41,7 @@ const form = useForm({
     email: "",
     password: "",
     password_confirmation: "",
+    status: "",
 });
 
 const photoPreview = ref(null);
@@ -355,6 +357,28 @@ const breadcrumbs = [
                                     autocomplete="off"
                                     v-model="form.password_confirmation"
                                 />
+                            </div>
+                            <div class="flex flex-col gap-2 md:col-span-2">
+                                <LabelSpan label="Pilih Status" />
+                                <RadioGroup
+                                    :orientation="'vertical'"
+                                    v-model="form.status"
+                                >
+                                    <div
+                                        class="flex items-center space-x-2"
+                                        v-for="(item, index) in status_coaches"
+                                        :key="index"
+                                    >
+                                        <RadioGroupItem
+                                            :id="`status-${index}`"
+                                            :value="item.value"
+                                        />
+                                        <Label :for="`status-${index}`">
+                                            {{ item.label }}
+                                        </Label>
+                                    </div>
+                                </RadioGroup>
+                                <InputError :message="form.errors.status" />
                             </div>
                         </div>
                         <Separator class="mt-4" />

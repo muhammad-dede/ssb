@@ -14,23 +14,20 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Button, buttonVariants } from "@/components/ui/button/index";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import InputError from "@/components/InputError.vue";
 import { LoaderCircle } from "lucide-vue-next";
 import HeadingGroup from "@/components/HeadingGroup.vue";
 import Heading from "@/components/Heading.vue";
+import LabelSpan from "@/components/LabelSpan.vue";
 import usePermissions from "@/composables/usePermissions";
 
 const { can } = usePermissions();
 
 defineProps({
     roles: Object,
+    status_users: Object,
 });
-
-const breadcrumbs = [
-    { title: "Dashboard", href: "/dashboard" },
-    { title: "Pengguna", href: "/user" },
-    { title: "Tambah", href: "/user/create" },
-];
 
 const form = useForm({
     name: "",
@@ -38,11 +35,18 @@ const form = useForm({
     password: "",
     password_confirmation: "",
     role: "",
+    status: "",
 });
 
 const submit = () => {
     form.post(route("user.store"));
 };
+
+const breadcrumbs = [
+    { title: "Dashboard", href: "/dashboard" },
+    { title: "Pengguna", href: "/user" },
+    { title: "Tambah", href: "/user/create" },
+];
 </script>
 
 <template>
@@ -58,6 +62,7 @@ const submit = () => {
             <form @submit.prevent="submit">
                 <Card>
                     <CardContent>
+                        <Heading title="Informasi Pengguna" />
                         <div
                             class="grid grid-cols-1 md:grid-cols-2 gap-x-2 gap-y-6 mb-4"
                         >
@@ -86,6 +91,26 @@ const submit = () => {
                                 <InputError :message="form.errors.email" />
                             </div>
                             <div class="w-full flex flex-col gap-2">
+                                <Label for="role">Role</Label>
+                                <Select v-model="form.role" name="role">
+                                    <SelectTrigger id="role" class="w-full">
+                                        <SelectValue placeholder="Pilih Role" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem
+                                                v-for="role in roles"
+                                                :key="role.id"
+                                                :value="role.name"
+                                            >
+                                                {{ role.name }}
+                                            </SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                                <InputError :message="form.errors.role" />
+                            </div>
+                            <div class="w-full flex flex-col gap-2">
                                 <Label for="password">Password</Label>
                                 <Input
                                     id="password"
@@ -110,25 +135,27 @@ const submit = () => {
                                     v-model="form.password_confirmation"
                                 />
                             </div>
-                            <div class="w-full flex flex-col gap-2">
-                                <Label for="role">Role</Label>
-                                <Select v-model="form.role" name="role">
-                                    <SelectTrigger id="role" class="w-full">
-                                        <SelectValue placeholder="Pilih Role" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectItem
-                                                v-for="role in roles"
-                                                :key="role.id"
-                                                :value="role.name"
-                                            >
-                                                {{ role.name }}
-                                            </SelectItem>
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                                <InputError :message="form.errors.role" />
+                            <div class="flex flex-col gap-2 md:col-span-2">
+                                <LabelSpan label="Pilih Status" />
+                                <RadioGroup
+                                    :orientation="'vertical'"
+                                    v-model="form.status"
+                                >
+                                    <div
+                                        class="flex items-center space-x-2"
+                                        v-for="(item, index) in status_users"
+                                        :key="index"
+                                    >
+                                        <RadioGroupItem
+                                            :id="`status-${index}`"
+                                            :value="item.value"
+                                        />
+                                        <Label :for="`status-${index}`">
+                                            {{ item.label }}
+                                        </Label>
+                                    </div>
+                                </RadioGroup>
+                                <InputError :message="form.errors.status" />
                             </div>
                         </div>
                     </CardContent>

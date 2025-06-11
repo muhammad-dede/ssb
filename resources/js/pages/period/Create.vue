@@ -10,14 +10,21 @@ import InputError from "@/components/InputError.vue";
 import { LoaderCircle } from "lucide-vue-next";
 import HeadingGroup from "@/components/HeadingGroup.vue";
 import Heading from "@/components/Heading.vue";
+import LabelSpan from "@/components/LabelSpan.vue";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import usePermissions from "@/composables/usePermissions";
 
 const { can } = usePermissions();
+
+defineProps({
+    status_periods: Object,
+});
 
 const form = useForm({
     name: "",
     start_date: "",
     end_date: "",
+    status: "",
 });
 
 const submit = () => {
@@ -44,6 +51,7 @@ const breadcrumbs = [
             <form @submit.prevent="submit">
                 <Card>
                     <CardContent>
+                        <Heading title="Informasi Periode" />
                         <div
                             class="grid grid-cols-1 md:grid-cols-2 gap-x-2 gap-y-6 mb-4"
                         >
@@ -80,6 +88,28 @@ const breadcrumbs = [
                                     v-model="form.end_date"
                                 />
                                 <InputError :message="form.errors.end_date" />
+                            </div>
+                            <div class="flex flex-col gap-2 md:col-span-2">
+                                <LabelSpan label="Pilih Status" />
+                                <RadioGroup
+                                    :orientation="'vertical'"
+                                    v-model="form.status"
+                                >
+                                    <div
+                                        class="flex items-center space-x-2"
+                                        v-for="(item, index) in status_periods"
+                                        :key="index"
+                                    >
+                                        <RadioGroupItem
+                                            :id="`status-${index}`"
+                                            :value="item.value"
+                                        />
+                                        <Label :for="`status-${index}`">
+                                            {{ item.label }}
+                                        </Label>
+                                    </div>
+                                </RadioGroup>
+                                <InputError :message="form.errors.status" />
                             </div>
                         </div>
                     </CardContent>

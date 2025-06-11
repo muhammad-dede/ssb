@@ -14,32 +14,39 @@ use App\Models\Training;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 
 class TrainingController extends Controller
 {
     use HasPermissionCheck;
 
+    // Enums
+    protected $variants = [];
+    protected $status_trainings = [];
+    // Models
     protected $period_active;
     protected $periods = [];
     protected $programs = [];
     protected $coaches = [];
-    protected $status_trainings = [];
-    protected $variants = [];
+    // Validation
     protected $attributes = [
         'student_id' => 'Siswa',
         'program_code' => 'Program Yang Diikuti',
         'period_id' => 'Periode Yang Diikuti',
+        'status' => 'Status',
     ];
 
     public function __construct()
     {
+        // Enums
+        $this->variants = Variant::options();
+        $this->status_trainings = StatusTraining::options();
+        // Models
         $this->period_active = Period::where('status', StatusPeriod::ACTIVE)->first() ?? null;
         $this->periods = Period::orderBy('id', 'desc')->get();
         $this->programs = Program::where('status', StatusProgram::ACTIVE)->get();
         $this->coaches = Coach::where('status', StatusCoach::ACTIVE)->get();
-        $this->status_trainings = StatusTraining::options();
-        $this->variants = Variant::options();
     }
 
     /**
@@ -75,9 +82,9 @@ class TrainingController extends Controller
             ->withQueryString();
 
         return Inertia::render('training/Index', [
-            'periods' => $this->periods,
-            'status_trainings' => $this->status_trainings,
             'variants' => $this->variants,
+            'status_trainings' => $this->status_trainings,
+            'periods' => $this->periods,
             'trainings' => $trainings,
             'period_id_terms' => $period_id,
             'search_term' => $search,
@@ -94,6 +101,7 @@ class TrainingController extends Controller
         $this->checkPermission('training.create');
 
         return Inertia::render('training/Create', [
+            'status_trainings' => $this->status_trainings,
             'programs' => $this->programs,
             'periods' => $this->periods,
             'coaches' => $this->coaches,
@@ -116,6 +124,7 @@ class TrainingController extends Controller
             'end_time'   => ['required', 'date_format:H:i', 'after:start_time'],
             'location' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'status' => ['required', new Enum(StatusTraining::class)],
         ], [], $this->attributes);
 
         try {
@@ -129,7 +138,7 @@ class TrainingController extends Controller
                 'end_time' => $request->end_time,
                 'location' => $request->location,
                 'description' => $request->description,
-                'status' => StatusTraining::INACTIVE,
+                'status' => StatusTraining::from($request->status),
             ]);
             DB::commit();
             return redirect()->route('training.show', $training->id)->with('success', 'Latihan berhasil ditambahkan');
@@ -148,6 +157,7 @@ class TrainingController extends Controller
 
         $training = Training::with(['period', 'program', 'coach'])->findOrFail($id);
         return Inertia::render('training/Show', [
+            'variants' => $this->variants,
             'status_trainings' => $this->status_trainings,
             'variants' => $this->variants,
             'training' => $training,
@@ -163,6 +173,7 @@ class TrainingController extends Controller
 
         $training = Training::findOrFail($id);
         return Inertia::render('training/Edit', [
+            'status_trainings' => $this->status_trainings,
             'programs' => $this->programs,
             'periods' => $this->periods,
             'coaches' => $this->coaches,
@@ -186,6 +197,7 @@ class TrainingController extends Controller
             'end_time'   => ['required', 'date_format:H:i', 'after:start_time'],
             'location' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'status' => ['required', new Enum(StatusTraining::class)],
         ], [], $this->attributes);
 
         try {
@@ -200,6 +212,7 @@ class TrainingController extends Controller
                 'end_time' => $request->end_time,
                 'location' => $request->location,
                 'description' => $request->description,
+                'status' => StatusTraining::from($request->status),
             ]);
             DB::commit();
             return redirect()->route('training.show', $training->id)->with('success', 'Latihan berhasil diubah');
@@ -222,27 +235,6 @@ class TrainingController extends Controller
             $training->delete();
             DB::commit();
             return redirect()->route('training.index')->with('success', 'Latihan berhasil dihapus');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
-    }
-
-    /**
-     * Change Status the specified resource from storage.
-     */
-    public function status(string $id)
-    {
-        $this->checkPermission('training.edit');
-
-        try {
-            DB::beginTransaction();
-            $training = Training::findOrFail($id);
-            $training->update([
-                'status' => $training->status === StatusTraining::ACTIVE ? StatusTraining::INACTIVE : StatusTraining::ACTIVE,
-            ]);
-            DB::commit();
-            return redirect()->back()->with('success', 'Status Latihan berhasil diubah');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
