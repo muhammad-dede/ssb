@@ -90,16 +90,13 @@ const handleFileChange = (event) => {
 };
 
 const submit = () => {
-    form.post(
-        route("registration-student.payment", props.student_program?.id),
-        {
-            forceFormData: true,
-            preserveScroll: true,
-            onSuccess: () => {
-                isDialogOpen.value = false;
-            },
-        }
-    );
+    form.post(route("student-program.payment", props.student_program?.id), {
+        forceFormData: true,
+        preserveScroll: true,
+        onSuccess: () => {
+            isDialogOpen.value = false;
+        },
+    });
 };
 </script>
 

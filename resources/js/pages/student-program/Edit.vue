@@ -72,18 +72,15 @@ const dateFormat = (date) => {
 };
 
 const submit = () => {
-    form.patch(
-        route("registration-student.update", props.student_program?.id),
-        {
-            preserveScroll: true,
-        }
-    );
+    form.patch(route("student-program.update", props.student_program?.id), {
+        preserveScroll: true,
+    });
 };
 
 const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Registrasi", href: "/registration-student" },
-    { title: "Ubah", href: "/registration-student/edit" },
+    { title: "Registrasi", href: "/student-program" },
+    { title: "Ubah", href: "/student-program/edit" },
 ];
 </script>
 
@@ -237,8 +234,8 @@ const breadcrumbs = [
                                     Simpan
                                 </Button>
                                 <Link
-                                    v-if="can('registration-student.index')"
-                                    :href="route('registration-student.index')"
+                                    v-if="can('student-program.index')"
+                                    :href="route('student-program.index')"
                                     :class="
                                         buttonVariants({ variant: 'outline' })
                                     "

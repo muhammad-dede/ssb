@@ -35,7 +35,7 @@ const isDialogOpen = ref(false);
 
 const submit = () => {
     form.post(
-        route("registration-student.payment.status", props.student_program?.id),
+        route("student-program.payment.status", props.student_program?.id),
         {
             forceFormData: true,
             preserveScroll: true,

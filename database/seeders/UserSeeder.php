@@ -61,11 +61,11 @@ class UserSeeder extends Seeder
             ['guard_name' => 'web', 'name' => 'student.show'],
             ['guard_name' => 'web', 'name' => 'student.delete'],
             // Registration Student
-            ['guard_name' => 'web', 'name' => 'registration-student.index'],
-            ['guard_name' => 'web', 'name' => 'registration-student.create'],
-            ['guard_name' => 'web', 'name' => 'registration-student.edit'],
-            ['guard_name' => 'web', 'name' => 'registration-student.show'],
-            ['guard_name' => 'web', 'name' => 'registration-student.delete'],
+            ['guard_name' => 'web', 'name' => 'student-program.index'],
+            ['guard_name' => 'web', 'name' => 'student-program.create'],
+            ['guard_name' => 'web', 'name' => 'student-program.edit'],
+            ['guard_name' => 'web', 'name' => 'student-program.show'],
+            ['guard_name' => 'web', 'name' => 'student-program.delete'],
             // Training
             ['guard_name' => 'web', 'name' => 'training.index'],
             ['guard_name' => 'web', 'name' => 'training.create'],
@@ -147,11 +147,11 @@ class UserSeeder extends Seeder
                 $role->givePermissionTo('student.show');
                 $role->givePermissionTo('student.delete');
                 // Registration
-                $role->givePermissionTo('registration-student.index');
-                $role->givePermissionTo('registration-student.create');
-                $role->givePermissionTo('registration-student.edit');
-                $role->givePermissionTo('registration-student.show');
-                $role->givePermissionTo('registration-student.delete');
+                $role->givePermissionTo('student-program.index');
+                $role->givePermissionTo('student-program.create');
+                $role->givePermissionTo('student-program.edit');
+                $role->givePermissionTo('student-program.show');
+                $role->givePermissionTo('student-program.delete');
                 // Training
                 $role->givePermissionTo('training.index');
                 $role->givePermissionTo('training.create');
@@ -187,11 +187,11 @@ class UserSeeder extends Seeder
                 $role->givePermissionTo('student.show');
                 $role->givePermissionTo('student.delete');
                 // Registration
-                $role->givePermissionTo('registration-student.index');
-                $role->givePermissionTo('registration-student.create');
-                $role->givePermissionTo('registration-student.edit');
-                $role->givePermissionTo('registration-student.show');
-                $role->givePermissionTo('registration-student.delete');
+                $role->givePermissionTo('student-program.index');
+                $role->givePermissionTo('student-program.create');
+                $role->givePermissionTo('student-program.edit');
+                $role->givePermissionTo('student-program.show');
+                $role->givePermissionTo('student-program.delete');
                 // Training
                 $role->givePermissionTo('training.index');
                 $role->givePermissionTo('training.create');

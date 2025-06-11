@@ -29,9 +29,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('student/{student}/update', [App\Http\Controllers\StudentController::class, 'update'])->name('student.update');
     Route::resource('student', App\Http\Controllers\StudentController::class)->except(['update']);
     // Registration Student
-    Route::post('registration-student/{student_program}/payment', [App\Http\Controllers\RegistrationStudentController::class, 'payment'])->name('registration-student.payment');
-    Route::post('registration-student/{student_program}/payment/status', [App\Http\Controllers\RegistrationStudentController::class, 'paymentStatus'])->name('registration-student.payment.status');
-    Route::resource('registration-student', App\Http\Controllers\RegistrationStudentController::class);
+    Route::post('student-program/{student_program}/payment', [App\Http\Controllers\StudentProgramController::class, 'payment'])->name('student-program.payment');
+    Route::post('student-program/{student_program}/payment/status', [App\Http\Controllers\StudentProgramController::class, 'paymentStatus'])->name('student-program.payment.status');
+    Route::resource('student-program', App\Http\Controllers\StudentProgramController::class);
     // Training
     Route::resource('training', App\Http\Controllers\TrainingController::class);
 });

@@ -69,12 +69,9 @@ const showConfirmDelete = ref(false);
 
 const destroy = () => {
     showConfirmDelete.value = false;
-    router.delete(
-        route("registration-student.destroy", props.student_program?.id),
-        {
-            preserveScroll: true,
-        }
-    );
+    router.delete(route("student-program.destroy", props.student_program?.id), {
+        preserveScroll: true,
+    });
 };
 
 const getStatusLabel = (status) => {
@@ -132,8 +129,8 @@ const togglePhoto = () => {
 
 const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Registrasi", href: "/registration-student" },
-    { title: "Detail", href: "/registration-student/show" },
+    { title: "Registrasi", href: "/student-program" },
+    { title: "Detail", href: "/student-program/show" },
 ];
 </script>
 
@@ -154,22 +151,22 @@ const breadcrumbs = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem
-                            v-if="can('registration-student.index')"
+                            v-if="can('student-program.index')"
                             asChild
                         >
-                            <Link :href="route('registration-student.index')">
+                            <Link :href="route('student-program.index')">
                                 <Undo2 class="text-yellow-500" />
                                 Kembali
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                            v-if="can('registration-student.edit')"
+                            v-if="can('student-program.edit')"
                             asChild
                         >
                             <Link
                                 :href="
                                     route(
-                                        'registration-student.edit',
+                                        'student-program.edit',
                                         student_program.id
                                     )
                                 "
@@ -179,7 +176,7 @@ const breadcrumbs = [
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                            v-if="can('registration-student.delete')"
+                            v-if="can('student-program.delete')"
                             @select="showConfirmDelete = true"
                         >
                             <Trash2 class="text-red-500" />

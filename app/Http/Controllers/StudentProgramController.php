@@ -24,7 +24,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 
-class RegistrationStudentController extends Controller
+class StudentProgramController extends Controller
 {
     use HasPermissionCheck;
 
@@ -82,7 +82,7 @@ class RegistrationStudentController extends Controller
      */
     public function index(Request $request)
     {
-        $this->checkPermission('registration-student.index');
+        $this->checkPermission('student-program.index');
 
         $period_id = (int) ($request->period_id ?? $this->period_active->id);
         $search = $request->search;
@@ -105,7 +105,7 @@ class RegistrationStudentController extends Controller
             ->paginate($per_page)
             ->withQueryString();
 
-        return Inertia::render('registration-student/Index', [
+        return Inertia::render('student-program/Index', [
             'variants' => $this->variants,
             'status_student_programs' => $this->status_student_programs,
             'status_billings' => $this->status_billings,
@@ -123,9 +123,9 @@ class RegistrationStudentController extends Controller
      */
     public function create()
     {
-        $this->checkPermission('registration-student.create');
+        $this->checkPermission('student-program.create');
 
-        return Inertia::render('registration-student/Create', [
+        return Inertia::render('student-program/Create', [
             'students' => $this->students,
             'programs' => $this->programs,
             'periods' => $this->periods,
@@ -137,7 +137,7 @@ class RegistrationStudentController extends Controller
      */
     public function store(Request $request)
     {
-        $this->checkPermission('registration-student.create');
+        $this->checkPermission('student-program.create');
 
         $request->validate([
             'period_id' => ['required', 'exists:period,id'],
@@ -166,7 +166,7 @@ class RegistrationStudentController extends Controller
                 'status' => StatusBilling::UNPAID,
             ]);
             DB::commit();
-            return redirect()->route('registration-student.show', $student_program->id)->with('success', 'Registrasi Siswa berhasil ditambahkan');
+            return redirect()->route('student-program.show', $student_program->id)->with('success', 'Registrasi Siswa berhasil ditambahkan');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -178,10 +178,10 @@ class RegistrationStudentController extends Controller
      */
     public function show(string $id)
     {
-        $this->checkPermission('registration-student.show');
+        $this->checkPermission('student-program.show');
 
         $student_program = StudentProgram::with(['student', 'program', 'period', 'billing', 'billing.payment', 'billing.payment.receiverBank', 'billing.payment.senderBank'])->findOrFail($id);
-        return Inertia::render('registration-student/Show', [
+        return Inertia::render('student-program/Show', [
             'variants' => $this->variants,
             'status_student_programs' => $this->status_student_programs,
             'status_billings' => $this->status_billings,
@@ -198,10 +198,10 @@ class RegistrationStudentController extends Controller
      */
     public function edit(string $id)
     {
-        $this->checkPermission('registration-student.edit');
+        $this->checkPermission('student-program.edit');
 
         $student_program = StudentProgram::with(['billing'])->findOrFail($id);
-        return Inertia::render('registration-student/Edit', [
+        return Inertia::render('student-program/Edit', [
             'students' => $this->students,
             'programs' => $this->programs,
             'periods' => $this->periods,
@@ -214,7 +214,7 @@ class RegistrationStudentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $this->checkPermission('registration-student.edit');
+        $this->checkPermission('student-program.edit');
 
         $request->validate([
             'period_id' => ['required', 'exists:period,id'],
@@ -249,7 +249,7 @@ class RegistrationStudentController extends Controller
                 ]);
             }
             DB::commit();
-            return redirect()->route('registration-student.show', $student_program->id)->with('success', 'Registrasi Siswa berhasil diubah');
+            return redirect()->route('student-program.show', $student_program->id)->with('success', 'Registrasi Siswa berhasil diubah');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -261,7 +261,7 @@ class RegistrationStudentController extends Controller
      */
     public function destroy(string $id)
     {
-        $this->checkPermission('registration-student.delete');
+        $this->checkPermission('student-program.delete');
 
         try {
             DB::beginTransaction();
@@ -271,7 +271,7 @@ class RegistrationStudentController extends Controller
             }
             $student_program->delete();
             DB::commit();
-            return redirect()->route('registration-student.index')->with('success', 'Registrasi berhasil dihapus');
+            return redirect()->route('student-program.index')->with('success', 'Registrasi berhasil dihapus');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -283,7 +283,7 @@ class RegistrationStudentController extends Controller
      */
     public function payment(Request $request, string $student_program_id)
     {
-        $this->checkPermission('registration-student.show');
+        $this->checkPermission('student-program.show');
 
         $student_program = StudentProgram::with(['billing', 'billing.payment', 'student'])->findOrFail($student_program_id);
         $is_edit = filled($student_program->billing->payment);
@@ -367,7 +367,7 @@ class RegistrationStudentController extends Controller
      */
     public function paymentStatus(Request $request, string $student_program_id)
     {
-        $this->checkPermission('registration-student.show');
+        $this->checkPermission('student-program.show');
 
         $student_program = StudentProgram::with(['billing', 'billing.payment', 'student'])->findOrFail($student_program_id);
         $request->validate([

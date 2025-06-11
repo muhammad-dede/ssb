@@ -70,7 +70,7 @@ const studentProgramToDelete = ref(null);
 
 const dataControl = () => {
     router.get(
-        route("registration-student.index"),
+        route("student-program.index"),
         {
             period_id: period_id.value,
             search: search.value,
@@ -114,7 +114,7 @@ const confirmDelete = (studentProgram) => {
 const destroy = () => {
     if (!studentProgramToDelete.value) return;
     const studentProgramId = studentProgramToDelete.value.id;
-    router.delete(route("registration-student.destroy", studentProgramId), {
+    router.delete(route("student-program.destroy", studentProgramId), {
         preserveScroll: true,
         onFinish: () => {
             studentProgramToDelete.value = null;
@@ -124,7 +124,7 @@ const destroy = () => {
 
 const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Registrasi", href: "/registration-student" },
+    { title: "Registrasi", href: "/student-program" },
 ];
 </script>
 
@@ -138,8 +138,8 @@ const breadcrumbs = [
                     description="Lihat dan kelola data registrasi siswa yang tersedia"
                 />
                 <Link
-                    v-if="can('registration-student.create')"
-                    :href="route('registration-student.create')"
+                    v-if="can('student-program.create')"
+                    :href="route('student-program.create')"
                     :class="buttonVariants({ variant: 'default' })"
                 >
                     <SquarePlus class="w-4 h-4" />Tambah
@@ -217,9 +217,9 @@ const breadcrumbs = [
                                     <DropdownMenu
                                         v-if="
                                             canAny(
-                                                'registration-student.edit',
-                                                'registration-student.show',
-                                                'registration-student.delete'
+                                                'student-program.edit',
+                                                'student-program.show',
+                                                'student-program.delete'
                                             )
                                         "
                                     >
@@ -241,15 +241,13 @@ const breadcrumbs = [
                                             <DropdownMenuItem
                                                 asChild
                                                 v-if="
-                                                    can(
-                                                        'registration-student.show'
-                                                    )
+                                                    can('student-program.show')
                                                 "
                                             >
                                                 <Link
                                                     :href="
                                                         route(
-                                                            'registration-student.show',
+                                                            'student-program.show',
                                                             item.id
                                                         )
                                                     "
@@ -260,15 +258,13 @@ const breadcrumbs = [
                                             <DropdownMenuItem
                                                 asChild
                                                 v-if="
-                                                    can(
-                                                        'registration-student.edit'
-                                                    )
+                                                    can('student-program.edit')
                                                 "
                                             >
                                                 <Link
                                                     :href="
                                                         route(
-                                                            'registration-student.edit',
+                                                            'student-program.edit',
                                                             item.id
                                                         )
                                                     "
@@ -279,7 +275,7 @@ const breadcrumbs = [
                                             <DropdownMenuItem
                                                 v-if="
                                                     can(
-                                                        'registration-student.delete'
+                                                        'student-program.delete'
                                                     )
                                                 "
                                                 @select="

@@ -89,9 +89,9 @@ const dataNavItems = [
     },
     {
         title: "Registrasi",
-        href: "/registration-student",
+        href: "/student-program",
         icon: FileDiff,
-        permission: "registration-student.index",
+        permission: "student-program.index",
     },
 ];
 
@@ -148,7 +148,7 @@ const activityNavItems = [
                     canAny(
                         'coach.index',
                         'student.index',
-                        'registration-student.index'
+                        'student-program.index'
                     )
                 "
                 group-label="Data"

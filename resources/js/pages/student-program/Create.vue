@@ -72,15 +72,15 @@ const dateFormat = (date) => {
 };
 
 const submit = () => {
-    form.post(route("registration-student.store"), {
+    form.post(route("student-program.store"), {
         preserveScroll: true,
     });
 };
 
 const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Registrasi", href: "/registration-student" },
-    { title: "Tambah", href: "/registration-student/create" },
+    { title: "Registrasi", href: "/student-program" },
+    { title: "Tambah", href: "/student-program/create" },
 ];
 </script>
 
@@ -234,8 +234,8 @@ const breadcrumbs = [
                                     Simpan
                                 </Button>
                                 <Link
-                                    v-if="can('registration-student.index')"
-                                    :href="route('registration-student.index')"
+                                    v-if="can('student-program.index')"
+                                    :href="route('student-program.index')"
                                     :class="
                                         buttonVariants({ variant: 'outline' })
                                     "
