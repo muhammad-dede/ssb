@@ -5,8 +5,8 @@ import { debounce } from "lodash";
 import AppLayout from "@/layouts/AppLayout.vue";
 import MainContent from "@/components/MainContent.vue";
 import PaginationLinks from "@/components/PaginationLinks.vue";
-import { Button, buttonVariants } from "@/components/ui/button/index";
-import { SquarePlus, MoreHorizontal } from "lucide-vue-next";
+import { Button } from "@/components/ui/button/index";
+import { MoreHorizontal } from "lucide-vue-next";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -31,17 +31,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge/index";
 import SearchInput from "@/components/SearchInput.vue";
 import FilterControl from "@/components/FilterControl.vue";
 import HeadingGroup from "@/components/HeadingGroup.vue";
@@ -52,26 +41,29 @@ const { can, canAny } = usePermissions();
 
 const props = defineProps({
     variants: Object,
-    status_trainings: Object,
+    status_student_programs: Object,
     periods: Object,
-    trainings: Object,
+    programs: Object,
+    student_programs: Object,
     period_id_term: Number,
+    program_code_term: Number,
     search_term: String,
     per_page_term: String,
     filter_term: String,
 });
 
 const period_id = ref(props.period_id_term);
+const program_code = ref(props.program_code_term);
 const search = ref(props.search_term);
 const perPage = ref(props.per_page_term);
 const filter = ref(props.filter_term);
-const trainingToDelete = ref(null);
 
 const dataControl = () => {
     router.get(
-        route("training.index"),
+        route("report-student.index"),
         {
             period_id: period_id.value,
+            program_code: program_code.value,
             search: search.value,
             per_page: perPage.value,
             filter: filter.value,
@@ -82,94 +74,36 @@ const dataControl = () => {
         }
     );
 };
-
 watch(
     search,
     debounce(() => {
         dataControl();
     }, 1000)
 );
-
-watch([period_id, perPage, filter], () => {
+watch([period_id, program_code, perPage, filter], () => {
     dataControl();
 });
 
-const getStatusLabel = (status) => {
-    if (!status) return "-";
-    const found = props.status_trainings?.find((item) => item.value === status);
-    return found?.label?.toUpperCase() ?? "-";
-};
-
-const getStatusVariant = (status) => {
-    if (!status) return "outline";
-    const found = props.variants?.find((item) => item.value === status);
-    return found?.label ?? "outline";
-};
-
-const confirmDelete = (training) => {
-    trainingToDelete.value = training;
-};
-
-const destroy = () => {
-    if (!trainingToDelete.value) return;
-    const trainingId = trainingToDelete.value.id;
-    router.delete(route("training.destroy", trainingId), {
-        preserveScroll: true,
-        onFinish: () => {
-            trainingToDelete.value = null;
-        },
-    });
-};
-
-const setTrainingTime = (training) => {
-    if (!training?.training_date) return "-";
-    const date = new Date(training?.training_date).toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-    });
-    const formatTime = (time) => {
-        if (!time) return "-";
-        const [hours, minutes] = time.split(":");
-        const dateObj = new Date();
-        dateObj.setHours(hours, minutes);
-        return dateObj.toLocaleTimeString("id-ID", {
-            hour: "2-digit",
-            minute: "2-digit",
-        });
-    };
-    const startTime = formatTime(training?.start_time);
-    const endTime = formatTime(training?.end_time);
-    return `${date}, ${startTime} - ${endTime}`;
-};
-
 const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Latihan", href: "/training" },
+    { title: "Raport Siswa", href: "/report-student" },
 ];
 </script>
 
 <template>
-    <Head title="Latihan" />
+    <Head title="Raport Siswa" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <MainContent>
             <HeadingGroup>
                 <Heading
-                    title="Data Latihan"
-                    description="Lihat dan kelola data latihan yang tersedia"
+                    title="Data Raport Siswa"
+                    description="Lihat dan kelola data raport siswa yang tersedia"
                 />
-                <Link
-                    v-if="can('training.create')"
-                    :href="route('training.create')"
-                    :class="buttonVariants({ variant: 'default' })"
-                >
-                    <SquarePlus class="w-4 h-4" />Tambah
-                </Link>
             </HeadingGroup>
             <div
                 class="flex flex-col lg:flex-row lg:justify-between items-center gap-4 mb-4"
             >
-                <div class="grid w-full lg:grid-cols-2 lg:w-xl gap-4">
+                <div class="grid w-full lg:grid-cols-3 lg:w-xl gap-4">
                     <Select v-model="period_id" name="period_id">
                         <SelectTrigger id="period_id" class="w-full">
                             <SelectValue placeholder="Pilih Periode" />
@@ -182,6 +116,22 @@ const breadcrumbs = [
                                     :value="period.id"
                                 >
                                     {{ period.name }}
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <Select v-model="program_code" name="program_code">
+                        <SelectTrigger id="program_code" class="w-full">
+                            <SelectValue placeholder="Pilih Program" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem
+                                    v-for="(program, index) in programs"
+                                    :key="index"
+                                    :value="program.code"
+                                >
+                                    {{ program.name }}
                                 </SelectItem>
                             </SelectGroup>
                         </SelectContent>
@@ -200,53 +150,41 @@ const breadcrumbs = [
                     <TableHeader>
                         <TableRow>
                             <TableHead class="w-[10px]">No</TableHead>
+                            <TableHead>Nama Siswa</TableHead>
                             <TableHead>Program</TableHead>
-                            <TableHead>Periode</TableHead>
-                            <TableHead>Pelatih</TableHead>
-                            <TableHead>Waktu</TableHead>
-                            <TableHead>Status</TableHead>
+                            <TableHead>Rata-Rata Latihan</TableHead>
+                            <TableHead>Rata-Rata Pertandingan</TableHead>
+                            <TableHead>Total Nilai</TableHead>
                             <TableHead class="w-[10px]"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <template v-if="trainings.data.length > 0">
+                        <template v-if="student_programs.data.length > 0">
                             <TableRow
-                                v-for="(item, index) in trainings.data"
+                                v-for="(item, index) in student_programs.data"
                                 :key="item.id"
                             >
                                 <TableCell class="font-medium">
-                                    {{ trainings.from + index }}
+                                    {{ student_programs.from + index }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ item.program?.name ?? "-" }}
+                                    {{ item.student?.name }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ item.period?.name ?? "-" }}
+                                    {{ item.program?.name }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ item.coach?.name ?? "-" }}
+                                    {{ item.report?.training?.total_score }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ setTrainingTime(item) }}
+                                    {{ item.report?.match_event?.total_score }}
                                 </TableCell>
-                                <TableCell>
-                                    <Badge
-                                        :variant="
-                                            getStatusVariant(item?.status)
-                                        "
-                                    >
-                                        {{ getStatusLabel(item?.status) }}
-                                    </Badge>
+                                <TableCell class="font-bold">
+                                    {{ item.report?.final_score }}
                                 </TableCell>
                                 <TableCell class="text-center">
                                     <DropdownMenu
-                                        v-if="
-                                            canAny(
-                                                'training.edit',
-                                                'training.show',
-                                                'training.delete'
-                                            )
-                                        "
+                                        v-if="canAny('report-student.show')"
                                     >
                                         <DropdownMenuTrigger as-child>
                                             <Button
@@ -265,41 +203,20 @@ const breadcrumbs = [
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
                                                 asChild
-                                                v-if="can('training.show')"
+                                                v-if="
+                                                    can('report-student.show')
+                                                "
                                             >
                                                 <Link
                                                     :href="
                                                         route(
-                                                            'training.show',
+                                                            'report-student.show',
                                                             item.id
                                                         )
                                                     "
                                                 >
                                                     Detail
                                                 </Link>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                                asChild
-                                                v-if="can('training.edit')"
-                                            >
-                                                <Link
-                                                    :href="
-                                                        route(
-                                                            'training.edit',
-                                                            item.id
-                                                        )
-                                                    "
-                                                >
-                                                    Ubah
-                                                </Link>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                                v-if="can('training.delete')"
-                                                @select="
-                                                    () => confirmDelete(item)
-                                                "
-                                            >
-                                                Hapus
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
@@ -308,7 +225,7 @@ const breadcrumbs = [
                         </template>
                         <template v-else>
                             <TableRow>
-                                <TableCell colspan="7" class="text-center py-6">
+                                <TableCell colspan="6" class="text-center py-6">
                                     <strong>Tidak ada data</strong>
                                 </TableCell>
                             </TableRow>
@@ -316,27 +233,7 @@ const breadcrumbs = [
                     </TableBody>
                 </Table>
             </div>
-            <PaginationLinks :paginator="trainings" />
+            <PaginationLinks :paginator="student_programs" />
         </MainContent>
     </AppLayout>
-
-    <AlertDialog :open="!!trainingToDelete">
-        <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>
-                    Apakah Anda benar-benar yakin?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                    Tindakan ini tidak dapat dibatalkan. Ini akan secara
-                    permanen menghapus data terkait dari server kami.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogCancel @click="trainingToDelete = null">
-                    Batal
-                </AlertDialogCancel>
-                <AlertDialogAction @click="destroy">Hapus</AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
 </template>

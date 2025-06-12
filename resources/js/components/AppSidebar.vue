@@ -23,6 +23,7 @@ import {
     FileDiff,
     SlidersHorizontal,
     Clock,
+    FileBadge2,
 } from "lucide-vue-next";
 import AppLogo from "./AppLogo.vue";
 import usePermissions from "@/composables/usePermissions";
@@ -109,6 +110,15 @@ const activityNavItems = [
         permission: "match-event.index",
     },
 ];
+
+const reportNavItems = [
+    {
+        title: "Raport Siswa",
+        href: "/report-student",
+        icon: FileBadge2,
+        permission: "report-student.index",
+    },
+];
 </script>
 
 <template>
@@ -158,6 +168,11 @@ const activityNavItems = [
                 v-if="canAny('training.index', 'match-event.index')"
                 group-label="Aktifitas"
                 :items="activityNavItems"
+            />
+            <NavMain
+                v-if="canAny('report-student.index')"
+                group-label="Laporan"
+                :items="reportNavItems"
             />
         </SidebarContent>
 

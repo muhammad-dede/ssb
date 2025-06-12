@@ -56,13 +56,13 @@ const props = defineProps({
     status_billings: Object,
     periods: Object,
     student_programs: Object,
-    period_id_terms: Number,
+    period_id_term: Number,
     search_term: String,
     per_page_term: String,
     filter_term: String,
 });
 
-const period_id = ref(props.period_id_terms);
+const period_id = ref(props.period_id_term);
 const search = ref(props.search_term);
 const perPage = ref(props.per_page_term);
 const filter = ref(props.filter_term);

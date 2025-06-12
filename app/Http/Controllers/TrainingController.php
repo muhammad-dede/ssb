@@ -102,7 +102,7 @@ class TrainingController extends Controller
             'status_trainings' => $this->status_trainings,
             'periods' => $this->periods,
             'trainings' => $trainings,
-            'period_id_terms' => $period_id,
+            'period_id_term' => $period_id,
             'search_term' => $search,
             'per_page_term' => $per_page,
             'filter_term' => $filter,

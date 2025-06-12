@@ -105,7 +105,7 @@ class MatchEventController extends Controller
             'status_match_events' => $this->status_match_events,
             'periods' => $this->periods,
             'match_events' => $match_events,
-            'period_id_terms' => $period_id,
+            'period_id_term' => $period_id,
             'search_term' => $search,
             'per_page_term' => $per_page,
             'filter_term' => $filter,

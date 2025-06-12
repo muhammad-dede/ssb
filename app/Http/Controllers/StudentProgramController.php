@@ -111,7 +111,7 @@ class StudentProgramController extends Controller
             'status_billings' => $this->status_billings,
             'periods' => $this->periods,
             'student_programs' => $student_programs,
-            'period_id_terms' => $period_id,
+            'period_id_term' => $period_id,
             'search_term' => $search,
             'per_page_term' => $per_page,
             'filter_term' => $filter,

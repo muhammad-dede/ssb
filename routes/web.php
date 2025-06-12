@@ -42,6 +42,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('match-event/{match_event}/attendance', [App\Http\Controllers\MatchEventController::class, 'attendance'])->name('match-event.attendance');
     Route::post('match-event/{match_event}/assessment', [App\Http\Controllers\MatchEventController::class, 'assessment'])->name('match-event.assessment');
     Route::resource('match-event', App\Http\Controllers\MatchEventController::class);
+    // Report Student
+    Route::get('report-student', [App\Http\Controllers\ReportStudentController::class, 'index'])->name('report-student.index');
+    Route::get('report-student/{student_program}', [App\Http\Controllers\ReportStudentController::class, 'show'])->name('report-student.show');
 });
 
 require __DIR__ . '/auth.php';
