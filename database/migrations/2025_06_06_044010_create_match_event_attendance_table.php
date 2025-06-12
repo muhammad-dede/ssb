@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('match_event_attendance', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('training_id')->nullable()->index();
+            $table->unsignedBigInteger('match_event_id')->nullable()->index();
             $table->unsignedBigInteger('student_id')->nullable()->index();
             $table->string('attendance')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
 
-            $table->foreign('training_id')->references('id')->on('training')->onDelete('cascade');
+            $table->foreign('match_event_id')->references('id')->on('match_event')->onDelete('cascade');
             $table->foreign('student_id')->references('id')->on('student')->onDelete('cascade');
         });
     }

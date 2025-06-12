@@ -28,7 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Student
     Route::post('student/{student}/update', [App\Http\Controllers\StudentController::class, 'update'])->name('student.update');
     Route::resource('student', App\Http\Controllers\StudentController::class)->except(['update']);
-    // Registration Student
+    // Student Program
     Route::post('student-program/{student_program}/payment', [App\Http\Controllers\StudentProgramController::class, 'payment'])->name('student-program.payment');
     Route::post('student-program/{student_program}/payment/status', [App\Http\Controllers\StudentProgramController::class, 'paymentStatus'])->name('student-program.payment.status');
     Route::resource('student-program', App\Http\Controllers\StudentProgramController::class);
@@ -37,6 +37,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('training/{training}/attendance', [App\Http\Controllers\TrainingController::class, 'attendance'])->name('training.attendance');
     Route::post('training/{training}/assessment', [App\Http\Controllers\TrainingController::class, 'assessment'])->name('training.assessment');
     Route::resource('training', App\Http\Controllers\TrainingController::class);
+    // Match Event
+    Route::post('match-event/{match_event}/generate', [App\Http\Controllers\MatchEventController::class, 'generate'])->name('match-event.generate');
+    Route::post('match-event/{match_event}/attendance', [App\Http\Controllers\MatchEventController::class, 'attendance'])->name('match-event.attendance');
+    Route::post('match-event/{match_event}/assessment', [App\Http\Controllers\MatchEventController::class, 'assessment'])->name('match-event.assessment');
+    Route::resource('match-event', App\Http\Controllers\MatchEventController::class);
 });
 
 require __DIR__ . '/auth.php';

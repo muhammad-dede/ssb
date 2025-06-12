@@ -52,9 +52,9 @@ const { can, canAny } = usePermissions();
 
 const props = defineProps({
     variants: Object,
-    status_trainings: Object,
+    status_match_events: Object,
     periods: Object,
-    trainings: Object,
+    match_events: Object,
     period_id_terms: Number,
     search_term: String,
     per_page_term: String,
@@ -65,11 +65,11 @@ const period_id = ref(props.period_id_terms);
 const search = ref(props.search_term);
 const perPage = ref(props.per_page_term);
 const filter = ref(props.filter_term);
-const trainingToDelete = ref(null);
+const matchEventToDelete = ref(null);
 
 const dataControl = () => {
     router.get(
-        route("training.index"),
+        route("match-event.index"),
         {
             period_id: period_id.value,
             search: search.value,
@@ -96,7 +96,9 @@ watch([period_id, perPage, filter], () => {
 
 const getStatusLabel = (status) => {
     if (!status) return "-";
-    const found = props.status_trainings?.find((item) => item.value === status);
+    const found = props.status_match_events?.find(
+        (item) => item.value === status
+    );
     return found?.label?.toUpperCase() ?? "-";
 };
 
@@ -106,24 +108,24 @@ const getStatusVariant = (status) => {
     return found?.label ?? "outline";
 };
 
-const confirmDelete = (training) => {
-    trainingToDelete.value = training;
+const confirmDelete = (matchEvent) => {
+    matchEventToDelete.value = matchEvent;
 };
 
 const destroy = () => {
-    if (!trainingToDelete.value) return;
-    const trainingId = trainingToDelete.value.id;
-    router.delete(route("training.destroy", trainingId), {
+    if (!matchEventToDelete.value) return;
+    const matchEventId = matchEventToDelete.value.id;
+    router.delete(route("match-event.destroy", matchEventId), {
         preserveScroll: true,
         onFinish: () => {
-            trainingToDelete.value = null;
+            matchEventToDelete.value = null;
         },
     });
 };
 
-const setTrainingTime = (training) => {
-    if (!training?.training_date) return "-";
-    const date = new Date(training?.training_date).toLocaleDateString("id-ID", {
+const setTime = (matchEvent) => {
+    if (!matchEvent?.match_date) return "-";
+    const date = new Date(matchEvent?.match_date).toLocaleDateString("id-ID", {
         day: "numeric",
         month: "long",
         year: "numeric",
@@ -138,29 +140,29 @@ const setTrainingTime = (training) => {
             minute: "2-digit",
         });
     };
-    const startTime = formatTime(training?.start_time);
-    const endTime = formatTime(training?.end_time);
+    const startTime = formatTime(matchEvent?.start_time);
+    const endTime = formatTime(matchEvent?.end_time);
     return `${date}, ${startTime} - ${endTime}`;
 };
 
 const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Latihan", href: "/training" },
+    { title: "Pertandingan", href: "/match-event" },
 ];
 </script>
 
 <template>
-    <Head title="Latihan" />
+    <Head title="Pertandingan" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <MainContent>
             <HeadingGroup>
                 <Heading
-                    title="Data Latihan"
-                    description="Lihat dan kelola data latihan yang tersedia"
+                    title="Data Pertandingan"
+                    description="Lihat dan kelola data pertandingan yang tersedia"
                 />
                 <Link
-                    v-if="can('training.create')"
-                    :href="route('training.create')"
+                    v-if="can('match-event.create')"
+                    :href="route('match-event.create')"
                     :class="buttonVariants({ variant: 'default' })"
                 >
                     <SquarePlus class="w-4 h-4" />Tambah
@@ -209,13 +211,13 @@ const breadcrumbs = [
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <template v-if="trainings.data.length > 0">
+                        <template v-if="match_events.data.length > 0">
                             <TableRow
-                                v-for="(item, index) in trainings.data"
+                                v-for="(item, index) in match_events.data"
                                 :key="item.id"
                             >
                                 <TableCell class="font-medium">
-                                    {{ trainings.from + index }}
+                                    {{ match_events.from + index }}
                                 </TableCell>
                                 <TableCell>
                                     {{ item.program?.name ?? "-" }}
@@ -227,7 +229,7 @@ const breadcrumbs = [
                                     {{ item.coach?.name ?? "-" }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ setTrainingTime(item) }}
+                                    {{ setTime(item) }}
                                 </TableCell>
                                 <TableCell>
                                     <Badge
@@ -242,9 +244,9 @@ const breadcrumbs = [
                                     <DropdownMenu
                                         v-if="
                                             canAny(
-                                                'training.edit',
-                                                'training.show',
-                                                'training.delete'
+                                                'match-event.edit',
+                                                'match-event.show',
+                                                'match-event.delete'
                                             )
                                         "
                                     >
@@ -265,12 +267,12 @@ const breadcrumbs = [
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
                                                 asChild
-                                                v-if="can('training.show')"
+                                                v-if="can('match-event.show')"
                                             >
                                                 <Link
                                                     :href="
                                                         route(
-                                                            'training.show',
+                                                            'match-event.show',
                                                             item.id
                                                         )
                                                     "
@@ -280,12 +282,12 @@ const breadcrumbs = [
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
                                                 asChild
-                                                v-if="can('training.edit')"
+                                                v-if="can('match-event.edit')"
                                             >
                                                 <Link
                                                     :href="
                                                         route(
-                                                            'training.edit',
+                                                            'match-event.edit',
                                                             item.id
                                                         )
                                                     "
@@ -294,7 +296,7 @@ const breadcrumbs = [
                                                 </Link>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
-                                                v-if="can('training.delete')"
+                                                v-if="can('match-event.delete')"
                                                 @select="
                                                     () => confirmDelete(item)
                                                 "
@@ -316,11 +318,11 @@ const breadcrumbs = [
                     </TableBody>
                 </Table>
             </div>
-            <PaginationLinks :paginator="trainings" />
+            <PaginationLinks :paginator="match_events" />
         </MainContent>
     </AppLayout>
 
-    <AlertDialog :open="!!trainingToDelete">
+    <AlertDialog :open="!!matchEventToDelete">
         <AlertDialogContent>
             <AlertDialogHeader>
                 <AlertDialogTitle>
@@ -332,7 +334,7 @@ const breadcrumbs = [
                 </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-                <AlertDialogCancel @click="trainingToDelete = null">
+                <AlertDialogCancel @click="matchEventToDelete = null">
                     Batal
                 </AlertDialogCancel>
                 <AlertDialogAction @click="destroy">Hapus</AlertDialogAction>
