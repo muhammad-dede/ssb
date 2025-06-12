@@ -2,25 +2,17 @@
 import AppLayout from "@/layouts/AppLayout.vue";
 import { Head, Link, router } from "@inertiajs/vue3";
 import MainContent from "@/components/MainContent.vue";
-import { Card, CardContent } from "@/components/ui/card/index";
 import { Button } from "@/components/ui/button/index";
 import {
-    Calendar,
     MoreHorizontal,
     Trash2,
     Pencil,
     Undo2,
-    Group,
-    CalendarDays,
-    UserCog,
-    Timer,
-    MapPin,
-    NotebookPen,
-    CirclePower,
+    Bell,
+    LoaderCircle,
 } from "lucide-vue-next";
 import HeadingGroup from "@/components/HeadingGroup.vue";
 import Heading from "@/components/Heading.vue";
-import InfoItem from "@/components/InfoItem.vue";
 import { ref } from "vue";
 import usePermissions from "@/composables/usePermissions";
 import {
@@ -39,17 +31,30 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge/index";
+import {
+    Alert,
+    AlertDescription,
+    AlertTitle,
+} from "@/components/ui/alert/index";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import TabTraining from "./show/TabTraining.vue";
+import TabAttendance from "./show/TabAttendance.vue";
+import TabAssessment from "./show/TabAssessment.vue";
 
 const { can } = usePermissions();
 
 const props = defineProps({
     variants: Object,
     status_trainings: Object,
+    attendances: Object,
+    assessments: Object,
     training: Object,
+    training_attendances: Object,
+    training_assessments: Object,
 });
 
 const showConfirmDelete = ref(false);
+const isGenerating = ref(false);
 
 const destroy = () => {
     showConfirmDelete.value = false;
@@ -58,22 +63,18 @@ const destroy = () => {
     });
 };
 
-const getStatusLabel = (status) => {
-    if (!status) return "-";
-    const found = props.status_trainings?.find((item) => item.value === status);
-    return found?.label?.toUpperCase() ?? "-";
-};
-
-const getVariant = (status) => {
-    if (!status) return "outline";
-    const found = props.variants?.find((item) => item.value === status);
-    return found?.label ?? "outline";
-};
-
-const dateFormat = (date) => {
-    if (!date) return "-";
-    const options = { day: "numeric", month: "long", year: "numeric" };
-    return new Date(date).toLocaleDateString("id-ID", options);
+const generate = () => {
+    isGenerating.value = true;
+    router.post(
+        route("training.generate", props.training?.id),
+        {},
+        {
+            preserveScroll: true,
+            onFinish: () => {
+                isGenerating.value = false;
+            },
+        }
+    );
 };
 
 const breadcrumbs = [
@@ -121,68 +122,58 @@ const breadcrumbs = [
                     </DropdownMenuContent>
                 </DropdownMenu>
             </HeadingGroup>
-            <Card>
-                <CardContent>
-                    <h5 class="text-sm font-bold text-gray-500 mb-4">
-                        Informasi Latihan
-                    </h5>
-                    <div class="grid divide-y divide-gray-100">
-                        <div class="flex justify-between items-center">
-                            <InfoItem
-                                label="Periode"
-                                :value="training.period?.name ?? '-'"
-                                :icon="CalendarDays"
-                                background
-                            />
-                            <Badge
-                                :variant="getVariant(training?.status)"
-                                class="py-2 px-3 rounded-full h-fit"
-                            >
-                                {{ getStatusLabel(training?.status) }}
-                            </Badge>
-                        </div>
-                        <InfoItem
-                            label="Program"
-                            :value="training.program?.name ?? '-'"
-                            :icon="Group"
-                            background
+            <Alert class="mb-2 relative">
+                <Bell class="h-4 w-4" />
+                <AlertTitle>Catatan</AlertTitle>
+                <AlertDescription class="max-w-[50%]">
+                    Klik generate untuk sinkronisasi data kehadiran dan
+                    penilaian siswa.
+                </AlertDescription>
+                <div
+                    class="absolute right-0 h-full flex items-center justify-center px-4"
+                >
+                    <Button
+                        type="button"
+                        class="w-fit"
+                        @click.prevent="generate"
+                        :disabled="isGenerating"
+                    >
+                        <LoaderCircle
+                            v-if="isGenerating"
+                            class="h-4 w-4 animate-spin mr-2"
                         />
-                        <InfoItem
-                            label="Pelatih"
-                            :value="training.coach?.name ?? '-'"
-                            :icon="UserCog"
-                            background
-                        />
-                        <InfoItem
-                            label="Tanggal Pelatihan"
-                            :value="dateFormat(training.training_date) ?? '-'"
-                            :icon="Calendar"
-                            background
-                        />
-                        <InfoItem
-                            label="Waktu Pelatihan"
-                            :value="
-                                `${training.start_time} - ${training.end_time}` ??
-                                '-'
-                            "
-                            :icon="Timer"
-                            background
-                        />
-                        <InfoItem
-                            label="Lokasi"
-                            :value="training.location ?? '-'"
-                            :icon="MapPin"
-                            background
-                        />
-                        <InfoItem
-                            label="Deskripsi"
-                            :value="training.description ?? '-'"
-                            :icon="NotebookPen"
-                            background
-                        />
-                    </div>
-                </CardContent>
-            </Card>
+                        <span>Generate</span>
+                    </Button>
+                </div>
+            </Alert>
+            <Tabs default-value="training" class="w-full">
+                <TabsList class="grid w-full grid-cols-3">
+                    <TabsTrigger value="training">Latihan</TabsTrigger>
+                    <TabsTrigger value="attendances">Kehadiran</TabsTrigger>
+                    <TabsTrigger value="assessments">Penilaian</TabsTrigger>
+                </TabsList>
+                <TabsContent value="training">
+                    <TabTraining
+                        :variants="variants"
+                        :status_trainings="status_trainings"
+                        :training="training"
+                    />
+                </TabsContent>
+                <TabsContent value="attendances">
+                    <TabAttendance
+                        :attendances="attendances"
+                        :training="training"
+                        :training_attendances="training_attendances"
+                    />
+                </TabsContent>
+                <TabsContent value="assessments">
+                    <TabAssessment
+                        :assessments="assessments"
+                        :training="training"
+                        :training_assessments="training_assessments"
+                    />
+                </TabsContent>
+            </Tabs>
         </MainContent>
     </AppLayout>
 

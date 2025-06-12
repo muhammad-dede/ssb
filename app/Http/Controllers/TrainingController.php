@@ -2,15 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Attendance;
+use App\Enums\StatusAssessment;
 use App\Enums\StatusCoach;
 use App\Enums\StatusPeriod;
 use App\Enums\StatusProgram;
+use App\Enums\StatusStudentProgram;
 use App\Enums\StatusTraining;
 use App\Enums\Variant;
+use App\Models\Assessment;
 use App\Models\Coach;
 use App\Models\Period;
 use App\Models\Program;
+use App\Models\Student;
 use App\Models\Training;
+use App\Models\TrainingAssessment;
+use App\Models\TrainingAttendance;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,11 +31,13 @@ class TrainingController extends Controller
     // Enums
     protected $variants = [];
     protected $status_trainings = [];
+    protected $attendances = [];
     // Models
     protected $period_active;
     protected $periods = [];
     protected $programs = [];
     protected $coaches = [];
+    protected $assessments = [];
     // Validation
     protected $attributes = [
         'student_id' => 'Siswa',
@@ -42,11 +51,13 @@ class TrainingController extends Controller
         // Enums
         $this->variants = Variant::options();
         $this->status_trainings = StatusTraining::options();
+        $this->attendances = Attendance::options();
         // Models
         $this->period_active = Period::where('status', StatusPeriod::ACTIVE)->first() ?? null;
         $this->periods = Period::orderBy('id', 'desc')->get();
         $this->programs = Program::where('status', StatusProgram::ACTIVE)->get();
         $this->coaches = Coach::where('status', StatusCoach::ACTIVE)->get();
+        $this->assessments = Assessment::where('status', StatusAssessment::ACTIVE)->get();
     }
 
     /**
@@ -156,11 +167,16 @@ class TrainingController extends Controller
         $this->checkPermission('training.show');
 
         $training = Training::with(['period', 'program', 'coach'])->findOrFail($id);
+        $training_attendances = TrainingAttendance::with(['student'])->where('training_id', $training->id)->get();
+        $training_assessments = TrainingAssessment::with(['student', 'assessment'])->where('training_id', $training->id)->get();
         return Inertia::render('training/Show', [
             'variants' => $this->variants,
             'status_trainings' => $this->status_trainings,
-            'variants' => $this->variants,
+            'attendances' => $this->attendances,
+            'assessments' => $this->assessments,
             'training' => $training,
+            'training_attendances' => $training_attendances,
+            'training_assessments' => $training_assessments,
         ]);
     }
 
@@ -235,6 +251,108 @@ class TrainingController extends Controller
             $training->delete();
             DB::commit();
             return redirect()->route('training.index')->with('success', 'Latihan berhasil dihapus');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+    }
+
+    /**
+     * Generate new resource from storage.
+     */
+    public function generate(string $training_id)
+    {
+        $this->checkPermission('training.show');
+
+        try {
+            DB::beginTransaction();
+            $training = Training::findOrFail($training_id);
+            $students = Student::whereHas(
+                'programs',
+                fn($query) =>
+                $query->where('period_id', $training->period_id)
+                    ->where('program_code', $training->program_code)
+                    ->where('status', StatusStudentProgram::ACTIVE)
+            )->get();
+            foreach ($students as $student) {
+                $training->attendances()->updateOrCreate([
+                    'training_id' => $training->id,
+                    'student_id' => $student->id,
+                ]);
+                foreach ($this->assessments as $assessment) {
+                    $exists = $training->assessments()
+                        ->where('training_id', $training->id)
+                        ->where('student_id', $student->id)
+                        ->where('assessment_code', $assessment->code)
+                        ->exists();
+                    if (!$exists) {
+                        $training->assessments()->create([
+                            'training_id' => $training->id,
+                            'student_id' => $student->id,
+                            'assessment_code' => $assessment->code,
+                            'value' => 0,
+                        ]);
+                    }
+                }
+            }
+            DB::commit();
+            return redirect()->back()->with('success', 'Generate berhasil');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function attendance(Request $request, string $training_id)
+    {
+        $this->checkPermission('training.show');
+
+        try {
+            DB::beginTransaction();
+            $training = Training::findOrFail($training_id);
+            if (!empty($request->attendances)) {
+                foreach ($request->attendances as $value) {
+                    $training->attendances()
+                        ->where('student_id', $value['student_id'])
+                        ->update([
+                            'attendance' => $value['attendance'],
+                            'notes' => $value['notes'],
+                        ]);
+                }
+            }
+            DB::commit();
+            return redirect()->back()->with('success', 'Kehadiran berhasil disimpan');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function assessment(Request $request, string $training_id)
+    {
+        $this->checkPermission('training.show');
+
+        try {
+            DB::beginTransaction();
+            $training = Training::findOrFail($training_id);
+            if (!empty($request->assessments)) {
+                foreach ($request->assessments as $value) {
+                    $training->assessments()
+                        ->where('student_id', $value['student_id'])
+                        ->where('assessment_code', $value['assessment_code'])
+                        ->update([
+                            'value' => $value['value'],
+                        ]);
+                }
+            }
+            DB::commit();
+            return redirect()->back()->with('success', 'Penilaian berhasil disimpan');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;

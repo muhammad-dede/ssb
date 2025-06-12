@@ -33,6 +33,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('student-program/{student_program}/payment/status', [App\Http\Controllers\StudentProgramController::class, 'paymentStatus'])->name('student-program.payment.status');
     Route::resource('student-program', App\Http\Controllers\StudentProgramController::class);
     // Training
+    Route::post('training/{training}/generate', [App\Http\Controllers\TrainingController::class, 'generate'])->name('training.generate');
+    Route::post('training/{training}/attendance', [App\Http\Controllers\TrainingController::class, 'attendance'])->name('training.attendance');
+    Route::post('training/{training}/assessment', [App\Http\Controllers\TrainingController::class, 'assessment'])->name('training.assessment');
     Route::resource('training', App\Http\Controllers\TrainingController::class);
 });
 
