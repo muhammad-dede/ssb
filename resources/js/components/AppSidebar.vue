@@ -119,6 +119,15 @@ const adminReportMenu = [
         permission: "admin.report-student.index",
     },
 ];
+
+const studentDataMenu = [
+    {
+        title: "Registrasi",
+        href: "/student/student-program",
+        icon: FileDiff,
+        permission: "student-menu",
+    },
+];
 </script>
 
 <template>
@@ -137,6 +146,7 @@ const adminReportMenu = [
 
         <SidebarContent>
             <NavMain :items="dashboardMenu" />
+            <!-- Admin -->
             <NavMain
                 v-if="canAny('admin.role.index', 'admin.user.index')"
                 group-label="Kelola Pengguna"
@@ -173,6 +183,12 @@ const adminReportMenu = [
                 v-if="canAny('admin.report-student.index')"
                 group-label="Laporan"
                 :items="adminReportMenu"
+            />
+            <!-- Student -->
+            <NavMain
+                v-if="canAny('student-menu')"
+                group-label="Data"
+                :items="studentDataMenu"
             />
         </SidebarContent>
 

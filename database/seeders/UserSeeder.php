@@ -84,6 +84,10 @@ class UserSeeder extends Seeder
             ['guard_name' => 'web', 'name' => 'admin.report-student.index'],
             ['guard_name' => 'web', 'name' => 'admin.report-student.show'],
             ['guard_name' => 'web', 'name' => 'admin.report-student.pdf'],
+            // Student Menu
+            ['guard_name' => 'web', 'name' => 'student-menu'],
+            // Coach Menu
+            ['guard_name' => 'web', 'name' => 'coach-menu'],
         ];
 
         foreach ($permissions as $key => $value) {
@@ -219,14 +223,36 @@ class UserSeeder extends Seeder
             if ($role->name === 'Leader') {
                 // Dashboard
                 $role->givePermissionTo('dashboard');
+                // Coach
+                $role->givePermissionTo('admin.coach.index');
+                $role->givePermissionTo('admin.coach.show');
+                // Student
+                $role->givePermissionTo('admin.student.index');
+                $role->givePermissionTo('admin.student.show');
+                // Registration
+                $role->givePermissionTo('admin.student-program.index');
+                $role->givePermissionTo('admin.student-program.show');
+                // Training
+                $role->givePermissionTo('admin.training.index');
+                $role->givePermissionTo('admin.training.show');
+                // Match Event
+                $role->givePermissionTo('admin.match-event.index');
+                $role->givePermissionTo('admin.match-event.show');
+                // Report Student
+                $role->givePermissionTo('admin.report-student.index');
+                $role->givePermissionTo('admin.report-student.show');
             }
             if ($role->name === 'Student') {
                 // Dashboard
                 $role->givePermissionTo('dashboard');
+                // Student Menu
+                $role->givePermissionTo('student-menu');
             }
             if ($role->name === 'Coach') {
                 // Dashboard
                 $role->givePermissionTo('dashboard');
+                // Coach Menu
+                $role->givePermissionTo('coach-menu');
             }
         }
 
