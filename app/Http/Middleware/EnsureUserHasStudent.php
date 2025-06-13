@@ -19,7 +19,7 @@ class EnsureUserHasStudent
         $user = Auth::user();
         if ($user->hasRole('Student')) {
             if (!$user->student) {
-                return redirect()->route('ensure.student');
+                return redirect()->route('student.ensure');
             }
         }
         return $next($request);

@@ -32,7 +32,7 @@ const submit = () => {
 <template>
     <AuthLayout
         title="Reset password"
-        description="Please enter your new password below"
+        description="Silakan masukkan password baru Anda di bawah ini"
     >
         <Head title="Reset password" />
 
@@ -68,7 +68,9 @@ const submit = () => {
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password_confirmation">Confirm Password</Label>
+                    <Label for="password_confirmation"
+                        >Konfirmasi Password</Label
+                    >
                     <Input
                         id="password_confirmation"
                         type="password"
@@ -76,7 +78,7 @@ const submit = () => {
                         autocomplete="new-password"
                         v-model="form.password_confirmation"
                         class="mt-1 block w-full"
-                        placeholder="Confirm password"
+                        placeholder="Konfirmasi Password"
                     />
                     <InputError :message="form.errors.password_confirmation" />
                 </div>

@@ -24,15 +24,15 @@ const submit = () => {
 
 <template>
     <AuthBase
-        title="Create an account"
-        description="Enter your details below to create your account"
+        title="Daftar Akun"
+        description="Masukkan detail Anda di bawah ini untuk membuat akun Anda"
     >
-        <Head title="Register" />
+        <Head title="Daftar" />
 
         <form @submit.prevent="submit" class="flex flex-col gap-6">
             <div class="grid gap-6">
                 <div class="grid gap-2">
-                    <Label for="name">Name</Label>
+                    <Label for="name">Nama</Label>
                     <Input
                         id="name"
                         type="text"
@@ -41,13 +41,13 @@ const submit = () => {
                         :tabindex="1"
                         autocomplete="name"
                         v-model="form.name"
-                        placeholder="Full name"
+                        placeholder="Nama Lengkap"
                     />
                     <InputError :message="form.errors.name" />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
+                    <Label for="email">Email</Label>
                     <Input
                         id="email"
                         type="email"
@@ -75,7 +75,9 @@ const submit = () => {
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password_confirmation">Confirm password</Label>
+                    <Label for="password_confirmation"
+                        >Konfirmasi Password</Label
+                    >
                     <Input
                         id="password_confirmation"
                         type="password"
@@ -83,7 +85,7 @@ const submit = () => {
                         :tabindex="4"
                         autocomplete="new-password"
                         v-model="form.password_confirmation"
-                        placeholder="Confirm password"
+                        placeholder="Konfirmasi Password"
                     />
                     <InputError :message="form.errors.password_confirmation" />
                 </div>
@@ -98,17 +100,17 @@ const submit = () => {
                         v-if="form.processing"
                         class="h-4 w-4 animate-spin"
                     />
-                    Create account
+                    Daftar Akun
                 </Button>
             </div>
 
             <div class="text-center text-sm text-muted-foreground">
-                Already have an account?
+                Sudah punya akun?
                 <TextLink
                     :href="route('login')"
                     class="underline underline-offset-4"
                     :tabindex="6"
-                    >Log in</TextLink
+                    >Masuk</TextLink
                 >
             </div>
         </form>

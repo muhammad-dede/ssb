@@ -22,10 +22,10 @@ const submit = () => {
 
 <template>
     <AuthLayout
-        title="Confirm your password"
-        description="This is a secure area of the application. Please confirm your password before continuing."
+        title="Konfirmasi password Anda"
+        description="Ini adalah area yang aman dari aplikasi. Silakan konfirmasi kata sandi Anda sebelum melanjutkan"
     >
-        <Head title="Confirm password" />
+        <Head title="Konfirmasi Password" />
 
         <form @submit.prevent="submit">
             <div class="space-y-6">
@@ -49,7 +49,7 @@ const submit = () => {
                             v-if="form.processing"
                             class="h-4 w-4 animate-spin"
                         />
-                        Confirm Password
+                        Konfirmasi Password
                     </Button>
                 </div>
             </div>

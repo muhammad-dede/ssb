@@ -23,8 +23,8 @@ const submit = () => {
 
 <template>
     <AuthLayout
-        title="Forgot password"
-        description="Enter your email to receive a password reset link"
+        title="Lupa Password"
+        description="Masukkan email Anda untuk menerima tautan reset kata sandi"
     >
         <Head title="Forgot password" />
 
@@ -38,7 +38,7 @@ const submit = () => {
         <div class="space-y-6">
             <form @submit.prevent="submit">
                 <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
+                    <Label for="email">Email</Label>
                     <Input
                         id="email"
                         type="email"
@@ -63,14 +63,14 @@ const submit = () => {
                             v-if="form.processing"
                             class="h-4 w-4 animate-spin"
                         />
-                        Email password reset link
+                        Kirim tautan reset password
                     </Button>
                 </div>
             </form>
 
             <div class="space-x-1 text-center text-sm text-muted-foreground">
-                <span>Or, return to</span>
-                <TextLink :href="route('login')">log in</TextLink>
+                <span>Atau, kembali ke</span>
+                <TextLink :href="route('login')">masuk</TextLink>
             </div>
         </div>
     </AuthLayout>

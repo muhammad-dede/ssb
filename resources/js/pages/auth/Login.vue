@@ -32,10 +32,10 @@ const submit = () => {
 
 <template>
     <AuthBase
-        title="Log in to your account"
-        description="Enter your email and password below to log in"
+        title="Masuk ke akun Anda"
+        description="Masukkan email dan kata sandi Anda di bawah ini untuk masuk"
     >
-        <Head title="Log in" />
+        <Head title="Masuk" />
 
         <div
             v-if="props.status"
@@ -47,7 +47,7 @@ const submit = () => {
         <form @submit.prevent="submit" class="flex flex-col gap-6">
             <div class="grid gap-6">
                 <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
+                    <Label for="email">Email</Label>
                     <Input
                         id="email"
                         type="email"
@@ -70,7 +70,7 @@ const submit = () => {
                             class="text-sm"
                             :tabindex="5"
                         >
-                            Forgot password?
+                            Lupa password?
                         </TextLink>
                     </div>
                     <Input
@@ -92,7 +92,7 @@ const submit = () => {
                             v-model="form.remember"
                             :tabindex="3"
                         />
-                        <span>Remember me</span>
+                        <span>Ingat saya</span>
                     </Label>
                 </div>
 
@@ -106,14 +106,14 @@ const submit = () => {
                         v-if="form.processing"
                         class="h-4 w-4 animate-spin"
                     />
-                    Log in
+                    Masuk
                 </Button>
             </div>
 
             <div class="text-center text-sm text-muted-foreground">
-                Don't have an account?
+                Belum punya akun?
                 <TextLink :href="route('register')" :tabindex="5"
-                    >Sign up</TextLink
+                    >Daftar Akun</TextLink
                 >
             </div>
         </form>
