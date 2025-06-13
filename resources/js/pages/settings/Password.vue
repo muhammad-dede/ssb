@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 
 const breadcrumbItems = [
     {
-        title: "Password settings",
+        title: "Pengaturan Password",
         href: "/settings/password",
     },
 ];
@@ -51,18 +51,18 @@ const updatePassword = () => {
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Password settings" />
+        <Head title="Pengaturan Password" />
 
         <SettingsLayout>
             <div class="space-y-6">
                 <HeadingSmall
-                    title="Update password"
-                    description="Ensure your account is using a long, random password to stay secure"
+                    title="Perbarui password"
+                    description="Pastikan akun Anda menggunakan password yang panjang dan acak untuk menjaga keamanan"
                 />
 
                 <form @submit.prevent="updatePassword" class="space-y-6">
                     <div class="grid gap-2">
-                        <Label for="current_password">Current password</Label>
+                        <Label for="current_password">Password Saat Ini</Label>
                         <Input
                             id="current_password"
                             ref="currentPasswordInput"
@@ -70,13 +70,13 @@ const updatePassword = () => {
                             type="password"
                             class="mt-1 block w-full"
                             autocomplete="current-password"
-                            placeholder="Current password"
+                            placeholder="Password Saat Ini"
                         />
                         <InputError :message="form.errors.current_password" />
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="password">New password</Label>
+                        <Label for="password">Password Baru</Label>
                         <Input
                             id="password"
                             ref="passwordInput"
@@ -84,14 +84,14 @@ const updatePassword = () => {
                             type="password"
                             class="mt-1 block w-full"
                             autocomplete="new-password"
-                            placeholder="New password"
+                            placeholder="Password Baru"
                         />
                         <InputError :message="form.errors.password" />
                     </div>
 
                     <div class="grid gap-2">
                         <Label for="password_confirmation"
-                            >Confirm password</Label
+                            >Konfirmasi Password Baru</Label
                         >
                         <Input
                             id="password_confirmation"
@@ -99,7 +99,7 @@ const updatePassword = () => {
                             type="password"
                             class="mt-1 block w-full"
                             autocomplete="new-password"
-                            placeholder="Confirm password"
+                            placeholder="Konfirmasi Password Baru"
                         />
                         <InputError
                             :message="form.errors.password_confirmation"
@@ -107,9 +107,7 @@ const updatePassword = () => {
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <Button :disabled="form.processing"
-                            >Save password</Button
-                        >
+                        <Button :disabled="form.processing">Simpan</Button>
 
                         <Transition
                             enter-active-class="transition ease-in-out"

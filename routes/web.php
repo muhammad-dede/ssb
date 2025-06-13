@@ -7,7 +7,7 @@ Route::get('/', function () {
     return 'Home';
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'has_student'])->group(function () {
     // Dashboard
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
     // Role
