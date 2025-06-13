@@ -10,6 +10,7 @@ import {
     PersonStanding,
     BookOpenCheck,
     Bookmark,
+    Printer,
 } from "lucide-vue-next";
 import HeadingGroup from "@/components/HeadingGroup.vue";
 import Heading from "@/components/Heading.vue";
@@ -35,6 +36,12 @@ const { can } = usePermissions();
 const props = defineProps({
     student_program: Object,
 });
+
+const generatePdf = () => {
+    const id = props.student_program?.id;
+    const url = route("report-student.pdf", id);
+    window.open(url, "_blank");
+};
 
 const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
@@ -67,6 +74,13 @@ const breadcrumbs = [
                                 <Undo2 class="text-yellow-500" />
                                 Kembali
                             </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            v-if="can('report-student.show')"
+                            @click="generatePdf"
+                        >
+                            <Printer class="text-gray-500" />
+                            Cetak
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

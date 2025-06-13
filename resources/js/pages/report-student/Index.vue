@@ -74,15 +74,22 @@ const dataControl = () => {
         }
     );
 };
+
 watch(
     search,
     debounce(() => {
         dataControl();
     }, 1000)
 );
+
 watch([period_id, program_code, perPage, filter], () => {
     dataControl();
 });
+
+const generatePdf = (id) => {
+    const url = route("report-student.pdf", id);
+    window.open(url, "_blank");
+};
 
 const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
@@ -217,6 +224,14 @@ const breadcrumbs = [
                                                 >
                                                     Detail
                                                 </Link>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                v-if="
+                                                    can('report-student.show')
+                                                "
+                                                @click="generatePdf(item?.id)"
+                                            >
+                                                Cetak
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>

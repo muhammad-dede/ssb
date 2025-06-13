@@ -45,6 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Report Student
     Route::get('report-student', [App\Http\Controllers\ReportStudentController::class, 'index'])->name('report-student.index');
     Route::get('report-student/{student_program}', [App\Http\Controllers\ReportStudentController::class, 'show'])->name('report-student.show');
+    Route::get('report-student/{student_program}/pdf', [App\Http\Controllers\ReportStudentController::class, 'generatePdf'])->name('report-student.pdf');
 });
 
 require __DIR__ . '/auth.php';

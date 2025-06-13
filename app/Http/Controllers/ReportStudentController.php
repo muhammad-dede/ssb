@@ -20,6 +20,7 @@ use App\Models\Training;
 use App\Models\TrainingAssessment;
 use App\Models\TrainingAttendance;
 use App\Traits\HasPermissionCheck;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -111,6 +112,22 @@ class ReportStudentController extends Controller
         ]);
     }
 
+    /**
+     * Display the specified resource.
+     */
+    public function generatePdf(string $student_program_id)
+    {
+        $this->checkPermission('report-student.show');
+
+        $student_program = StudentProgram::with(['student', 'period', 'program'])->findOrFail($student_program_id);
+        $student_program->report = $this->calculateReport($student_program->student_id, $student_program->period_id, $student_program->program_code);
+        $pdf = Pdf::loadView('pdf.report-student', [
+            'student_program' => $student_program,
+        ])->setPaper('a4', 'portrait');
+        $filename = 'raport_' . str_replace(' ', '_', $student_program->student?->name ?? 'NA') . '.pdf';
+        return $pdf->stream($filename);
+    }
+
     private function calculateReport($student_id, $period_id, $program_code)
     {
         // ========== training_attendance_percentage ==========
@@ -169,7 +186,7 @@ class ReportStudentController extends Controller
         $training_avg_assessment = $training_scores->pluck('total_value')->avg() ?? 0;
 
         $training_scores->push([
-            'code' => 'ATTENDANCE',
+            'code' => 'ATD',
             'name' => 'KEHADIRAN',
             'total_value' => $training_attendance_percentage,
         ]);
@@ -198,7 +215,7 @@ class ReportStudentController extends Controller
         $match_event_avg_assessment = $match_event_scores->pluck('total_value')->avg() ?? 0;
 
         $match_event_scores->push([
-            'code' => 'ATTENDANCE',
+            'code' => 'ATD',
             'name' => 'KEHADIRAN',
             'total_value' => $match_event_attendance_percentage,
         ]);
