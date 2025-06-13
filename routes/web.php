@@ -7,6 +7,11 @@ Route::get('/', function () {
     return 'Home';
 })->name('home');
 
+Route::controller(App\Http\Controllers\EnsureStudentController::class)->group(function () {
+    Route::get('ensure/student', 'create')->name('ensure.student');
+    Route::post('ensure/student', 'store')->name('ensure.student.store');
+})->middleware('auth');
+
 Route::middleware(['auth', 'has_student'])->group(function () {
     // Dashboard
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
