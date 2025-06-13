@@ -7,14 +7,9 @@ Route::get('/', function () {
     return 'Home';
 })->name('home');
 
-Route::controller(App\Http\Controllers\EnsureStudentController::class)->group(function () {
-    Route::get('ensure/student', 'create')->name('ensure.student');
-    Route::post('ensure/student', 'store')->name('ensure.student.store');
-})->middleware('auth');
-
-Route::middleware(['auth', 'has_student'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     // Dashboard
-    Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard')->middleware('has_student');
     // Role
     Route::resource('role', App\Http\Controllers\RoleController::class)->except(['show']);
     // User
@@ -53,3 +48,4 @@ Route::middleware(['auth', 'has_student'])->group(function () {
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/settings.php';
+require __DIR__ . '/student.php';
