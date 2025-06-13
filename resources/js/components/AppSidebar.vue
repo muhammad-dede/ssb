@@ -30,7 +30,7 @@ import usePermissions from "@/composables/usePermissions";
 
 const { canAny } = usePermissions();
 
-const dashboardNavItems = [
+const dashboardMenu = [
     {
         title: "Dashboard",
         href: "/dashboard",
@@ -39,84 +39,84 @@ const dashboardNavItems = [
     },
 ];
 
-const manageUserNavItems = [
+const adminManageUserMenu = [
     {
         title: "Role",
-        href: "/role",
+        href: "/admin/role",
         icon: ShieldCheck,
-        permission: "role.index",
+        permission: "admin.role.index",
     },
     {
         title: "Pengguna",
-        href: "/user",
+        href: "/admin/user",
         icon: User,
-        permission: "user.index",
+        permission: "admin.user.index",
     },
 ];
 
-const masterNavItems = [
+const adminMasterMenu = [
     {
         title: "Akun Bank",
-        href: "/bank-account",
+        href: "/admin/bank-account",
         icon: Banknote,
-        permission: "bank-account.index",
+        permission: "admin.bank-account.index",
     },
     {
         title: "Program",
-        href: "/program",
+        href: "/admin/program",
         icon: BookOpenCheck,
-        permission: "program.index",
+        permission: "admin.program.index",
     },
     {
         title: "Periode",
-        href: "/period",
+        href: "/admin/period",
         icon: Bookmark,
-        permission: "period.index",
+        permission: "admin.period.index",
     },
 ];
 
-const dataNavItems = [
+const adminDataMenu = [
     {
         title: "Pelatih",
-        href: "/coach",
+        href: "/admin/coach",
         icon: UserCog,
-        permission: "coach.index",
+        permission: "admin.coach.index",
     },
     {
         title: "Siswa",
-        href: "/student",
+        href: "/admin/student",
         icon: PersonStanding,
-        permission: "student.index",
+        permission: "admin.student.index",
     },
     {
         title: "Registrasi",
-        href: "/student-program",
+        href: "/admin/student-program",
         icon: FileDiff,
-        permission: "student-program.index",
+        permission: "admin.student-program.index",
     },
 ];
 
-const activityNavItems = [
+const adminActivityMenu = [
     {
         title: "Latihan",
-        href: "/training",
+        href: "/admin/training",
         icon: Clock,
-        permission: "training.index",
+        permission: "admin.training.index",
     },
     {
         title: "Pertandingan",
-        href: "/match-event",
+        href: "/admin/match-event",
         icon: SlidersHorizontal,
-        permission: "match-event.index",
+        permission: "admin.match-event.index",
     },
 ];
 
-const reportNavItems = [
+const adminReportMenu = [
     {
         title: "Raport Siswa",
-        href: "/report-student",
+        href: "/admin/report-student",
         icon: FileBadge2,
-        permission: "report-student.index",
+        permission: "admin.report-student.index",
     },
 ];
 </script>
@@ -136,43 +136,43 @@ const reportNavItems = [
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :items="dashboardNavItems" />
+            <NavMain :items="dashboardMenu" />
             <NavMain
-                v-if="canAny('role.index', 'user.index')"
+                v-if="canAny('admin.role.index', 'admin.user.index')"
                 group-label="Kelola Pengguna"
-                :items="manageUserNavItems"
+                :items="adminManageUserMenu"
             />
             <NavMain
                 v-if="
                     canAny(
-                        'bank-account.index',
-                        'program.index',
-                        'period.index'
+                        'admin.bank-account.index',
+                        'admin.program.index',
+                        'admin.period.index'
                     )
                 "
                 group-label="Master"
-                :items="masterNavItems"
+                :items="adminMasterMenu"
             />
             <NavMain
                 v-if="
                     canAny(
-                        'coach.index',
-                        'student.index',
-                        'student-program.index'
+                        'admin.coach.index',
+                        'admin.student.index',
+                        'admin.student-program.index'
                     )
                 "
                 group-label="Data"
-                :items="dataNavItems"
+                :items="adminDataMenu"
             />
             <NavMain
-                v-if="canAny('training.index', 'match-event.index')"
+                v-if="canAny('admin.training.index', 'admin.match-event.index')"
                 group-label="Aktifitas"
-                :items="activityNavItems"
+                :items="adminActivityMenu"
             />
             <NavMain
-                v-if="canAny('report-student.index')"
+                v-if="canAny('admin.report-student.index')"
                 group-label="Laporan"
-                :items="reportNavItems"
+                :items="adminReportMenu"
             />
         </SidebarContent>
 

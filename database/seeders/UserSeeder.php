@@ -19,71 +19,71 @@ class UserSeeder extends Seeder
             // Dashboard
             ['guard_name' => 'web', 'name' => 'dashboard'],
             // Role
-            ['guard_name' => 'web', 'name' => 'role.index'],
-            ['guard_name' => 'web', 'name' => 'role.create'],
-            ['guard_name' => 'web', 'name' => 'role.edit'],
-            ['guard_name' => 'web', 'name' => 'role.show'],
-            ['guard_name' => 'web', 'name' => 'role.delete'],
+            ['guard_name' => 'web', 'name' => 'admin.role.index'],
+            ['guard_name' => 'web', 'name' => 'admin.role.create'],
+            ['guard_name' => 'web', 'name' => 'admin.role.edit'],
+            ['guard_name' => 'web', 'name' => 'admin.role.delete'],
             // User
-            ['guard_name' => 'web', 'name' => 'user.index'],
-            ['guard_name' => 'web', 'name' => 'user.create'],
-            ['guard_name' => 'web', 'name' => 'user.edit'],
-            ['guard_name' => 'web', 'name' => 'user.show'],
-            ['guard_name' => 'web', 'name' => 'user.delete'],
+            ['guard_name' => 'web', 'name' => 'admin.user.index'],
+            ['guard_name' => 'web', 'name' => 'admin.user.create'],
+            ['guard_name' => 'web', 'name' => 'admin.user.edit'],
+            ['guard_name' => 'web', 'name' => 'admin.user.delete'],
             // Bank Account
-            ['guard_name' => 'web', 'name' => 'bank-account.index'],
-            ['guard_name' => 'web', 'name' => 'bank-account.create'],
-            ['guard_name' => 'web', 'name' => 'bank-account.edit'],
-            ['guard_name' => 'web', 'name' => 'bank-account.show'],
-            ['guard_name' => 'web', 'name' => 'bank-account.delete'],
+            ['guard_name' => 'web', 'name' => 'admin.bank-account.index'],
+            ['guard_name' => 'web', 'name' => 'admin.bank-account.create'],
+            ['guard_name' => 'web', 'name' => 'admin.bank-account.edit'],
+            ['guard_name' => 'web', 'name' => 'admin.bank-account.delete'],
             // Program
-            ['guard_name' => 'web', 'name' => 'program.index'],
-            ['guard_name' => 'web', 'name' => 'program.create'],
-            ['guard_name' => 'web', 'name' => 'program.edit'],
-            ['guard_name' => 'web', 'name' => 'program.show'],
-            ['guard_name' => 'web', 'name' => 'program.delete'],
+            ['guard_name' => 'web', 'name' => 'admin.program.index'],
+            ['guard_name' => 'web', 'name' => 'admin.program.create'],
+            ['guard_name' => 'web', 'name' => 'admin.program.edit'],
+            ['guard_name' => 'web', 'name' => 'admin.program.delete'],
             // Period
-            ['guard_name' => 'web', 'name' => 'period.index'],
-            ['guard_name' => 'web', 'name' => 'period.create'],
-            ['guard_name' => 'web', 'name' => 'period.edit'],
-            ['guard_name' => 'web', 'name' => 'period.show'],
-            ['guard_name' => 'web', 'name' => 'period.delete'],
+            ['guard_name' => 'web', 'name' => 'admin.period.index'],
+            ['guard_name' => 'web', 'name' => 'admin.period.create'],
+            ['guard_name' => 'web', 'name' => 'admin.period.edit'],
+            ['guard_name' => 'web', 'name' => 'admin.period.delete'],
             // Coach
-            ['guard_name' => 'web', 'name' => 'coach.index'],
-            ['guard_name' => 'web', 'name' => 'coach.create'],
-            ['guard_name' => 'web', 'name' => 'coach.edit'],
-            ['guard_name' => 'web', 'name' => 'coach.show'],
-            ['guard_name' => 'web', 'name' => 'coach.delete'],
+            ['guard_name' => 'web', 'name' => 'admin.coach.index'],
+            ['guard_name' => 'web', 'name' => 'admin.coach.create'],
+            ['guard_name' => 'web', 'name' => 'admin.coach.edit'],
+            ['guard_name' => 'web', 'name' => 'admin.coach.show'],
+            ['guard_name' => 'web', 'name' => 'admin.coach.delete'],
             // Student
-            ['guard_name' => 'web', 'name' => 'student.index'],
-            ['guard_name' => 'web', 'name' => 'student.create'],
-            ['guard_name' => 'web', 'name' => 'student.edit'],
-            ['guard_name' => 'web', 'name' => 'student.show'],
-            ['guard_name' => 'web', 'name' => 'student.delete'],
+            ['guard_name' => 'web', 'name' => 'admin.student.index'],
+            ['guard_name' => 'web', 'name' => 'admin.student.create'],
+            ['guard_name' => 'web', 'name' => 'admin.student.edit'],
+            ['guard_name' => 'web', 'name' => 'admin.student.show'],
+            ['guard_name' => 'web', 'name' => 'admin.student.delete'],
             // Registration Student
-            ['guard_name' => 'web', 'name' => 'student-program.index'],
-            ['guard_name' => 'web', 'name' => 'student-program.create'],
-            ['guard_name' => 'web', 'name' => 'student-program.edit'],
-            ['guard_name' => 'web', 'name' => 'student-program.show'],
-            ['guard_name' => 'web', 'name' => 'student-program.delete'],
+            ['guard_name' => 'web', 'name' => 'admin.student-program.index'],
+            ['guard_name' => 'web', 'name' => 'admin.student-program.create'],
+            ['guard_name' => 'web', 'name' => 'admin.student-program.edit'],
+            ['guard_name' => 'web', 'name' => 'admin.student-program.show'],
+            ['guard_name' => 'web', 'name' => 'admin.student-program.delete'],
+            ['guard_name' => 'web', 'name' => 'admin.student-program.payment'],
             // Training
-            ['guard_name' => 'web', 'name' => 'training.index'],
-            ['guard_name' => 'web', 'name' => 'training.create'],
-            ['guard_name' => 'web', 'name' => 'training.edit'],
-            ['guard_name' => 'web', 'name' => 'training.show'],
-            ['guard_name' => 'web', 'name' => 'training.delete'],
+            ['guard_name' => 'web', 'name' => 'admin.training.index'],
+            ['guard_name' => 'web', 'name' => 'admin.training.create'],
+            ['guard_name' => 'web', 'name' => 'admin.training.edit'],
+            ['guard_name' => 'web', 'name' => 'admin.training.show'],
+            ['guard_name' => 'web', 'name' => 'admin.training.delete'],
+            ['guard_name' => 'web', 'name' => 'admin.training.generate'],
+            ['guard_name' => 'web', 'name' => 'admin.training.attendance'],
+            ['guard_name' => 'web', 'name' => 'admin.training.assessment'],
             // Macth event
-            ['guard_name' => 'web', 'name' => 'match-event.index'],
-            ['guard_name' => 'web', 'name' => 'match-event.create'],
-            ['guard_name' => 'web', 'name' => 'match-event.edit'],
-            ['guard_name' => 'web', 'name' => 'match-event.show'],
-            ['guard_name' => 'web', 'name' => 'match-event.delete'],
+            ['guard_name' => 'web', 'name' => 'admin.match-event.index'],
+            ['guard_name' => 'web', 'name' => 'admin.match-event.create'],
+            ['guard_name' => 'web', 'name' => 'admin.match-event.edit'],
+            ['guard_name' => 'web', 'name' => 'admin.match-event.show'],
+            ['guard_name' => 'web', 'name' => 'admin.match-event.delete'],
+            ['guard_name' => 'web', 'name' => 'admin.match-event.generate'],
+            ['guard_name' => 'web', 'name' => 'admin.match-event.attendance'],
+            ['guard_name' => 'web', 'name' => 'admin.match-event.assessment'],
             // Report Student
-            ['guard_name' => 'web', 'name' => 'report-student.index'],
-            ['guard_name' => 'web', 'name' => 'report-student.create'],
-            ['guard_name' => 'web', 'name' => 'report-student.edit'],
-            ['guard_name' => 'web', 'name' => 'report-student.show'],
-            ['guard_name' => 'web', 'name' => 'report-student.delete'],
+            ['guard_name' => 'web', 'name' => 'admin.report-student.index'],
+            ['guard_name' => 'web', 'name' => 'admin.report-student.show'],
+            ['guard_name' => 'web', 'name' => 'admin.report-student.pdf'],
         ];
 
         foreach ($permissions as $key => $value) {
@@ -105,111 +105,116 @@ class UserSeeder extends Seeder
                 // Dashboard
                 $role->givePermissionTo('dashboard');
                 // Role
-                $role->givePermissionTo('role.index');
-                $role->givePermissionTo('role.create');
-                $role->givePermissionTo('role.edit');
-                $role->givePermissionTo('role.show');
-                $role->givePermissionTo('role.delete');
+                $role->givePermissionTo('admin.role.index');
+                $role->givePermissionTo('admin.role.create');
+                $role->givePermissionTo('admin.role.edit');
+                $role->givePermissionTo('admin.role.delete');
                 // User
-                $role->givePermissionTo('user.index');
-                $role->givePermissionTo('user.create');
-                $role->givePermissionTo('user.edit');
-                $role->givePermissionTo('user.show');
-                $role->givePermissionTo('user.delete');
+                $role->givePermissionTo('admin.user.index');
+                $role->givePermissionTo('admin.user.create');
+                $role->givePermissionTo('admin.user.edit');
+                $role->givePermissionTo('admin.user.delete');
                 // Bank Account
-                $role->givePermissionTo('bank-account.index');
-                $role->givePermissionTo('bank-account.create');
-                $role->givePermissionTo('bank-account.edit');
-                $role->givePermissionTo('bank-account.show');
-                $role->givePermissionTo('bank-account.delete');
+                $role->givePermissionTo('admin.bank-account.index');
+                $role->givePermissionTo('admin.bank-account.create');
+                $role->givePermissionTo('admin.bank-account.edit');
+                $role->givePermissionTo('admin.bank-account.delete');
                 // Program
-                $role->givePermissionTo('program.index');
-                $role->givePermissionTo('program.create');
-                $role->givePermissionTo('program.edit');
-                $role->givePermissionTo('program.show');
-                $role->givePermissionTo('program.delete');
+                $role->givePermissionTo('admin.program.index');
+                $role->givePermissionTo('admin.program.create');
+                $role->givePermissionTo('admin.program.edit');
+                $role->givePermissionTo('admin.program.delete');
                 // Period
-                $role->givePermissionTo('period.index');
-                $role->givePermissionTo('period.create');
-                $role->givePermissionTo('period.edit');
-                $role->givePermissionTo('period.show');
-                $role->givePermissionTo('period.delete');
+                $role->givePermissionTo('admin.period.index');
+                $role->givePermissionTo('admin.period.create');
+                $role->givePermissionTo('admin.period.edit');
+                $role->givePermissionTo('admin.period.delete');
                 // Coach
-                $role->givePermissionTo('coach.index');
-                $role->givePermissionTo('coach.create');
-                $role->givePermissionTo('coach.edit');
-                $role->givePermissionTo('coach.show');
-                $role->givePermissionTo('coach.delete');
+                $role->givePermissionTo('admin.coach.index');
+                $role->givePermissionTo('admin.coach.create');
+                $role->givePermissionTo('admin.coach.edit');
+                $role->givePermissionTo('admin.coach.show');
+                $role->givePermissionTo('admin.coach.delete');
                 // Student
-                $role->givePermissionTo('student.index');
-                $role->givePermissionTo('student.create');
-                $role->givePermissionTo('student.edit');
-                $role->givePermissionTo('student.show');
-                $role->givePermissionTo('student.delete');
+                $role->givePermissionTo('admin.student.index');
+                $role->givePermissionTo('admin.student.create');
+                $role->givePermissionTo('admin.student.edit');
+                $role->givePermissionTo('admin.student.show');
+                $role->givePermissionTo('admin.student.delete');
                 // Registration
-                $role->givePermissionTo('student-program.index');
-                $role->givePermissionTo('student-program.create');
-                $role->givePermissionTo('student-program.edit');
-                $role->givePermissionTo('student-program.show');
-                $role->givePermissionTo('student-program.delete');
+                $role->givePermissionTo('admin.student-program.index');
+                $role->givePermissionTo('admin.student-program.create');
+                $role->givePermissionTo('admin.student-program.edit');
+                $role->givePermissionTo('admin.student-program.show');
+                $role->givePermissionTo('admin.student-program.delete');
+                $role->givePermissionTo('admin.student-program.payment');
                 // Training
-                $role->givePermissionTo('training.index');
-                $role->givePermissionTo('training.create');
-                $role->givePermissionTo('training.edit');
-                $role->givePermissionTo('training.show');
-                $role->givePermissionTo('training.delete');
+                $role->givePermissionTo('admin.training.index');
+                $role->givePermissionTo('admin.training.create');
+                $role->givePermissionTo('admin.training.edit');
+                $role->givePermissionTo('admin.training.show');
+                $role->givePermissionTo('admin.training.delete');
+                $role->givePermissionTo('admin.training.generate');
+                $role->givePermissionTo('admin.training.attendance');
+                $role->givePermissionTo('admin.training.assessment');
                 // Match Event
-                $role->givePermissionTo('match-event.index');
-                $role->givePermissionTo('match-event.create');
-                $role->givePermissionTo('match-event.edit');
-                $role->givePermissionTo('match-event.show');
-                $role->givePermissionTo('match-event.delete');
+                $role->givePermissionTo('admin.match-event.index');
+                $role->givePermissionTo('admin.match-event.create');
+                $role->givePermissionTo('admin.match-event.edit');
+                $role->givePermissionTo('admin.match-event.show');
+                $role->givePermissionTo('admin.match-event.delete');
+                $role->givePermissionTo('admin.match-event.generate');
+                $role->givePermissionTo('admin.match-event.attendance');
+                $role->givePermissionTo('admin.match-event.assessment');
                 // Report Student
-                $role->givePermissionTo('report-student.index');
-                $role->givePermissionTo('report-student.create');
-                $role->givePermissionTo('report-student.edit');
-                $role->givePermissionTo('report-student.show');
-                $role->givePermissionTo('report-student.delete');
+                $role->givePermissionTo('admin.report-student.index');
+                $role->givePermissionTo('admin.report-student.show');
+                $role->givePermissionTo('admin.report-student.pdf');
             }
             if ($role->name === 'Admin') {
                 // Dashboard
                 $role->givePermissionTo('dashboard');
                 // Coach
-                $role->givePermissionTo('coach.index');
-                $role->givePermissionTo('coach.create');
-                $role->givePermissionTo('coach.edit');
-                $role->givePermissionTo('coach.show');
-                $role->givePermissionTo('coach.delete');
+                $role->givePermissionTo('admin.coach.index');
+                $role->givePermissionTo('admin.coach.create');
+                $role->givePermissionTo('admin.coach.edit');
+                $role->givePermissionTo('admin.coach.show');
+                $role->givePermissionTo('admin.coach.delete');
                 // Student
-                $role->givePermissionTo('student.index');
-                $role->givePermissionTo('student.create');
-                $role->givePermissionTo('student.edit');
-                $role->givePermissionTo('student.show');
-                $role->givePermissionTo('student.delete');
+                $role->givePermissionTo('admin.student.index');
+                $role->givePermissionTo('admin.student.create');
+                $role->givePermissionTo('admin.student.edit');
+                $role->givePermissionTo('admin.student.show');
+                $role->givePermissionTo('admin.student.delete');
                 // Registration
-                $role->givePermissionTo('student-program.index');
-                $role->givePermissionTo('student-program.create');
-                $role->givePermissionTo('student-program.edit');
-                $role->givePermissionTo('student-program.show');
-                $role->givePermissionTo('student-program.delete');
+                $role->givePermissionTo('admin.student-program.index');
+                $role->givePermissionTo('admin.student-program.create');
+                $role->givePermissionTo('admin.student-program.edit');
+                $role->givePermissionTo('admin.student-program.show');
+                $role->givePermissionTo('admin.student-program.delete');
+                $role->givePermissionTo('admin.student-program.payment');
                 // Training
-                $role->givePermissionTo('training.index');
-                $role->givePermissionTo('training.create');
-                $role->givePermissionTo('training.edit');
-                $role->givePermissionTo('training.show');
-                $role->givePermissionTo('training.delete');
+                $role->givePermissionTo('admin.training.index');
+                $role->givePermissionTo('admin.training.create');
+                $role->givePermissionTo('admin.training.edit');
+                $role->givePermissionTo('admin.training.show');
+                $role->givePermissionTo('admin.training.delete');
+                $role->givePermissionTo('admin.training.generate');
+                $role->givePermissionTo('admin.training.attendance');
+                $role->givePermissionTo('admin.training.assessment');
                 // Match Event
-                $role->givePermissionTo('match-event.index');
-                $role->givePermissionTo('match-event.create');
-                $role->givePermissionTo('match-event.edit');
-                $role->givePermissionTo('match-event.show');
-                $role->givePermissionTo('match-event.delete');
+                $role->givePermissionTo('admin.match-event.index');
+                $role->givePermissionTo('admin.match-event.create');
+                $role->givePermissionTo('admin.match-event.edit');
+                $role->givePermissionTo('admin.match-event.show');
+                $role->givePermissionTo('admin.match-event.delete');
+                $role->givePermissionTo('admin.match-event.generate');
+                $role->givePermissionTo('admin.match-event.attendance');
+                $role->givePermissionTo('admin.match-event.assessment');
                 // Report Student
-                $role->givePermissionTo('report-student.index');
-                $role->givePermissionTo('report-student.create');
-                $role->givePermissionTo('report-student.edit');
-                $role->givePermissionTo('report-student.show');
-                $role->givePermissionTo('report-student.delete');
+                $role->givePermissionTo('admin.report-student.index');
+                $role->givePermissionTo('admin.report-student.show');
+                $role->givePermissionTo('admin.report-student.pdf');
             }
             if ($role->name === 'Leader') {
                 // Dashboard
