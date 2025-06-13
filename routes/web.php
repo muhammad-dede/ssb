@@ -7,11 +7,9 @@ Route::get('/', function () {
     return 'Home';
 })->name('home');
 
-Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Dashboard
+    Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
     // Role
     Route::resource('role', App\Http\Controllers\RoleController::class)->except(['show']);
     // User

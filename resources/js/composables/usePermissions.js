@@ -18,10 +18,22 @@ export default function usePermissions() {
         return list.some((p) => permissions.value.includes(p));
     };
 
+    // ✅ Cek jika user memiliki role tertentu
+    const hasRole = (targetRole) => {
+        return role.value === targetRole;
+    };
+
+    // ✅ Cek jika user memiliki salah satu dari beberapa role
+    const hasAnyRole = (...roles) => {
+        return roles.includes(role.value);
+    };
+
     return {
         permissions,
         role,
         can,
         canAny,
+        hasRole,
+        hasAnyRole,
     };
 }
