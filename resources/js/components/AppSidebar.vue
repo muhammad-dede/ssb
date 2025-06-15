@@ -128,6 +128,21 @@ const studentDataMenu = [
         permission: "student-menu",
     },
 ];
+
+const studentActivityMenu = [
+    {
+        title: "Latihan",
+        href: "/student/training",
+        icon: Clock,
+        permission: "student-menu",
+    },
+    {
+        title: "Pertandingan",
+        href: "/student/match-event",
+        icon: SlidersHorizontal,
+        permission: "student-menu",
+    },
+];
 </script>
 
 <template>
@@ -189,6 +204,11 @@ const studentDataMenu = [
                 v-if="canAny('student-menu')"
                 group-label="Data"
                 :items="studentDataMenu"
+            />
+            <NavMain
+                v-if="canAny('student-menu')"
+                group-label="Aktifitas"
+                :items="studentActivityMenu"
             />
         </SidebarContent>
 

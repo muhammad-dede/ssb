@@ -9,13 +9,11 @@ use App\Enums\StatusPayment;
 use App\Enums\StatusPeriod;
 use App\Enums\StatusProgram;
 use App\Enums\StatusStudentProgram;
-use App\Enums\Variant;
 use App\Http\Controllers\Controller;
 use App\Models\Bank;
 use App\Models\BankAccount;
 use App\Models\Period;
 use App\Models\Program;
-use App\Models\Student;
 use App\Models\StudentProgram;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
@@ -30,51 +28,28 @@ class StudentProgramController extends Controller
     use HasPermissionCheck;
 
     // Enums
-    protected $variants = [];
-    protected $status_student_programs = [];
-    protected $status_billings = [];
-    protected $status_payments = [];
     protected $payment_methods = [];
     // Models
     protected $student;
     protected $period_active;
-    protected $periods = [];
-    protected $programs = [];
-    protected $students = [];
     protected $bank_accounts = [];
     protected $banks = [];
     // Validation
     protected $attributes = [
-        'program_code' => 'Program Yang Diikuti',
-        'period_id' => 'Periode Yang Diikuti',
-        // Payment
-        'amount' => 'Jumlah Pembayaran',
-        'payment_date' => 'Tanggal Pembayaran',
-        'method' => 'Metode Pembayaran',
         'receiver_id' => 'Bank Tujuan',
         'sender_bank_code' => 'Bank Pengirim',
         'sender_account_number' => 'No Rekening Pengirim',
         'sender_account_holder_name' => 'Atas Nama Pengirim',
         'proof_file' => 'Bukti Transfer',
         'reference_number' => 'No Referensi',
-        'notes' => 'Catatan',
-        'status' => 'Status',
     ];
 
     public function __construct()
     {
-        // Enums
-        $this->variants = Variant::options();
-        $this->status_student_programs = StatusStudentProgram::options();
-        $this->status_billings = StatusBilling::options();
-        $this->status_payments = StatusPayment::options();
         $this->payment_methods = PaymentMethod::options();
         // Models
         $this->student = Auth::user()?->student;
         $this->period_active = Period::where('status', StatusPeriod::ACTIVE)->first() ?? null;
-        $this->periods = Period::orderBy('id', 'desc')->get();
-        $this->programs = Program::where('status', StatusProgram::ACTIVE)->get();
-        $this->students = Student::orderBy('id', 'desc')->get();
         $this->bank_accounts = BankAccount::with(['bank'])->where('status', StatusBankAccount::ACTIVE)->get();
         $this->banks = Bank::all();
     }
@@ -169,6 +144,7 @@ class StudentProgramController extends Controller
             $student_age = Carbon::parse($this->student->date_of_birth)->age;
             $program = Program::where('age_min', '<=', $student_age)
                 ->where('age_max', '>=', $student_age)
+                ->where('status', StatusProgram::ACTIVE)
                 ->latest()->firstOrFail();
             $student_program = StudentProgram::create([
                 'student_id' => $this->student?->id,
@@ -230,6 +206,22 @@ class StudentProgramController extends Controller
     }
 
     /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
@@ -284,6 +276,7 @@ class StudentProgramController extends Controller
             $student_age = Carbon::parse($this->student->date_of_birth)->age;
             $program = Program::where('age_min', '<=', $student_age)
                 ->where('age_max', '>=', $student_age)
+                ->where('status', StatusProgram::ACTIVE)
                 ->latest()->firstOrFail();
             $bank_account = BankAccount::findOrFail($request->receiver_id);
             $payment_data = [
