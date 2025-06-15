@@ -43,7 +43,7 @@ class EnsureStudentController extends Controller
     public function create()
     {
         $user = Auth::user();
-        return Inertia::render('student/ensure-student/Create', [
+        return Inertia::render('student/ensure/Create', [
             'dominant_foots' => $this->dominant_foots,
             'genders' => $this->genders,
             'user' => $user,
