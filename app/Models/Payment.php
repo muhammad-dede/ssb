@@ -13,7 +13,6 @@ class Payment extends Model
     protected $table = 'payment';
 
     protected $guarded = [];
-    protected $appends = ['proof_file_url'];
 
     protected function casts(): array
     {
@@ -21,6 +20,25 @@ class Payment extends Model
             'method' => PaymentMethod::class,
             'status' => StatusPayment::class,
         ];
+    }
+
+    protected $appends = ['proof_file_url', 'can_confirm', 'can_edit'];
+
+    public function getProofFileUrlAttribute(): ?string
+    {
+        return ($this->proof_file && Storage::disk('public')->exists($this->proof_file))
+            ? asset('storage/' . $this->proof_file)
+            : null;
+    }
+
+    public function getCanConfirmAttribute(): bool
+    {
+        return $this->status === StatusPayment::PENDING;
+    }
+
+    public function getCanEditAttribute(): bool
+    {
+        return $this->status !== StatusPayment::PAID;
     }
 
     public function billing(): BelongsTo
@@ -36,12 +54,5 @@ class Payment extends Model
     public function senderBank(): BelongsTo
     {
         return $this->belongsTo(Bank::class, 'sender_bank_code', 'code');
-    }
-
-    public function getProofFileUrlAttribute(): ?string
-    {
-        return ($this->proof_file && Storage::disk('public')->exists($this->proof_file))
-            ? asset('storage/' . $this->proof_file)
-            : null;
     }
 }

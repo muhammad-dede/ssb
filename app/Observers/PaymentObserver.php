@@ -32,17 +32,17 @@ class PaymentObserver
         }
 
         // Default status untuk StudentProgram
-        $statusStudentProgram = StatusStudentProgram::INACTIVE;
+        $statusStudentProgram = StatusStudentProgram::UNREGISTERED;
 
         // Update billing status dan tentukan status student program
         switch ($payment->status) {
             case StatusPayment::PAID:
                 $billing->update(['status' => StatusBilling::PAID]);
-                $statusStudentProgram = StatusStudentProgram::ACTIVE;
+                $statusStudentProgram = StatusStudentProgram::REGISTERED;
                 break;
 
             case StatusPayment::PENDING:
-                $billing->update(['status' => StatusBilling::PAID]);
+                $billing->update(['status' => StatusBilling::UNPAID]);
                 break;
 
             case StatusPayment::UNPAID:
@@ -56,11 +56,11 @@ class PaymentObserver
                 break;
 
             case StatusPayment::EXPIRED:
-                $billing->update(['status' => StatusBilling::OVERDUE]);
+                $billing->update(['status' => StatusBilling::CANCELLED]);
                 break;
 
             case StatusPayment::CANCELLED:
-                $billing->update(['status' => StatusBilling::UNPAID]);
+                $billing->update(['status' => StatusBilling::CANCELLED]);
                 break;
         }
 

@@ -55,9 +55,6 @@ import Payment from "./Payment.vue";
 const { can } = usePermissions();
 
 const props = defineProps({
-    variants: Object,
-    status_student_programs: Object,
-    status_billings: Object,
     status_payments: Object,
     payment_methods: Object,
     bank_accounts: Object,
@@ -77,36 +74,10 @@ const destroy = () => {
     );
 };
 
-const getStatusLabel = (status) => {
-    if (!status) return "-";
-    const found = props.status_student_programs?.find(
-        (item) => item.value === status
-    );
-    return found?.label?.toUpperCase() ?? "-";
-};
-
-const getStatusBillingLabel = (status) => {
-    if (!status) return "-";
-    const found = props.status_billings?.find((item) => item.value === status);
-    return found?.label?.toUpperCase() ?? "-";
-};
-
-const getStatusPaymentLabel = (status) => {
-    if (!status) return "-";
-    const found = props.status_payments?.find((item) => item.value === status);
-    return found?.label?.toUpperCase() ?? "-";
-};
-
 const getPaymentMethodLabel = (method) => {
     if (!method) return "-";
     const found = props.payment_methods?.find((item) => item.value === method);
     return found?.label?.toUpperCase() ?? "-";
-};
-
-const getVariant = (status) => {
-    if (!status) return "outline";
-    const found = props.variants?.find((item) => item.value === status);
-    return found?.label ?? "outline";
 };
 
 const dateFormat = (date) => {
@@ -271,15 +242,11 @@ const breadcrumbs = [
                                     />
                                     <Badge
                                         :variant="
-                                            getVariant(student_program?.status)
+                                            student_program?.status_variant
                                         "
                                         class="py-2 px-3 rounded-full h-fit"
                                     >
-                                        {{
-                                            getStatusLabel(
-                                                student_program?.status
-                                            )
-                                        }}
+                                        {{ student_program?.status_label }}
                                     </Badge>
                                 </div>
                                 <InfoItem
@@ -297,28 +264,12 @@ const breadcrumbs = [
                                 Informasi Tagihan
                             </h5>
                             <div class="grid divide-y divide-gray-100">
-                                <div class="flex justify-between items-center">
-                                    <InfoItem
-                                        label="Invoice"
-                                        :value="`${student_program?.billing?.invoice}`"
-                                        :icon="CreditCard"
-                                        background
-                                    />
-                                    <Badge
-                                        :variant="
-                                            getVariant(
-                                                student_program?.billing?.status
-                                            )
-                                        "
-                                        class="py-2 px-3 rounded-full h-fit"
-                                    >
-                                        {{
-                                            getStatusBillingLabel(
-                                                student_program?.billing?.status
-                                            )
-                                        }}
-                                    </Badge>
-                                </div>
+                                <InfoItem
+                                    label="Invoice"
+                                    :value="`${student_program?.billing?.invoice}`"
+                                    :icon="CreditCard"
+                                    background
+                                />
                                 <InfoItem
                                     label="Biaya Pendaftaran"
                                     :value="`${currency(
@@ -347,33 +298,15 @@ const breadcrumbs = [
                                 v-if="student_program?.billing?.payment"
                                 class="grid divide-y divide-gray-100"
                             >
-                                <div class="flex justify-between items-center">
-                                    <InfoItem
-                                        label="Jumlah Yang Dibayarkan"
-                                        :value="`${currency(
-                                            student_program?.billing?.payment
-                                                ?.amount
-                                        )}`"
-                                        :icon="CircleDollarSign"
-                                        background
-                                    />
-                                    <Badge
-                                        :variant="
-                                            getVariant(
-                                                student_program?.billing
-                                                    ?.payment?.status
-                                            )
-                                        "
-                                        class="py-2 px-3 rounded-full h-fit"
-                                    >
-                                        {{
-                                            getStatusPaymentLabel(
-                                                student_program?.billing
-                                                    ?.payment?.status
-                                            )
-                                        }}
-                                    </Badge>
-                                </div>
+                                <InfoItem
+                                    label="Jumlah Yang Dibayarkan"
+                                    :value="`${currency(
+                                        student_program?.billing?.payment
+                                            ?.amount
+                                    )}`"
+                                    :icon="CircleDollarSign"
+                                    background
+                                />
                                 <InfoItem
                                     label="Tanggal Bayar"
                                     :value="`${dateFormat(
@@ -444,7 +377,7 @@ const breadcrumbs = [
                                 <div
                                     v-if="
                                         student_program?.billing?.payment
-                                            ?.status === 'PENDING'
+                                            ?.can_confirm
                                     "
                                     class="pt-4"
                                 >

@@ -5,16 +5,10 @@ import MainContent from "@/components/MainContent.vue";
 import { Card, CardContent } from "@/components/ui/card/index";
 import { Button } from "@/components/ui/button/index";
 import {
-    Phone,
     Calendar,
-    MapPinCheck,
-    IdCard,
     MoreHorizontal,
     Trash2,
-    Pencil,
     Undo2,
-    Ruler,
-    Weight,
     Bookmark,
     BookOpenCheck,
     CircleDollarSign,
@@ -30,7 +24,6 @@ import HeadingGroup from "@/components/HeadingGroup.vue";
 import Heading from "@/components/Heading.vue";
 import InfoItem from "@/components/InfoItem.vue";
 import { ref } from "vue";
-import usePermissions from "@/composables/usePermissions";
 import Lightbox from "@/components/Lightbox.vue";
 import { Badge } from "@/components/ui/badge/index";
 import {
@@ -49,16 +42,9 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import PaymentStatus from "./PaymentStatus.vue";
 import Payment from "./Payment.vue";
 
-const { can } = usePermissions();
-
 const props = defineProps({
-    variants: Object,
-    status_student_programs: Object,
-    status_billings: Object,
-    status_payments: Object,
     payment_methods: Object,
     bank_accounts: Object,
     banks: Object,
@@ -70,43 +56,17 @@ const showConfirmDelete = ref(false);
 const destroy = () => {
     showConfirmDelete.value = false;
     router.delete(
-        route("admin.student-program.destroy", props.student_program?.id),
+        route("student.student-program.destroy", props.student_program?.id),
         {
             preserveScroll: true,
         }
     );
 };
 
-const getStatusLabel = (status) => {
-    if (!status) return "-";
-    const found = props.status_student_programs?.find(
-        (item) => item.value === status
-    );
-    return found?.label?.toUpperCase() ?? "-";
-};
-
-const getStatusBillingLabel = (status) => {
-    if (!status) return "-";
-    const found = props.status_billings?.find((item) => item.value === status);
-    return found?.label?.toUpperCase() ?? "-";
-};
-
-const getStatusPaymentLabel = (status) => {
-    if (!status) return "-";
-    const found = props.status_payments?.find((item) => item.value === status);
-    return found?.label?.toUpperCase() ?? "-";
-};
-
 const getPaymentMethodLabel = (method) => {
     if (!method) return "-";
     const found = props.payment_methods?.find((item) => item.value === method);
     return found?.label?.toUpperCase() ?? "-";
-};
-
-const getVariant = (status) => {
-    if (!status) return "outline";
-    const found = props.variants?.find((item) => item.value === status);
-    return found?.label ?? "outline";
 };
 
 const dateFormat = (date) => {
@@ -132,8 +92,8 @@ const togglePhoto = () => {
 
 const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Registrasi", href: "/admin/student-program" },
-    { title: "Detail", href: "/admin/student-program/show" },
+    { title: "Registrasi", href: "/student/student-program" },
+    { title: "Detail", href: "/student/student-program/show" },
 ];
 </script>
 
@@ -153,33 +113,16 @@ const breadcrumbs = [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                            v-if="can('admin.student-program.index')"
-                            asChild
-                        >
-                            <Link :href="route('admin.student-program.index')">
+                        <DropdownMenuItem asChild>
+                            <Link
+                                :href="route('student.student-program.index')"
+                            >
                                 <Undo2 class="text-yellow-500" />
                                 Kembali
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                            v-if="can('admin.student-program.edit')"
-                            asChild
-                        >
-                            <Link
-                                :href="
-                                    route(
-                                        'admin.student-program.edit',
-                                        student_program.id
-                                    )
-                                "
-                            >
-                                <Pencil class="text-green-500" />
-                                Ubah Data
-                            </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                            v-if="can('admin.student-program.delete')"
+                            v-if="student_program.can_delete"
                             @select="showConfirmDelete = true"
                         >
                             <Trash2 class="text-red-500" />
@@ -190,72 +133,6 @@ const breadcrumbs = [
             </HeadingGroup>
             <div class="flex flex-col lg:flex-row gap-4">
                 <div class="h-fit w-full lg:w-[50%] xl:w-[60%]">
-                    <Card>
-                        <CardContent>
-                            <h5 class="text-sm font-bold text-gray-500 mb-4">
-                                Informasi Siswa
-                            </h5>
-                            <div class="grid divide-y divide-gray-100">
-                                <InfoItem
-                                    :label="
-                                        student_program.student
-                                            ?.national_id_number
-                                    "
-                                    :value="student_program.student?.name"
-                                    :icon="IdCard"
-                                />
-                                <InfoItem
-                                    label="Tempat Lahir"
-                                    :value="
-                                        student_program.student?.place_of_birth
-                                    "
-                                    :icon="MapPinCheck"
-                                    background
-                                />
-                                <InfoItem
-                                    label="Tanggal Lahir"
-                                    :value="
-                                        dateFormat(
-                                            student_program.student
-                                                ?.date_of_birth
-                                        )
-                                    "
-                                    :icon="Calendar"
-                                    background
-                                />
-                                <InfoItem
-                                    label="Alamat"
-                                    :value="student_program.student?.address"
-                                    :icon="MapPinCheck"
-                                    background
-                                />
-                                <InfoItem
-                                    label="Telepon"
-                                    :value="student_program.student?.phone"
-                                    :icon="Phone"
-                                    background
-                                />
-                                <InfoItem
-                                    label="Tinggi Badan"
-                                    :value="`${
-                                        student_program.student.height_cm ?? '-'
-                                    } Centimeter`"
-                                    :icon="Ruler"
-                                    background
-                                />
-                                <InfoItem
-                                    label="Berat Badan"
-                                    :value="`${
-                                        student_program.student.weight_kg ?? '-'
-                                    } Kg`"
-                                    :icon="Weight"
-                                    background
-                                />
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-                <div class="h-fit w-full lg:w-[50%] xl:w-[40%] space-y-4">
                     <Card>
                         <CardContent>
                             <h5 class="text-sm font-bold text-gray-500 mb-4">
@@ -271,15 +148,11 @@ const breadcrumbs = [
                                     />
                                     <Badge
                                         :variant="
-                                            getVariant(student_program?.status)
+                                            student_program?.status_variant
                                         "
                                         class="py-2 px-3 rounded-full h-fit"
                                     >
-                                        {{
-                                            getStatusLabel(
-                                                student_program?.status
-                                            )
-                                        }}
+                                        {{ student_program?.status_label }}
                                     </Badge>
                                 </div>
                                 <InfoItem
@@ -288,37 +161,12 @@ const breadcrumbs = [
                                     :icon="Bookmark"
                                     background
                                 />
-                            </div>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardContent>
-                            <h5 class="text-sm font-bold text-gray-500 mb-4">
-                                Informasi Tagihan
-                            </h5>
-                            <div class="grid divide-y divide-gray-100">
-                                <div class="flex justify-between items-center">
-                                    <InfoItem
-                                        label="Invoice"
-                                        :value="`${student_program?.billing?.invoice}`"
-                                        :icon="CreditCard"
-                                        background
-                                    />
-                                    <Badge
-                                        :variant="
-                                            getVariant(
-                                                student_program?.billing?.status
-                                            )
-                                        "
-                                        class="py-2 px-3 rounded-full h-fit"
-                                    >
-                                        {{
-                                            getStatusBillingLabel(
-                                                student_program?.billing?.status
-                                            )
-                                        }}
-                                    </Badge>
-                                </div>
+                                <InfoItem
+                                    label="Invoice"
+                                    :value="`${student_program?.billing?.invoice}`"
+                                    :icon="CreditCard"
+                                    background
+                                />
                                 <InfoItem
                                     label="Biaya Pendaftaran"
                                     :value="`${currency(
@@ -338,6 +186,8 @@ const breadcrumbs = [
                             </div>
                         </CardContent>
                     </Card>
+                </div>
+                <div class="h-fit w-full lg:w-[50%] xl:w-[40%] space-y-4">
                     <Card>
                         <CardContent>
                             <h5 class="text-sm font-bold text-gray-500 mb-4">
@@ -347,33 +197,15 @@ const breadcrumbs = [
                                 v-if="student_program?.billing?.payment"
                                 class="grid divide-y divide-gray-100"
                             >
-                                <div class="flex justify-between items-center">
-                                    <InfoItem
-                                        label="Jumlah Yang Dibayarkan"
-                                        :value="`${currency(
-                                            student_program?.billing?.payment
-                                                ?.amount
-                                        )}`"
-                                        :icon="CircleDollarSign"
-                                        background
-                                    />
-                                    <Badge
-                                        :variant="
-                                            getVariant(
-                                                student_program?.billing
-                                                    ?.payment?.status
-                                            )
-                                        "
-                                        class="py-2 px-3 rounded-full h-fit"
-                                    >
-                                        {{
-                                            getStatusPaymentLabel(
-                                                student_program?.billing
-                                                    ?.payment?.status
-                                            )
-                                        }}
-                                    </Badge>
-                                </div>
+                                <InfoItem
+                                    label="Jumlah Yang Dibayarkan"
+                                    :value="`${currency(
+                                        student_program?.billing?.payment
+                                            ?.amount
+                                    )}`"
+                                    :icon="CircleDollarSign"
+                                    background
+                                />
                                 <InfoItem
                                     label="Tanggal Bayar"
                                     :value="`${dateFormat(
@@ -436,7 +268,8 @@ const breadcrumbs = [
                                 <InfoItem
                                     label="Catatan"
                                     :value="
-                                        student_program?.billing?.payment?.notes
+                                        student_program?.billing?.payment
+                                            ?.notes ?? '-'
                                     "
                                     :icon="NotebookPen"
                                     background
@@ -444,27 +277,17 @@ const breadcrumbs = [
                                 <div
                                     v-if="
                                         student_program?.billing?.payment
-                                            ?.status === 'PENDING'
+                                            ?.method === 'TRANSFER' &&
+                                        student_program?.billing?.payment
+                                            ?.can_edit
                                     "
                                     class="pt-4"
                                 >
-                                    <PaymentStatus
-                                        label="Konfirmasi Pembayaran"
-                                        :student_program="student_program"
-                                        :status_payments="status_payments"
-                                        :bank_accounts="bank_accounts"
-                                        :banks="banks"
-                                        :payment_methods="payment_methods"
-                                    />
-                                </div>
-                                <div v-else class="pt-4">
                                     <Payment
                                         label="Ubah Pembayaran"
                                         :student_program="student_program"
-                                        :status_payments="status_payments"
                                         :bank_accounts="bank_accounts"
                                         :banks="banks"
-                                        :payment_methods="payment_methods"
                                     />
                                 </div>
                             </div>
@@ -483,10 +306,8 @@ const breadcrumbs = [
                                 <Payment
                                     label="Bayar"
                                     :student_program="student_program"
-                                    :status_payments="status_payments"
                                     :bank_accounts="bank_accounts"
                                     :banks="banks"
-                                    :payment_methods="payment_methods"
                                 />
                             </div>
                         </CardContent>

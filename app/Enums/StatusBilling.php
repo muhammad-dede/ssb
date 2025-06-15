@@ -7,7 +7,7 @@ enum StatusBilling: string
     case UNPAID = 'UNPAID';
     case PAID = 'PAID';
     case PARTIAL = 'PARTIAL';
-    case OVERDUE = 'OVERDUE';
+    case CANCELLED = 'CANCELLED';
 
     public function label(): string
     {
@@ -15,7 +15,7 @@ enum StatusBilling: string
             self::UNPAID => 'Belum Bayar',
             self::PAID => 'Sudah Bayar',
             self::PARTIAL => 'Cicil',
-            self::OVERDUE => 'Jatuh Tempo',
+            self::CANCELLED => 'Batal',
         };
     }
 

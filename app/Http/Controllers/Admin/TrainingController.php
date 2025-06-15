@@ -278,7 +278,7 @@ class TrainingController extends Controller
                 fn($query) =>
                 $query->where('period_id', $training->period_id)
                     ->where('program_code', $training->program_code)
-                    ->where('status', StatusStudentProgram::ACTIVE)
+                    ->where('status', StatusStudentProgram::REGISTERED)
             )->get();
             foreach ($students as $student) {
                 $training->attendances()->updateOrCreate([

@@ -45,10 +45,6 @@ import HeadingGroup from "@/components/HeadingGroup.vue";
 import Heading from "@/components/Heading.vue";
 
 const props = defineProps({
-    variants: Object,
-    status_payments: Object,
-    status_billings: Object,
-    status_student_programs: Object,
     period_active: Object,
     student_programs: Object,
     search_term: String,
@@ -97,35 +93,6 @@ const shouldRegisterNow = computed(() => {
     });
     return !hasActivePeriod;
 });
-
-const getStatusLabel = (student_program) => {
-    if (!student_program) return "-";
-    const isActive = student_program.status === "ACTIVE";
-    const source = isActive
-        ? props.status_student_programs
-        : student_program.billing?.status !== "PAID"
-        ? props.status_billings
-        : props.status_payments;
-    const status = isActive
-        ? student_program.status
-        : student_program.billing?.status !== "PAID"
-        ? student_program.billing?.status
-        : student_program.billing?.payment?.status;
-    const found = source?.find((item) => item.value === status);
-    return found?.label?.toUpperCase() ?? "-";
-};
-
-const getStatusVariant = (student_program) => {
-    if (!student_program) return "outline";
-    const isActive = student_program.status === "ACTIVE";
-    const status = isActive
-        ? student_program.status
-        : student_program.billing?.status !== "PAID"
-        ? student_program.billing?.status
-        : student_program.billing?.payment?.status;
-    const found = props.variants?.find((item) => item.value === status);
-    return found?.label ?? "outline";
-};
 
 const confirmDelete = (studentProgram) => {
     studentProgramToDelete.value = studentProgram;
@@ -220,8 +187,8 @@ const breadcrumbs = [
                                     {{ item.program?.name }}
                                 </TableCell>
                                 <TableCell>
-                                    <Badge :variant="getStatusVariant(item)">
-                                        {{ getStatusLabel(item) }}
+                                    <Badge :variant="item.status_variant">
+                                        {{ item.status_label }}
                                     </Badge>
                                 </TableCell>
                                 <TableCell class="text-center">
@@ -253,20 +220,8 @@ const breadcrumbs = [
                                                     Detail
                                                 </Link>
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem asChild>
-                                                <Link
-                                                    :href="
-                                                        route(
-                                                            'student.student-program.edit',
-                                                            item.id
-                                                        )
-                                                    "
-                                                >
-                                                    Ubah
-                                                </Link>
-                                            </DropdownMenuItem>
                                             <DropdownMenuItem
-                                                v-if="item.status !== 'ACTIVE'"
+                                                v-if="item.can_delete"
                                                 @select="
                                                     () => confirmDelete(item)
                                                 "

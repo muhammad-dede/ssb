@@ -293,7 +293,7 @@ class MatchEventController extends Controller
                 fn($query) =>
                 $query->where('period_id', $match_event->period_id)
                     ->where('program_code', $match_event->program_code)
-                    ->where('status', StatusStudentProgram::ACTIVE)
+                    ->where('status', StatusStudentProgram::REGISTERED)
             )->get();
             foreach ($students as $student) {
                 $match_event->attendances()->updateOrCreate([

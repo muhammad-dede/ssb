@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('student_id')->nullable()->index();
             $table->string('program_code', 20)->nullable()->index();
             $table->unsignedBigInteger('period_id')->nullable()->index();
-            $table->string('status')->nullable()->default('INACTIVE');
+            $table->string('status')->nullable()->default('UNREGISTERED');
             $table->timestamps();
 
             $table->foreign('student_id')->references('id')->on('student')->onDelete('cascade');

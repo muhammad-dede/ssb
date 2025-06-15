@@ -4,14 +4,14 @@ namespace App\Enums;
 
 enum StatusStudentProgram: string
 {
-    case ACTIVE = 'ACTIVE';
-    case INACTIVE = 'INACTIVE';
+    case UNREGISTERED = 'UNREGISTERED';
+    case REGISTERED = 'REGISTERED';
 
     public function label(): string
     {
         return match ($this) {
-            self::ACTIVE => 'Aktif',
-            self::INACTIVE => 'Nonaktif',
+            self::UNREGISTERED => 'Belum Terdaftar',
+            self::REGISTERED => 'Terdaftar',
         };
     }
 

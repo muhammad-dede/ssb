@@ -23,7 +23,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class StudentProgramController extends Controller
@@ -108,10 +107,6 @@ class StudentProgramController extends Controller
             ->withQueryString();
 
         return Inertia::render('student/student-program/Index', [
-            'variants' => $this->variants,
-            'status_payments' => $this->status_payments,
-            'status_billings' => $this->status_billings,
-            'status_student_programs' => $this->status_student_programs,
             'period_active' => $this->period_active,
             'student_programs' => $student_programs,
             'search_term' => $search,
@@ -179,19 +174,19 @@ class StudentProgramController extends Controller
                 'student_id' => $this->student?->id,
                 'program_code' => $program->code,
                 'period_id' => $this->period_active->id,
-                'status' => StatusStudentProgram::INACTIVE,
+                'status' => StatusStudentProgram::UNREGISTERED,
             ]);
             $billing = $student_program->billing()->create([
                 'amount' => $program->registration_fee ?? 0,
                 'due_date' => now()->addDays(7),
-                'status' => $is_payment ? StatusBilling::PAID : StatusBilling::UNPAID,
+                'status' => StatusBilling::UNPAID,
             ]);
             if ($is_payment) {
                 $bank_account = BankAccount::findOrFail($request->receiver_id);
                 $payment_data = [
                     'amount' => $program->registration_fee ?? 0,
                     'payment_date' => now(),
-                    'method' => "TRANSFER",
+                    'method' => PaymentMethod::from("TRANSFER"),
                     'receiver_bank_code' => $bank_account->bank_code,
                     'receiver_account_number' => $bank_account->account_number,
                     'receiver_account_holder_name' => $bank_account->account_holder_name,
@@ -209,7 +204,7 @@ class StudentProgramController extends Controller
                 $billing->payment()->create($payment_data);
             }
             DB::commit();
-            return redirect()->route('student.student-program.index')->with('success', 'Registrasi berhasil');
+            return redirect()->route('student.student-program.show', $student_program->id)->with('success', 'Registrasi berhasil');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -223,16 +218,105 @@ class StudentProgramController extends Controller
     {
         $this->checkPermission('student-menu');
 
-        $student_program = StudentProgram::with(['student', 'program', 'period', 'billing', 'billing.payment', 'billing.payment.receiverBank', 'billing.payment.senderBank'])->where('student_id', $this->student?->id)->where('id', $id)->firstOrFail();
+        $student_program = StudentProgram::with(['student', 'program', 'period', 'billing', 'billing.payment', 'billing.payment.receiverBank', 'billing.payment.senderBank'])
+            ->where('student_id', $this->student?->id)->where('id', $id)
+            ->firstOrFail();
         return Inertia::render('student/student-program/Show', [
-            'variants' => $this->variants,
-            'status_student_programs' => $this->status_student_programs,
-            'status_billings' => $this->status_billings,
-            'status_payments' => $this->status_payments,
             'payment_methods' => $this->payment_methods,
             'bank_accounts' => $this->bank_accounts,
             'banks' => $this->banks,
             'student_program' => $student_program,
         ]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        $this->checkPermission('student-menu');
+
+        try {
+            DB::beginTransaction();
+            $student_program = StudentProgram::where('student_id', $this->student?->id)
+                ->where('id', $id)
+                ->firstOrFail();;
+            if ($student_program->billing?->payment?->proof_file && Storage::disk('public')->exists($student_program->billing?->payment?->proof_file)) {
+                Storage::disk('public')->delete($student_program->billing?->payment?->proof_file);
+            }
+            $student_program->delete();
+            DB::commit();
+            return redirect()->route('student.student-program.index')->with('success', 'Registrasi berhasil dihapus');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+    }
+
+    /**
+     * Store or update a resource in storage.
+     */
+    public function payment(Request $request, string $student_program_id)
+    {
+        $this->checkPermission('student-menu');
+
+        $student_program = StudentProgram::with(['billing', 'billing.payment', 'student'])
+            ->where('student_id', $this->student?->id)->where('id', $student_program_id)
+            ->firstOrFail();
+        $is_edit = filled($student_program->billing->payment);
+        $existing_payment = $student_program->billing->payment;
+        $request->validate([
+            'receiver_id' => ['required', 'exists:bank_account,id'],
+            'sender_bank_code' => ['required', 'exists:bank,code'],
+            'sender_account_number' => ['required', 'string', 'max:255'],
+            'sender_account_holder_name' => ['required', 'string', 'max:255'],
+            'proof_file' => [
+                !$is_edit ? 'required' : 'nullable',
+                'image',
+                'mimes:jpg,jpeg,png',
+                'max:2048'
+            ],
+            'reference_number' => ['nullable', 'string', 'max:255'],
+        ], [], $this->attributes);
+
+        try {
+            DB::beginTransaction();
+            $student_age = Carbon::parse($this->student->date_of_birth)->age;
+            $program = Program::where('age_min', '<=', $student_age)
+                ->where('age_max', '>=', $student_age)
+                ->latest()->firstOrFail();
+            $bank_account = BankAccount::findOrFail($request->receiver_id);
+            $payment_data = [
+                'amount' => $is_edit ? $existing_payment->amount : $program->registration_fee,
+                'payment_date' => $is_edit ? $existing_payment->payment_date : now(),
+                'method' => $is_edit ? $existing_payment->method : PaymentMethod::from("TRANSFER"),
+                'receiver_bank_code' => $bank_account->bank_code,
+                'receiver_account_number' => $bank_account->account_number,
+                'receiver_account_holder_name' => $bank_account->account_holder_name,
+                'sender_bank_code' => $request->sender_bank_code,
+                'sender_account_number' => $request->sender_account_number,
+                'sender_account_holder_name' => strtoupper($request->sender_account_holder_name),
+                'reference_number' => $request->reference_number,
+                'notes' => $is_edit ? $existing_payment->notes : null,
+                'status' => $is_edit ? $existing_payment->status : StatusPayment::PENDING,
+            ];
+            if ($request->hasFile('proof_file')) {
+                if ($is_edit && $existing_payment?->proof_file && Storage::disk('public')->exists($existing_payment->proof_file)) {
+                    Storage::disk('public')->delete($existing_payment->proof_file);
+                }
+                $path = Storage::disk('public')->put('payment', $request->file('proof_file'));
+                $payment_data['proof_file'] = $path;
+            }
+            if ($is_edit) {
+                $existing_payment->update($payment_data);
+            } else {
+                $student_program->billing?->payment()->create($payment_data);
+            }
+            DB::commit();
+            return redirect()->back()->with('success', 'Pembayaran berhasil disimpan');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
     }
 }

@@ -107,9 +107,6 @@ class StudentProgramController extends Controller
             ->withQueryString();
 
         return Inertia::render('admin/student-program/Index', [
-            'variants' => $this->variants,
-            'status_student_programs' => $this->status_student_programs,
-            'status_billings' => $this->status_billings,
             'periods' => $this->periods,
             'student_programs' => $student_programs,
             'period_id_term' => $period_id,
@@ -156,7 +153,7 @@ class StudentProgramController extends Controller
                 'student_id' => $request->student_id,
                 'program_code' => $request->program_code,
                 'period_id' => $request->period_id,
-                'status' => StatusStudentProgram::INACTIVE,
+                'status' => StatusStudentProgram::UNREGISTERED,
             ]);
             $registration_fee = Program::where('code', $request->program_code)
                 ->pluck('registration_fee')

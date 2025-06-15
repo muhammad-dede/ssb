@@ -71,7 +71,7 @@ class ReportStudentController extends Controller
                     $q->where('name', 'like', '%' . $search . '%');
                 });
             })
-            ->where('status', StatusStudentProgram::ACTIVE)
+            ->where('status', StatusStudentProgram::REGISTERED)
             ->orderBy('id', $filter)
             ->paginate($per_page)
             ->withQueryString();

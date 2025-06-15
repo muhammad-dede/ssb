@@ -6,6 +6,8 @@ enum Variant: string
 {
     case ACTIVE = 'ACTIVE';
     case INACTIVE = 'INACTIVE';
+    case UNREGISTERED = 'UNREGISTERED';
+    case REGISTERED = 'REGISTERED';
     case UNPAID = 'UNPAID';
     case PENDING = 'PENDING';
     case PAID = 'PAID';
@@ -13,13 +15,14 @@ enum Variant: string
     case EXPIRED = 'EXPIRED';
     case CANCELLED = 'CANCELLED';
     case PARTIAL = 'PARTIAL';
-    case OVERDUE = 'OVERDUE';
 
     public function label(): string
     {
         return match ($this) {
             self::ACTIVE => 'default',
             self::INACTIVE => 'destructive',
+            self::REGISTERED => 'default',
+            self::UNREGISTERED => 'destructive',
             self::UNPAID => 'secondary',
             self::PENDING => 'outline',
             self::PAID => 'default',
@@ -27,7 +30,6 @@ enum Variant: string
             self::EXPIRED => 'destructive',
             self::CANCELLED => 'outline',
             self::PARTIAL => 'outline',
-            self::OVERDUE => 'destructive',
         };
     }
 
