@@ -44,8 +44,6 @@ import usePermissions from "@/composables/usePermissions";
 const { can, canAny } = usePermissions();
 
 const props = defineProps({
-    variants: Object,
-    status_periods: Object,
     periods: Object,
     search_term: String,
     per_page_term: String,
@@ -94,18 +92,6 @@ const destroy = () => {
             periodToDelete.value = null;
         },
     });
-};
-
-const getStatusLabel = (status) => {
-    if (!status) return "-";
-    const found = props.status_periods?.find((item) => item.value === status);
-    return found?.label?.toUpperCase() ?? "-";
-};
-
-const getStatusVariant = (status) => {
-    if (!status) return "outline";
-    const found = props.variants?.find((item) => item.value === status);
-    return found?.label ?? "outline";
 };
 
 const dateFormat = (date) => {
@@ -185,12 +171,8 @@ const breadcrumbs = [
                                     {{ dateFormat(item.end_date) }}
                                 </TableCell>
                                 <TableCell>
-                                    <Badge
-                                        :variant="
-                                            getStatusVariant(item?.status)
-                                        "
-                                    >
-                                        {{ getStatusLabel(item?.status) }}
+                                    <Badge :variant="item.status_variant">
+                                        {{ item.status_label }}
                                     </Badge>
                                 </TableCell>
                                 <TableCell class="text-center">

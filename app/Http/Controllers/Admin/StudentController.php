@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\DominantFoot;
 use App\Enums\Gender;
-use App\Enums\StatusStudentProgram;
 use App\Enums\StatusUser;
-use App\Enums\Variant;
 use App\Http\Controllers\Controller;
 use App\Models\Student;
 use App\Models\User;
@@ -22,8 +20,6 @@ class StudentController extends Controller
     use HasPermissionCheck;
 
     // Enums
-    protected $variants = [];
-    protected $status_student_programs = [];
     protected $genders = [];
     protected $dominant_foots = [];
     // Validation
@@ -45,8 +41,6 @@ class StudentController extends Controller
 
     public function __construct()
     {
-        $this->variants = Variant::options();
-        $this->status_student_programs = StatusStudentProgram::options();
         $this->genders = Gender::options();
         $this->dominant_foots = DominantFoot::options();
     }
@@ -81,9 +75,6 @@ class StudentController extends Controller
         });
 
         return Inertia::render('admin/student/Index', [
-            'variants' => $this->variants,
-            'status_student_programs' => $this->status_student_programs,
-            'genders' => $this->genders,
             'students' => $students,
             'search_term' => $search,
             'per_page_term' => $per_page,
@@ -174,10 +165,6 @@ class StudentController extends Controller
         $student = Student::with(['user', 'programPeriodActive'])->findOrFail($id);
         $student->photo_url = asset('storage/' . $student->photo);
         return Inertia::render('admin/student/Show', [
-            'variants' => $this->variants,
-            'status_student_programs' => $this->status_student_programs,
-            'genders' => $this->genders,
-            'dominant_foots' => $this->dominant_foots,
             'student' => $student,
         ]);
     }

@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('training_assessment', function (Blueprint $table) {
+        Schema::create('student_match_event_assessment', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('training_id')->nullable()->index();
-            $table->unsignedBigInteger('student_id')->nullable()->index();
+            $table->unsignedBigInteger('student_match_event_id')->nullable()->index();
             $table->string('assessment_code')->nullable()->index();
             $table->double('value')->nullable();
             $table->timestamps();
 
-            $table->foreign('training_id')->references('id')->on('training')->onDelete('cascade');
-            $table->foreign('student_id')->references('id')->on('student')->onDelete('cascade');
+            $table->foreign('student_match_event_id')->references('id')->on('student_match_event')->onDelete('cascade');
             $table->foreign('assessment_code')->references('code')->on('assessment')->onDelete('set null')->onUpdate('cascade');
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('training_assessment');
+        Schema::dropIfExists('student_match_event_assessment');
     }
 };

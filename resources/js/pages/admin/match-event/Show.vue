@@ -44,13 +44,10 @@ import TabAssessment from "./show/TabAssessment.vue";
 const { can } = usePermissions();
 
 const props = defineProps({
-    variants: Object,
-    status_match_events: Object,
     attendances: Object,
     assessments: Object,
     match_event: Object,
-    match_event_attendances: Object,
-    match_event_assessments: Object,
+    student_match_events: Object,
 });
 
 const showConfirmDelete = ref(false);
@@ -169,24 +166,18 @@ const breadcrumbs = [
                     <TabsTrigger value="assessments">Penilaian</TabsTrigger>
                 </TabsList>
                 <TabsContent value="match_event">
-                    <TabMatchEvent
-                        :variants="variants"
-                        :status_match_events="status_match_events"
-                        :match_event="match_event"
-                    />
+                    <TabMatchEvent :match_event="match_event" />
                 </TabsContent>
                 <TabsContent value="attendances">
                     <TabAttendance
                         :attendances="attendances"
-                        :match_event="match_event"
-                        :match_event_attendances="match_event_attendances"
+                        :student_match_events="student_match_events"
                     />
                 </TabsContent>
                 <TabsContent value="assessments">
                     <TabAssessment
                         :assessments="assessments"
-                        :match_event="match_event"
-                        :match_event_assessments="match_event_assessments"
+                        :student_match_events="student_match_events"
                     />
                 </TabsContent>
             </Tabs>

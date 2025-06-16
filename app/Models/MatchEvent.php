@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\StatusMatchEvent;
+use App\Enums\Variant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,6 +21,18 @@ class MatchEvent extends Model
         ];
     }
 
+    protected $appends = ['status_label', 'status_variant'];
+
+    public function getStatusLabelAttribute(): string
+    {
+        return strtoupper($this->status->label());
+    }
+
+    public function getStatusVariantAttribute(): string
+    {
+        return Variant::tryFrom($this->status->value)?->label() ?? 'outline';
+    }
+
     public function period(): BelongsTo
     {
         return $this->belongsTo(Period::class, 'period_id', 'id');
@@ -35,13 +48,8 @@ class MatchEvent extends Model
         return $this->belongsTo(Coach::class, 'coach_id', 'id');
     }
 
-    public function attendances(): HasMany
+    public function studentMatchEvents(): HasMany
     {
-        return $this->hasMany(MatchEventAttendance::class, 'match_event_id', 'id');
-    }
-
-    public function assessments(): HasMany
-    {
-        return $this->hasMany(MatchEventAssessment::class, 'match_event_id', 'id');
+        return $this->hasMany(StudentMatchEvent::class, 'match_event_id', 'id');
     }
 }

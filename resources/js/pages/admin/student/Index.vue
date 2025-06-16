@@ -43,9 +43,6 @@ import usePermissions from "@/composables/usePermissions";
 const { can, canAny } = usePermissions();
 
 const props = defineProps({
-    variants: Object,
-    status_student_programs: Object,
-    genders: Object,
     students: Object,
     search_term: String,
     per_page_term: String,
@@ -96,26 +93,6 @@ const destroy = () => {
             studentToDelete.value = null;
         },
     });
-};
-
-const getGenderLabel = (gender) => {
-    if (!gender) return "-";
-    const found = props.genders?.find((item) => item.value === gender);
-    return found?.label ?? "-";
-};
-
-const getStatusLabel = (status) => {
-    if (!status) return "Belum Terdaftar Diperiode Ini";
-    const found = props.status_student_programs?.find(
-        (item) => item.value === status
-    );
-    return found?.label?.toUpperCase() ?? "Belum Terdaftar Diperiode Ini";
-};
-
-const getStatusVariant = (status) => {
-    if (!status) return "outline";
-    const found = props.variants?.find((item) => item.value === status);
-    return found?.label ?? "outline";
 };
 
 const getAge = (birthDate) => {
@@ -187,7 +164,7 @@ const breadcrumbs = [
                                     {{ item.name }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ getGenderLabel(item?.gender) }}
+                                    {{ item.gender_label }}
                                 </TableCell>
                                 <TableCell>
                                     {{ getAge(item?.date_of_birth) }}
@@ -195,17 +172,15 @@ const breadcrumbs = [
                                 <TableCell>
                                     <Badge
                                         :variant="
-                                            getStatusVariant(
-                                                item.program_period_active
-                                                    ?.status
-                                            )
+                                            item.program_period_active
+                                                ?.status_variant ??
+                                            'destructive'
                                         "
                                     >
                                         {{
-                                            getStatusLabel(
-                                                item.program_period_active
-                                                    ?.status
-                                            )
+                                            item.program_period_active
+                                                ?.status_label ??
+                                            "BELUM TERDAFTAR"
                                         }}
                                     </Badge>
                                 </TableCell>

@@ -9,7 +9,6 @@ use App\Enums\StatusPeriod;
 use App\Enums\StatusProgram;
 use App\Enums\StatusStudentProgram;
 use App\Enums\StatusTraining;
-use App\Enums\Variant;
 use App\Http\Controllers\Controller;
 use App\Models\Assessment;
 use App\Models\Coach;
@@ -17,8 +16,8 @@ use App\Models\Period;
 use App\Models\Program;
 use App\Models\Student;
 use App\Models\Training;
-use App\Models\TrainingAssessment;
-use App\Models\TrainingAttendance;
+use App\Models\StudentTraining;
+use App\Models\StudentTrainingAssessment;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +29,6 @@ class TrainingController extends Controller
     use HasPermissionCheck;
 
     // Enums
-    protected $variants = [];
     protected $status_trainings = [];
     protected $attendances = [];
     // Models
@@ -55,7 +53,6 @@ class TrainingController extends Controller
     public function __construct()
     {
         // Enums
-        $this->variants = Variant::options();
         $this->status_trainings = StatusTraining::options();
         $this->attendances = Attendance::options();
         // Models
@@ -99,8 +96,6 @@ class TrainingController extends Controller
             ->withQueryString();
 
         return Inertia::render('admin/training/Index', [
-            'variants' => $this->variants,
-            'status_trainings' => $this->status_trainings,
             'periods' => $this->periods,
             'trainings' => $trainings,
             'period_id_term' => $period_id,
@@ -173,16 +168,14 @@ class TrainingController extends Controller
         $this->checkPermission('admin.training.show');
 
         $training = Training::with(['period', 'program', 'coach'])->findOrFail($id);
-        $training_attendances = TrainingAttendance::with(['student'])->where('training_id', $training->id)->get();
-        $training_assessments = TrainingAssessment::with(['student', 'assessment'])->where('training_id', $training->id)->get();
+        $student_trainings = StudentTraining::with(['student', 'studentTrainingAssessments', 'studentTrainingAssessments.assessment'])
+            ->where('training_id', $training->id)
+            ->get();
         return Inertia::render('admin/training/Show', [
-            'variants' => $this->variants,
-            'status_trainings' => $this->status_trainings,
             'attendances' => $this->attendances,
             'assessments' => $this->assessments,
             'training' => $training,
-            'training_attendances' => $training_attendances,
-            'training_assessments' => $training_assessments,
+            'student_trainings' => $student_trainings,
         ]);
     }
 
@@ -281,20 +274,17 @@ class TrainingController extends Controller
                     ->where('status', StatusStudentProgram::REGISTERED)
             )->get();
             foreach ($students as $student) {
-                $training->attendances()->updateOrCreate([
+                $student_training = $training->studentTrainings()->updateOrCreate([
                     'training_id' => $training->id,
                     'student_id' => $student->id,
                 ]);
                 foreach ($this->assessments as $assessment) {
-                    $exists = $training->assessments()
-                        ->where('training_id', $training->id)
-                        ->where('student_id', $student->id)
+                    $exists = $student_training->studentTrainingAssessments()
                         ->where('assessment_code', $assessment->code)
                         ->exists();
                     if (!$exists) {
-                        $training->assessments()->create([
-                            'training_id' => $training->id,
-                            'student_id' => $student->id,
+                        $student_training->studentTrainingAssessments()->create([
+                            'student_training_id' => $student_training->id,
                             'assessment_code' => $assessment->code,
                             'value' => 0,
                         ]);
@@ -312,21 +302,18 @@ class TrainingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function attendance(Request $request, string $training_id)
+    public function attendance(Request $request)
     {
         $this->checkPermission('admin.training.attendance');
 
         try {
             DB::beginTransaction();
-            $training = Training::findOrFail($training_id);
             if (!empty($request->attendances)) {
                 foreach ($request->attendances as $value) {
-                    $training->attendances()
-                        ->where('student_id', $value['student_id'])
-                        ->update([
-                            'attendance' => $value['attendance'],
-                            'notes' => $value['notes'],
-                        ]);
+                    StudentTraining::where('id', $value['id'])->update([
+                        'attendance' => $value['attendance'],
+                        'notes' => $value['notes'],
+                    ]);
                 }
             }
             DB::commit();
@@ -340,21 +327,17 @@ class TrainingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function assessment(Request $request, string $training_id)
+    public function assessment(Request $request)
     {
         $this->checkPermission('admin.training.assessment');
 
         try {
             DB::beginTransaction();
-            $training = Training::findOrFail($training_id);
             if (!empty($request->assessments)) {
                 foreach ($request->assessments as $value) {
-                    $training->assessments()
-                        ->where('student_id', $value['student_id'])
-                        ->where('assessment_code', $value['assessment_code'])
-                        ->update([
-                            'value' => $value['value'],
-                        ]);
+                    StudentTrainingAssessment::where('id', $value['id'])->update([
+                        'value' => $value['value'],
+                    ]);
                 }
             }
             DB::commit();

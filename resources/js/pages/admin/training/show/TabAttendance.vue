@@ -18,8 +18,7 @@ const { can } = usePermissions();
 
 const props = defineProps({
     attendances: Object,
-    training_attendances: Object,
-    training: Object,
+    student_trainings: Object,
 });
 
 const isEdit = ref(false);
@@ -29,10 +28,12 @@ const form = useForm({
 });
 
 watch(
-    () => props.training_attendances,
+    () => props.student_trainings,
     (newVal) => {
         form.attendances = (newVal ?? []).map((item) => ({
+            id: item.id ?? null,
             student_id: item.student_id ?? null,
+            training_id: item.training_id ?? null,
             attendance: item.attendance ?? null,
             notes: item.notes ?? null,
         }));
@@ -41,15 +42,17 @@ watch(
 );
 
 const resetAttendance = () => {
-    form.attendances = (props.training_attendances ?? []).map((item) => ({
+    form.attendances = (props.student_trainings ?? []).map((item) => ({
+        id: item.id ?? null,
         student_id: item.student_id ?? null,
+        training_id: item.training_id ?? null,
         attendance: item.attendance ?? null,
         notes: item.notes ?? null,
     }));
 };
 
 const submit = () => {
-    form.post(route("admin.training.attendance", props.training?.id), {
+    form.post(route("admin.training.attendance"), {
         preserveScroll: true,
         preserveState: true,
         onFinish: () => {
@@ -76,18 +79,18 @@ const submit = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    <template v-if="training_attendances?.length > 0">
+                    <template v-if="student_trainings?.length > 0">
                         <TableRow
                             v-for="(
-                                training_attendance, index
-                            ) in training_attendances"
-                            :key="index"
+                                student_training, index
+                            ) in student_trainings"
+                            :key="student_training.id"
                         >
                             <TableCell class="font-medium">
                                 {{ index + 1 }}
                             </TableCell>
                             <TableCell class="font-semibold">
-                                {{ training_attendance.student?.name ?? "-" }}
+                                {{ student_training.student?.name ?? "-" }}
                             </TableCell>
                             <template
                                 v-for="attendance in attendances"
@@ -151,7 +154,7 @@ const submit = () => {
         <div
             v-if="
                 can('admin.training.attendance') &&
-                training_attendances?.length > 0
+                student_trainings?.length > 0
             "
             class="flex justify-end items-center"
         >

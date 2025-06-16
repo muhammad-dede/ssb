@@ -8,18 +8,19 @@ use App\Enums\StatusMatchEvent;
 use App\Enums\StatusPeriod;
 use App\Enums\StatusStudentProgram;
 use App\Enums\StatusTraining;
-use App\Enums\Variant;
 use App\Http\Controllers\Controller;
 use App\Models\Assessment;
 use App\Models\MatchEvent;
 use App\Models\MatchEventAssessment;
-use App\Models\MatchEventAttendance;
 use App\Models\Period;
 use App\Models\Program;
+use App\Models\StudentMatchEvent;
+use App\Models\StudentMatchEventAssessment;
 use App\Models\StudentProgram;
+use App\Models\StudentTraining;
+use App\Models\StudentTrainingAssessment;
 use App\Models\Training;
 use App\Models\TrainingAssessment;
-use App\Models\TrainingAttendance;
 use App\Traits\HasPermissionCheck;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -28,9 +29,6 @@ use Inertia\Inertia;
 class ReportStudentController extends Controller
 {
     use HasPermissionCheck;
-    // Enums
-    protected $variants = [];
-    protected $status_student_programs = [];
     // Models
     protected $period_active;
     protected $periods = [];
@@ -39,9 +37,6 @@ class ReportStudentController extends Controller
 
     public function __construct()
     {
-        // Enums
-        $this->variants = Variant::options();
-        $this->status_student_programs = StatusStudentProgram::options();
         // Models
         $this->period_active = Period::where('status', StatusPeriod::ACTIVE)->first() ?? null;
         $this->periods = Period::orderBy('id', 'desc')->get();
@@ -86,8 +81,6 @@ class ReportStudentController extends Controller
         });
 
         return Inertia::render('admin/report-student/Index', [
-            'variants' => $this->variants,
-            'status_student_programs' => $this->status_student_programs,
             'periods' => $this->periods,
             'programs' => $this->programs,
             'student_programs' => $student_programs,
@@ -131,13 +124,12 @@ class ReportStudentController extends Controller
 
     private function calculateReport($student_id, $period_id, $program_code)
     {
-        // ========== training_attendance_percentage ==========
+        // ========== Training ========== //
         $total_training = Training::where('period_id', $period_id)
             ->where('program_code', $program_code)
             ->where('status', StatusTraining::ACTIVE)
             ->count();
-
-        $training_present = TrainingAttendance::whereHas('training', function ($q) use ($period_id, $program_code) {
+        $training_present = StudentTraining::whereHas('training', function ($q) use ($period_id, $program_code) {
             $q->where('period_id', $period_id)
                 ->where('program_code', $program_code)
                 ->where('status', StatusTraining::ACTIVE);
@@ -145,33 +137,16 @@ class ReportStudentController extends Controller
             ->where('student_id', $student_id)
             ->where('attendance', Attendance::PRESENT)
             ->count();
-
         $training_attendance_percentage = $total_training > 0 ? round(($training_present / $total_training) * 100) : 0;
 
-        // ========== match_event_attendance_percentage ==========
-        $total_match_event = MatchEvent::where('period_id', $period_id)
-            ->where('program_code', $program_code)
-            ->where('status', StatusMatchEvent::ACTIVE)
-            ->count();
-
-        $match_event_present = MatchEventAttendance::whereHas('matchEvent', function ($q) use ($period_id, $program_code) {
-            $q->where('period_id', $period_id)
-                ->where('program_code', $program_code)
-                ->where('status', StatusMatchEvent::ACTIVE);
-        })
-            ->where('student_id', $student_id)
-            ->where('attendance', Attendance::PRESENT)
-            ->count();
-
-        $match_event_attendance_percentage = $total_match_event > 0 ? round(($match_event_present / $total_match_event) * 100) : 0;
-
-        // ========== training_scores ==========
-        $training_scores = TrainingAssessment::with('assessment')
-            ->where('student_id', $student_id)
-            ->whereHas('training', function ($q) use ($period_id, $program_code) {
-                $q->where('period_id', $period_id)
-                    ->where('program_code', $program_code)
-                    ->where('status', StatusTraining::ACTIVE);
+        $training_scores = StudentTrainingAssessment::with('assessment')
+            ->whereHas('studentTraining', function ($query) use ($student_id, $period_id, $program_code) {
+                $query->where('student_id', $student_id)
+                    ->whereHas('training', function ($q) use ($period_id, $program_code) {
+                        $q->where('period_id', $period_id)
+                            ->where('program_code', $program_code)
+                            ->where('status', StatusTraining::ACTIVE);
+                    });
             })
             ->get()
             ->groupBy('assessment_code')
@@ -183,24 +158,37 @@ class ReportStudentController extends Controller
                 ];
             })
             ->values();
-
         $training_avg_assessment = $training_scores->pluck('total_value')->avg() ?? 0;
-
         $training_scores->push([
             'code' => 'ATD',
             'name' => 'KEHADIRAN',
             'total_value' => $training_attendance_percentage,
         ]);
-
         $training_total_score = round(($training_attendance_percentage * 0.4) + ($training_avg_assessment * 0.6));
 
-        // ========== match_event_scores ==========
-        $match_event_scores = MatchEventAssessment::with('assessment')
+        // ========== Match Event ========== //
+        $total_match_event = MatchEvent::where('period_id', $period_id)
+            ->where('program_code', $program_code)
+            ->where('status', StatusTraining::ACTIVE)
+            ->count();
+        $match_event_present = StudentMatchEvent::whereHas('matchEvent', function ($q) use ($period_id, $program_code) {
+            $q->where('period_id', $period_id)
+                ->where('program_code', $program_code)
+                ->where('status', StatusTraining::ACTIVE);
+        })
             ->where('student_id', $student_id)
-            ->whereHas('matchEvent', function ($q) use ($period_id, $program_code) {
-                $q->where('period_id', $period_id)
-                    ->where('program_code', $program_code)
-                    ->where('status', StatusMatchEvent::ACTIVE);
+            ->where('attendance', Attendance::PRESENT)
+            ->count();
+        $match_event_attendance_percentage = $total_match_event > 0 ? round(($match_event_present / $total_match_event) * 100) : 0;
+
+        $match_event_scores = StudentMatchEventAssessment::with('assessment')
+            ->whereHas('studentMatchEvent', function ($query) use ($student_id, $period_id, $program_code) {
+                $query->where('student_id', $student_id)
+                    ->whereHas('matchEvent', function ($q) use ($period_id, $program_code) {
+                        $q->where('period_id', $period_id)
+                            ->where('program_code', $program_code)
+                            ->where('status', StatusTraining::ACTIVE);
+                    });
             })
             ->get()
             ->groupBy('assessment_code')
@@ -212,15 +200,12 @@ class ReportStudentController extends Controller
                 ];
             })
             ->values();
-
         $match_event_avg_assessment = $match_event_scores->pluck('total_value')->avg() ?? 0;
-
         $match_event_scores->push([
             'code' => 'ATD',
             'name' => 'KEHADIRAN',
             'total_value' => $match_event_attendance_percentage,
         ]);
-
         $match_event_total_score = round(($match_event_attendance_percentage * 0.4) + ($match_event_avg_assessment * 0.6));
 
         // ========== final_score (average of total training & match_event) ==========

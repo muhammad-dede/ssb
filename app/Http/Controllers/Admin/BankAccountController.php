@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\StatusBankAccount;
-use App\Enums\Variant;
 use App\Http\Controllers\Controller;
 use App\Models\Bank;
 use App\Models\BankAccount;
@@ -18,7 +17,6 @@ class BankAccountController extends Controller
     use HasPermissionCheck;
 
     // Enums
-    protected $variants = [];
     protected $status_bank_accounts = [];
     // Models
     protected $banks = [];
@@ -32,7 +30,6 @@ class BankAccountController extends Controller
 
     public function __construct()
     {
-        $this->variants = Variant::options();
         $this->status_bank_accounts = StatusBankAccount::options();
         $this->banks = Bank::all();
     }
@@ -63,8 +60,6 @@ class BankAccountController extends Controller
             ->withQueryString();
 
         return Inertia::render('admin/bank-account/Index', [
-            'variants' => $this->variants,
-            'status_bank_accounts' => $this->status_bank_accounts,
             'bank_accounts' => $bank_accounts,
             'search_term' => $search,
             'per_page_term' => $per_page,

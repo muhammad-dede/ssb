@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\StatusProgram;
-use App\Enums\Variant;
 use App\Http\Controllers\Controller;
 use App\Models\Program;
 use App\Traits\HasPermissionCheck;
@@ -17,7 +16,6 @@ class ProgramController extends Controller
     use HasPermissionCheck;
 
     // Enums
-    protected $variants = [];
     protected $status_programs = [];
     // Validation
     protected $attributes = [
@@ -32,7 +30,6 @@ class ProgramController extends Controller
 
     public function __construct()
     {
-        $this->variants = Variant::options();
         $this->status_programs = StatusProgram::options();
     }
 
@@ -61,8 +58,6 @@ class ProgramController extends Controller
             ->withQueryString();
 
         return Inertia::render('admin/program/Index', [
-            'variants' => $this->variants,
-            'status_programs' => $this->status_programs,
             'programs' => $programs,
             'search_term' => $search,
             'per_page_term' => $per_page,

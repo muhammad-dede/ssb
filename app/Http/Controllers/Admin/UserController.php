@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\StatusUser;
-use App\Enums\Variant;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Traits\HasPermissionCheck;
@@ -18,7 +17,6 @@ class UserController extends Controller
     use HasPermissionCheck;
 
     // Enums
-    protected $variants = [];
     protected $status_users = [];
     // Models
     protected $roles = [];
@@ -33,7 +31,6 @@ class UserController extends Controller
 
     public function __construct()
     {
-        $this->variants = Variant::options();
         $this->status_users = StatusUser::options();
         $this->roles = Role::whereNotIn('name', ['Super Admin', 'Student', 'Coach'])->get();
     }
@@ -67,8 +64,6 @@ class UserController extends Controller
             ->withQueryString();
 
         return Inertia::render('admin/user/Index', [
-            'variants' => $this->variants,
-            'status_users' => $this->status_users,
             'users' => $users,
             'search_term' => $search,
             'per_page_term' => $per_page,

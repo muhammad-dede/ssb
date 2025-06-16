@@ -43,8 +43,6 @@ import usePermissions from "@/composables/usePermissions";
 const { can, canAny } = usePermissions();
 
 const props = defineProps({
-    variants: Object,
-    status_programs: Object,
     programs: Object,
     search_term: String,
     per_page_term: String,
@@ -93,18 +91,6 @@ const destroy = () => {
             programToDelete.value = null;
         },
     });
-};
-
-const getStatusLabel = (status) => {
-    if (!status) return "-";
-    const found = props.status_programs?.find((item) => item.value === status);
-    return found?.label?.toUpperCase() ?? "-";
-};
-
-const getStatusVariant = (status) => {
-    if (!status) return "outline";
-    const found = props.variants?.find((item) => item.value === status);
-    return found?.label ?? "outline";
 };
 
 const currency = (number) => {
@@ -185,12 +171,8 @@ const breadcrumbs = [
                                     {{ currency(item.registration_fee) }}
                                 </TableCell>
                                 <TableCell>
-                                    <Badge
-                                        :variant="
-                                            getStatusVariant(item?.status)
-                                        "
-                                    >
-                                        {{ getStatusLabel(item?.status) }}
+                                    <Badge :variant="item.status_variant">
+                                        {{ item.status_label }}
                                     </Badge>
                                 </TableCell>
                                 <TableCell class="text-center">

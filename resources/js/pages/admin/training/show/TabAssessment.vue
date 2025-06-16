@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, computed } from "vue";
+import { ref, watch } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import {
     Table,
@@ -18,8 +18,7 @@ const { can } = usePermissions();
 
 const props = defineProps({
     assessments: Object,
-    training: Object,
-    training_assessments: Object,
+    student_trainings: Object,
 });
 
 const isEdit = ref(false);
@@ -29,71 +28,54 @@ const form = useForm({
 });
 
 watch(
-    () => props.training_assessments,
-    (newVal) => {
-        form.assessments = (newVal ?? []).map((item) => ({
-            student_id: item.student_id ?? null,
-            assessment_code: item.assessment_code ?? null,
-            value: item.value ?? 0,
-        }));
+    () => props.student_trainings,
+    (studentTrainings) => {
+        form.assessments = (studentTrainings ?? []).flatMap((st) => {
+            return (st.student_training_assessments ?? []).map((a) => ({
+                id: a.id,
+                student_training_id: st.id,
+                assessment_code: a.assessment_code,
+                value: a.value ?? 0,
+            }));
+        });
     },
-    { immediate: true, deep: true }
+    { immediate: true }
 );
 
 const resetAssessments = () => {
-    form.assessments = (props.training_assessments ?? []).map((item) => ({
-        student_id: item.student_id ?? null,
-        assessment_code: item.assessment_code ?? null,
-        value: item.value ?? 0,
-    }));
-};
-
-const groupedTrainingAssessments = computed(() => {
-    if (!props.training_assessments?.length) return [];
-    const grouped = {};
-    props.training_assessments.forEach((item) => {
-        const studentId = item.student_id;
-        if (!grouped[studentId]) {
-            grouped[studentId] = {
-                student: item.student,
-                student_id: studentId,
-                assessments: {},
-            };
-        }
-        grouped[studentId].assessments[item.assessment_code] = item.value || 0;
+    const studentTrainings = props.student_trainings ?? [];
+    form.assessments = studentTrainings.flatMap((st) => {
+        return (st.student_training_assessments ?? []).map((a) => ({
+            id: a.id,
+            student_training_id: st.id,
+            assessment_code: a.assessment_code,
+            value: a.value ?? 0,
+        }));
     });
-    return Object.values(grouped);
-});
-
-const getAssessmentValue = (studentId, assessmentCode) => {
-    const formData = form.assessments.find(
-        (item) =>
-            item.student_id === studentId &&
-            item.assessment_code === assessmentCode
-    );
-    return formData?.value ?? 0;
 };
 
-const updateAssessmentValue = (studentId, assessmentCode, value) => {
-    const numValue = value === "" ? 0 : parseInt(value) || 0;
-    const existingIndex = form.assessments.findIndex(
-        (item) =>
-            item.student_id === studentId &&
-            item.assessment_code === assessmentCode
+const getAssessmentValue = (studentTrainingId, assessmentCode) => {
+    const found = form.assessments.find(
+        (a) =>
+            a.student_training_id === studentTrainingId &&
+            a.assessment_code === assessmentCode
     );
-    if (existingIndex !== -1) {
-        form.assessments[existingIndex].value = numValue;
-    } else {
-        form.assessments.push({
-            student_id: studentId,
-            assessment_code: assessmentCode,
-            value: numValue,
-        });
+    return found?.value ?? 0;
+};
+
+const updateAssessmentValue = (studentTrainingId, assessmentCode, value) => {
+    const found = form.assessments.find(
+        (a) =>
+            a.student_training_id === studentTrainingId &&
+            a.assessment_code === assessmentCode
+    );
+    if (found) {
+        found.value = Number(value);
     }
 };
 
 const submit = () => {
-    form.post(route("admin.training.assessment", props.training?.id), {
+    form.post(route("admin.training.assessment"), {
         preserveScroll: true,
         preserveState: true,
         onFinish: () => {
@@ -119,19 +101,20 @@ const submit = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    <template v-if="groupedTrainingAssessments.length > 0">
+                    <template v-if="student_trainings.length > 0">
                         <TableRow
                             v-for="(
-                                student_assessment, index
-                            ) in groupedTrainingAssessments"
-                            :key="student_assessment.student_id"
+                                student_training, index
+                            ) in student_trainings"
+                            :key="student_training.id"
                         >
                             <TableCell class="font-medium">
                                 {{ index + 1 }}
                             </TableCell>
                             <TableCell class="font-semibold">
-                                {{ student_assessment.student?.name ?? "-" }}
+                                {{ student_training.student?.name ?? "-" }}
                             </TableCell>
+
                             <template
                                 v-for="assessment in assessments"
                                 :key="assessment.code"
@@ -139,24 +122,24 @@ const submit = () => {
                                 <TableCell>
                                     <Input
                                         type="number"
+                                        min="0"
+                                        :readonly="!isEdit"
+                                        class="border-none shadow-none"
                                         :model-value="
                                             getAssessmentValue(
-                                                student_assessment.student_id,
+                                                student_training.id,
                                                 assessment.code
                                             )
                                         "
                                         @update:model-value="
                                             (value) =>
                                                 updateAssessmentValue(
-                                                    student_assessment.student_id,
+                                                    student_training.id,
                                                     assessment.code,
                                                     value
                                                 )
                                         "
-                                        :name="`assessments[${student_assessment.student_id}][${assessment.code}]`"
-                                        class="border-none shadow-none"
-                                        min="0"
-                                        :readonly="!isEdit"
+                                        :name="`assessment[${student_training.id}][${assessment.code}]`"
                                     />
                                 </TableCell>
                             </template>
@@ -175,10 +158,10 @@ const submit = () => {
                 </TableBody>
             </Table>
         </div>
+
         <div
             v-if="
-                can('admin.training.assessment') &&
-                groupedTrainingAssessments.length > 0
+                can('admin.training.assessment') && student_trainings.length > 0
             "
             class="flex justify-end items-center"
         >

@@ -9,16 +9,15 @@ use App\Enums\StatusMatchEvent;
 use App\Enums\StatusPeriod;
 use App\Enums\StatusProgram;
 use App\Enums\StatusStudentProgram;
-use App\Enums\Variant;
 use App\Http\Controllers\Controller;
 use App\Models\Assessment;
 use App\Models\Coach;
 use App\Models\MatchEvent;
-use App\Models\MatchEventAssessment;
-use App\Models\MatchEventAttendance;
 use App\Models\Period;
 use App\Models\Program;
 use App\Models\Student;
+use App\Models\StudentMatchEvent;
+use App\Models\StudentMatchEventAssessment;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +29,6 @@ class MatchEventController extends Controller
     use HasPermissionCheck;
 
     // Enums
-    protected $variants = [];
     protected $status_match_events = [];
     protected $attendances = [];
     // Models
@@ -58,7 +56,6 @@ class MatchEventController extends Controller
     public function __construct()
     {
         // Enums
-        $this->variants = Variant::options();
         $this->status_match_events = StatusMatchEvent::options();
         $this->attendances = Attendance::options();
         // Models
@@ -102,8 +99,6 @@ class MatchEventController extends Controller
             ->withQueryString();
 
         return Inertia::render('admin/match-event/Index', [
-            'variants' => $this->variants,
-            'status_match_events' => $this->status_match_events,
             'periods' => $this->periods,
             'match_events' => $match_events,
             'period_id_term' => $period_id,
@@ -182,16 +177,14 @@ class MatchEventController extends Controller
         $this->checkPermission('admin.match-event.show');
 
         $match_event = MatchEvent::with(['period', 'program', 'coach'])->findOrFail($id);
-        $match_event_attendances = MatchEventAttendance::with(['student'])->where('match_event_id', $match_event->id)->get();
-        $match_event_assessments = MatchEventAssessment::with(['student', 'assessment'])->where('match_event_id', $match_event->id)->get();
+        $student_match_events = StudentMatchEvent::with(['student', 'studentMatchEventAssessments', 'studentMatchEventAssessments.assessment'])
+            ->where('match_event_id', $match_event->id)
+            ->get();
         return Inertia::render('admin/match-event/Show', [
-            'variants' => $this->variants,
-            'status_match_events' => $this->status_match_events,
             'attendances' => $this->attendances,
             'assessments' => $this->assessments,
             'match_event' => $match_event,
-            'match_event_attendances' => $match_event_attendances,
-            'match_event_assessments' => $match_event_assessments,
+            'student_match_events' => $student_match_events,
         ]);
     }
 
@@ -296,20 +289,17 @@ class MatchEventController extends Controller
                     ->where('status', StatusStudentProgram::REGISTERED)
             )->get();
             foreach ($students as $student) {
-                $match_event->attendances()->updateOrCreate([
+                $student_match_event = $match_event->studentMatchEvents()->updateOrCreate([
                     'match_event_id' => $match_event->id,
                     'student_id' => $student->id,
                 ]);
                 foreach ($this->assessments as $assessment) {
-                    $exists = $match_event->assessments()
-                        ->where('match_event_id', $match_event->id)
-                        ->where('student_id', $student->id)
+                    $exists = $student_match_event->studentMatchEventAssessments()
                         ->where('assessment_code', $assessment->code)
                         ->exists();
                     if (!$exists) {
-                        $match_event->assessments()->create([
-                            'match_event_id' => $match_event->id,
-                            'student_id' => $student->id,
+                        $student_match_event->studentMatchEventAssessments()->create([
+                            'student_match_event_id' => $student_match_event->id,
                             'assessment_code' => $assessment->code,
                             'value' => 0,
                         ]);
@@ -327,21 +317,18 @@ class MatchEventController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function attendance(Request $request, string $match_event_id)
+    public function attendance(Request $request)
     {
         $this->checkPermission('admin.match-event.attendance');
 
         try {
             DB::beginTransaction();
-            $match_event = MatchEvent::findOrFail($match_event_id);
             if (!empty($request->attendances)) {
                 foreach ($request->attendances as $value) {
-                    $match_event->attendances()
-                        ->where('student_id', $value['student_id'])
-                        ->update([
-                            'attendance' => $value['attendance'],
-                            'notes' => $value['notes'],
-                        ]);
+                    StudentMatchEvent::where('id', $value['id'])->update([
+                        'attendance' => $value['attendance'],
+                        'notes' => $value['notes'],
+                    ]);
                 }
             }
             DB::commit();
@@ -355,21 +342,17 @@ class MatchEventController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function assessment(Request $request, string $match_event_id)
+    public function assessment(Request $request)
     {
         $this->checkPermission('admin.match-event.assessment');
 
         try {
             DB::beginTransaction();
-            $match_event = MatchEvent::findOrFail($match_event_id);
             if (!empty($request->assessments)) {
                 foreach ($request->assessments as $value) {
-                    $match_event->assessments()
-                        ->where('student_id', $value['student_id'])
-                        ->where('assessment_code', $value['assessment_code'])
-                        ->update([
-                            'value' => $value['value'],
-                        ]);
+                    StudentMatchEventAssessment::where('id', $value['id'])->update([
+                        'value' => $value['value'],
+                    ]);
                 }
             }
             DB::commit();

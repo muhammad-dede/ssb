@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, computed } from "vue";
+import { ref, watch } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import {
     Table,
@@ -18,8 +18,7 @@ const { can } = usePermissions();
 
 const props = defineProps({
     assessments: Object,
-    match_event: Object,
-    match_event_assessments: Object,
+    student_match_events: Object,
 });
 
 const isEdit = ref(false);
@@ -29,71 +28,54 @@ const form = useForm({
 });
 
 watch(
-    () => props.match_event_assessments,
-    (newVal) => {
-        form.assessments = (newVal ?? []).map((item) => ({
-            student_id: item.student_id ?? null,
-            assessment_code: item.assessment_code ?? null,
-            value: item.value ?? 0,
-        }));
+    () => props.student_match_events,
+    (studentMatchEvents) => {
+        form.assessments = (studentMatchEvents ?? []).flatMap((st) => {
+            return (st.student_match_event_assessments ?? []).map((a) => ({
+                id: a.id,
+                student_match_event_id: st.id,
+                assessment_code: a.assessment_code,
+                value: a.value ?? 0,
+            }));
+        });
     },
-    { immediate: true, deep: true }
+    { immediate: true }
 );
 
 const resetAssessments = () => {
-    form.assessments = (props.match_event_assessments ?? []).map((item) => ({
-        student_id: item.student_id ?? null,
-        assessment_code: item.assessment_code ?? null,
-        value: item.value ?? 0,
-    }));
-};
-
-const groupedMatchEventAssessments = computed(() => {
-    if (!props.match_event_assessments?.length) return [];
-    const grouped = {};
-    props.match_event_assessments.forEach((item) => {
-        const studentId = item.student_id;
-        if (!grouped[studentId]) {
-            grouped[studentId] = {
-                student: item.student,
-                student_id: studentId,
-                assessments: {},
-            };
-        }
-        grouped[studentId].assessments[item.assessment_code] = item.value || 0;
+    const studentMatchEvents = props.student_match_events ?? [];
+    form.assessments = studentMatchEvents.flatMap((st) => {
+        return (st.student_match_event_assessments ?? []).map((a) => ({
+            id: a.id,
+            student_match_event_id: st.id,
+            assessment_code: a.assessment_code,
+            value: a.value ?? 0,
+        }));
     });
-    return Object.values(grouped);
-});
-
-const getAssessmentValue = (studentId, assessmentCode) => {
-    const formData = form.assessments.find(
-        (item) =>
-            item.student_id === studentId &&
-            item.assessment_code === assessmentCode
-    );
-    return formData?.value ?? 0;
 };
 
-const updateAssessmentValue = (studentId, assessmentCode, value) => {
-    const numValue = value === "" ? 0 : parseInt(value) || 0;
-    const existingIndex = form.assessments.findIndex(
-        (item) =>
-            item.student_id === studentId &&
-            item.assessment_code === assessmentCode
+const getAssessmentValue = (studentMatchEventId, assessmentCode) => {
+    const found = form.assessments.find(
+        (a) =>
+            a.student_match_event_id === studentMatchEventId &&
+            a.assessment_code === assessmentCode
     );
-    if (existingIndex !== -1) {
-        form.assessments[existingIndex].value = numValue;
-    } else {
-        form.assessments.push({
-            student_id: studentId,
-            assessment_code: assessmentCode,
-            value: numValue,
-        });
+    return found?.value ?? 0;
+};
+
+const updateAssessmentValue = (studentMatchEventId, assessmentCode, value) => {
+    const found = form.assessments.find(
+        (a) =>
+            a.student_match_event_id === studentMatchEventId &&
+            a.assessment_code === assessmentCode
+    );
+    if (found) {
+        found.value = Number(value);
     }
 };
 
 const submit = () => {
-    form.post(route("admin.match-event.assessment", props.match_event?.id), {
+    form.post(route("admin.match-event.assessment"), {
         preserveScroll: true,
         preserveState: true,
         onFinish: () => {
@@ -119,19 +101,20 @@ const submit = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    <template v-if="groupedMatchEventAssessments.length > 0">
+                    <template v-if="student_match_events.length > 0">
                         <TableRow
                             v-for="(
-                                student_assessment, index
-                            ) in groupedMatchEventAssessments"
-                            :key="student_assessment.student_id"
+                                student_match_event, index
+                            ) in student_match_events"
+                            :key="student_match_event.id"
                         >
                             <TableCell class="font-medium">
                                 {{ index + 1 }}
                             </TableCell>
                             <TableCell class="font-semibold">
-                                {{ student_assessment.student?.name ?? "-" }}
+                                {{ student_match_event.student?.name ?? "-" }}
                             </TableCell>
+
                             <template
                                 v-for="assessment in assessments"
                                 :key="assessment.code"
@@ -139,24 +122,24 @@ const submit = () => {
                                 <TableCell>
                                     <Input
                                         type="number"
+                                        min="0"
+                                        :readonly="!isEdit"
+                                        class="border-none shadow-none"
                                         :model-value="
                                             getAssessmentValue(
-                                                student_assessment.student_id,
+                                                student_match_event.id,
                                                 assessment.code
                                             )
                                         "
                                         @update:model-value="
                                             (value) =>
                                                 updateAssessmentValue(
-                                                    student_assessment.student_id,
+                                                    student_match_event.id,
                                                     assessment.code,
                                                     value
                                                 )
                                         "
-                                        :name="`assessments[${student_assessment.student_id}][${assessment.code}]`"
-                                        class="border-none shadow-none"
-                                        min="0"
-                                        :readonly="!isEdit"
+                                        :name="`assessment[${student_match_event.id}][${assessment.code}]`"
                                     />
                                 </TableCell>
                             </template>
@@ -175,10 +158,11 @@ const submit = () => {
                 </TableBody>
             </Table>
         </div>
+
         <div
             v-if="
                 can('admin.match-event.assessment') &&
-                groupedMatchEventAssessments.length > 0
+                student_match_events.length > 0
             "
             class="flex justify-end items-center"
         >

@@ -9,7 +9,6 @@ use App\Enums\StatusPayment;
 use App\Enums\StatusPeriod;
 use App\Enums\StatusProgram;
 use App\Enums\StatusStudentProgram;
-use App\Enums\Variant;
 use App\Http\Controllers\Controller;
 use App\Models\Bank;
 use App\Models\BankAccount;
@@ -30,9 +29,6 @@ class StudentProgramController extends Controller
     use HasPermissionCheck;
 
     // Enums
-    protected $variants = [];
-    protected $status_student_programs = [];
-    protected $status_billings = [];
     protected $status_payments = [];
     protected $payment_methods = [];
     // Models
@@ -64,9 +60,6 @@ class StudentProgramController extends Controller
     public function __construct()
     {
         // Enums
-        $this->variants = Variant::options();
-        $this->status_student_programs = StatusStudentProgram::options();
-        $this->status_billings = StatusBilling::options();
         $this->status_payments = StatusPayment::options();
         $this->payment_methods = PaymentMethod::options();
         // Models
@@ -180,9 +173,6 @@ class StudentProgramController extends Controller
 
         $student_program = StudentProgram::with(['student', 'program', 'period', 'billing', 'billing.payment', 'billing.payment.receiverBank', 'billing.payment.senderBank'])->findOrFail($id);
         return Inertia::render('admin/student-program/Show', [
-            'variants' => $this->variants,
-            'status_student_programs' => $this->status_student_programs,
-            'status_billings' => $this->status_billings,
             'status_payments' => $this->status_payments,
             'payment_methods' => $this->payment_methods,
             'bank_accounts' => $this->bank_accounts,

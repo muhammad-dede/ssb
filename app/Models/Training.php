@@ -48,13 +48,8 @@ class Training extends Model
         return $this->belongsTo(Coach::class, 'coach_id', 'id');
     }
 
-    public function attendances(): HasMany
+    public function studentTrainings(): HasMany
     {
-        return $this->hasMany(TrainingAttendance::class, 'training_id', 'id');
-    }
-
-    public function assessments(): HasMany
-    {
-        return $this->hasMany(TrainingAssessment::class, 'training_id', 'id');
+        return $this->hasMany(StudentTraining::class, 'training_id', 'id');
     }
 }

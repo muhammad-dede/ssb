@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\StatusUser;
+use App\Enums\Variant;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -51,6 +52,18 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
             'status' => StatusUser::class,
         ];
+    }
+
+    protected $appends = ['status_label', 'status_variant'];
+
+    public function getStatusLabelAttribute(): string
+    {
+        return strtoupper($this->status->label());
+    }
+
+    public function getStatusVariantAttribute(): string
+    {
+        return Variant::tryFrom($this->status->value)?->label() ?? 'outline';
     }
 
     public function coach(): HasOne

@@ -15,24 +15,8 @@ import {
 import InfoItem from "@/components/InfoItem.vue";
 
 const props = defineProps({
-    variants: Object,
-    status_match_events: Object,
     match_event: Object,
 });
-
-const getStatusLabel = (status) => {
-    if (!status) return "-";
-    const found = props.status_match_events?.find(
-        (item) => item.value === status
-    );
-    return found?.label?.toUpperCase() ?? "-";
-};
-
-const getVariant = (status) => {
-    if (!status) return "outline";
-    const found = props.variants?.find((item) => item.value === status);
-    return found?.label ?? "outline";
-};
 
 const dateFormat = (date) => {
     if (!date) return "-";
@@ -56,10 +40,10 @@ const dateFormat = (date) => {
                         background
                     />
                     <Badge
-                        :variant="getVariant(match_event?.status)"
+                        :variant="match_event?.status_variant"
                         class="py-2 px-3 rounded-full h-fit"
                     >
-                        {{ getStatusLabel(match_event?.status) }}
+                        {{ match_event?.status_label }}
                     </Badge>
                 </div>
                 <InfoItem

@@ -46,9 +46,6 @@ import {
 const { can } = usePermissions();
 
 const props = defineProps({
-    variants: Object,
-    status_coaches: Object,
-    genders: Object,
     coach: Object,
 });
 
@@ -63,24 +60,6 @@ const destroy = () => {
     router.delete(route("admin.coach.destroy", props.coach.id), {
         preserveScroll: true,
     });
-};
-
-const getGenderLabel = (gender) => {
-    if (!gender) return "-";
-    const found = props.genders?.find((item) => item.value === gender);
-    return found?.label ?? "-";
-};
-
-const getStatusLabel = (status) => {
-    if (!status) return "-";
-    const found = props.status_coaches?.find((item) => item.value === status);
-    return found?.label?.toUpperCase() ?? "-";
-};
-
-const getStatusVariant = (status) => {
-    if (!status) return "outline";
-    const found = props.variants?.find((item) => item.value === status);
-    return found?.label ?? "outline";
 };
 
 const dateFormat = (date) => {
@@ -163,10 +142,10 @@ const breadcrumbs = [
                                 </div>
                             </template>
                             <Badge
-                                :variant="getStatusVariant(coach?.status)"
+                                :variant="coach.status_variant"
                                 class="py-2 px-3 rounded-full h-fit"
                             >
-                                {{ getStatusLabel(coach?.status) }}
+                                {{ coach.status_label }}
                             </Badge>
                         </div>
                         <div class="grid divide-y divide-gray-100">
@@ -189,7 +168,7 @@ const breadcrumbs = [
                             />
                             <InfoItem
                                 label="Jenis Kelamin"
-                                :value="getGenderLabel(coach?.gender)"
+                                :value="coach?.gender_label"
                                 :icon="Mars"
                                 background
                             />

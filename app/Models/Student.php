@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\DominantFoot;
 use App\Enums\Gender;
 use App\Enums\StatusPeriod;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +20,20 @@ class Student extends Model
     {
         return [
             'gender' => Gender::class,
+            'dominant_foot' => DominantFoot::class,
         ];
+    }
+
+    protected $appends = ['gender_label', 'dominant_foot_label'];
+
+    public function getGenderLabelAttribute(): string
+    {
+        return strtoupper($this->gender->label());
+    }
+
+    public function getDominantFootLabelAttribute(): string
+    {
+        return strtoupper($this->dominant_foot->label());
     }
 
     public function user(): BelongsTo

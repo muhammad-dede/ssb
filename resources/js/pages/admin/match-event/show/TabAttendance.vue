@@ -18,8 +18,7 @@ const { can } = usePermissions();
 
 const props = defineProps({
     attendances: Object,
-    match_event_attendances: Object,
-    match_event: Object,
+    student_match_events: Object,
 });
 
 const isEdit = ref(false);
@@ -29,10 +28,12 @@ const form = useForm({
 });
 
 watch(
-    () => props.match_event_attendances,
+    () => props.student_match_events,
     (newVal) => {
         form.attendances = (newVal ?? []).map((item) => ({
+            id: item.id ?? null,
             student_id: item.student_id ?? null,
+            match_event_id: item.match_event_id ?? null,
             attendance: item.attendance ?? null,
             notes: item.notes ?? null,
         }));
@@ -41,15 +42,17 @@ watch(
 );
 
 const resetAttendance = () => {
-    form.attendances = (props.match_event_attendances ?? []).map((item) => ({
+    form.attendances = (props.student_match_events ?? []).map((item) => ({
+        id: item.id ?? null,
         student_id: item.student_id ?? null,
+        match_event_id: item.match_event_id ?? null,
         attendance: item.attendance ?? null,
         notes: item.notes ?? null,
     }));
 };
 
 const submit = () => {
-    form.post(route("admin.match-event.attendance", props.match_event?.id), {
+    form.post(route("admin.match-event.attendance"), {
         preserveScroll: true,
         preserveState: true,
         onFinish: () => {
@@ -76,18 +79,18 @@ const submit = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    <template v-if="match_event_attendances?.length > 0">
+                    <template v-if="student_match_events?.length > 0">
                         <TableRow
                             v-for="(
-                                student_attendance, index
-                            ) in match_event_attendances"
-                            :key="index"
+                                student_match_event, index
+                            ) in student_match_events"
+                            :key="student_match_event.id"
                         >
                             <TableCell class="font-medium">
                                 {{ index + 1 }}
                             </TableCell>
                             <TableCell class="font-semibold">
-                                {{ student_attendance.student?.name ?? "-" }}
+                                {{ student_match_event.student?.name ?? "-" }}
                             </TableCell>
                             <template
                                 v-for="attendance in attendances"
@@ -151,7 +154,7 @@ const submit = () => {
         <div
             v-if="
                 can('admin.match-event.attendance') &&
-                match_event_attendances?.length > 0
+                student_match_events?.length > 0
             "
             class="flex justify-end items-center"
         >

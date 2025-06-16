@@ -46,9 +46,6 @@ import {
 const { can } = usePermissions();
 
 const props = defineProps({
-    variants: Object,
-    status_student_programs: Object,
-    genders: Object,
     dominant_foots: Object,
     student: Object,
 });
@@ -64,33 +61,6 @@ const destroy = () => {
     router.delete(route("admin.student.destroy", props.student.id), {
         preserveScroll: true,
     });
-};
-
-const getGenderLabel = (gender) => {
-    if (!gender) return "-";
-    const found = props.genders?.find((item) => item.value === gender);
-    return found?.label ?? "-";
-};
-
-const getDominantFootLabel = (dominant_foot) => {
-    if (!dominant_foot) return "-";
-    const found = props.dominant_foots?.find(
-        (item) => item.value === dominant_foot
-    );
-    return found?.label ?? "-";
-};
-
-const getStatusLabel = (status) => {
-    if (!status) return "Belum Terdaftar Diperiode Ini";
-    const found = props.status_student_programs?.find(
-        (item) => item.value === status
-    );
-    return found?.label?.toUpperCase() ?? "Belum Terdaftar Diperiode Ini";
-};
-const getStatusVariant = (status) => {
-    if (!status) return "outline";
-    const found = props.variants?.find((item) => item.value === status);
-    return found?.label ?? "outline";
 };
 
 const dateFormat = (date) => {
@@ -176,16 +146,14 @@ const breadcrumbs = [
                             </template>
                             <Badge
                                 :variant="
-                                    getStatusVariant(
-                                        student.program_period_active?.status
-                                    )
+                                    student.program_period_active
+                                        ?.status_variant ?? 'destructive'
                                 "
                                 class="py-2 px-3 rounded-full h-fit"
                             >
                                 {{
-                                    getStatusLabel(
-                                        student.program_period_active?.status
-                                    )
+                                    student.program_period_active
+                                        ?.status_label ?? "BELUM TERDAFTAR"
                                 }}
                             </Badge>
                         </div>
@@ -209,7 +177,7 @@ const breadcrumbs = [
                             />
                             <InfoItem
                                 label="Jenis Kelamin"
-                                :value="getGenderLabel(student?.gender)"
+                                :value="student?.gender_label"
                                 :icon="Mars"
                                 background
                             />
@@ -242,9 +210,7 @@ const breadcrumbs = [
                         <div class="grid divide-y divide-gray-100">
                             <InfoItem
                                 label="Kaki Dominan"
-                                :value="
-                                    getDominantFootLabel(student?.dominant_foot)
-                                "
+                                :value="student.dominant_foot_label"
                                 :icon="Footprints"
                                 background
                             />

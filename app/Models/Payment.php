@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PaymentMethod;
 use App\Enums\StatusPayment;
+use App\Enums\Variant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
@@ -22,7 +23,22 @@ class Payment extends Model
         ];
     }
 
-    protected $appends = ['proof_file_url', 'can_confirm', 'can_edit'];
+    protected $appends = ['method_label', 'status_label', 'status_variant', 'proof_file_url', 'can_confirm', 'can_edit'];
+
+    public function getMethodLabelAttribute(): string
+    {
+        return strtoupper($this->method->label());
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return strtoupper($this->status->label());
+    }
+
+    public function getStatusVariantAttribute(): string
+    {
+        return Variant::tryFrom($this->status->value)?->label() ?? 'outline';
+    }
 
     public function getProofFileUrlAttribute(): ?string
     {

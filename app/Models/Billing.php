@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\StatusBilling;
+use App\Enums\Variant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -19,6 +20,18 @@ class Billing extends Model
         return [
             'status' => StatusBilling::class,
         ];
+    }
+
+    protected $appends = ['status_label', 'status_variant'];
+
+    public function getStatusLabelAttribute(): string
+    {
+        return strtoupper($this->status->label());
+    }
+
+    public function getStatusVariantAttribute(): string
+    {
+        return Variant::tryFrom($this->status->value)?->label() ?? 'outline';
     }
 
     protected static function booted(): void

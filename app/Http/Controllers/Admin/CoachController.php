@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\Gender;
 use App\Enums\StatusCoach;
 use App\Enums\StatusUser;
-use App\Enums\Variant;
 use App\Http\Controllers\Controller;
 use App\Models\Coach;
 use App\Models\User;
@@ -21,7 +20,6 @@ class CoachController extends Controller
     use HasPermissionCheck;
 
     // Enums
-    protected $variants = [];
     protected $status_coaches = [];
     protected $genders = [];
     // Validations
@@ -46,7 +44,6 @@ class CoachController extends Controller
 
     public function __construct()
     {
-        $this->variants = Variant::options();
         $this->status_coaches = StatusCoach::options();
         $this->genders = Gender::options();
     }
@@ -81,8 +78,6 @@ class CoachController extends Controller
         });
 
         return Inertia::render('admin/coach/Index', [
-            'variants' => $this->variants,
-            'status_coaches' => $this->status_coaches,
             'coaches' => $coaches,
             'search_term' => $search,
             'per_page_term' => $per_page,
@@ -179,9 +174,6 @@ class CoachController extends Controller
         $coach = Coach::with(['user'])->findOrFail($id);
         $coach->photo_url = asset('storage/' . $coach->photo);
         return Inertia::render('admin/coach/Show', [
-            'variants' => $this->variants,
-            'status_coaches' => $this->status_coaches,
-            'genders' => $this->genders,
             'coach' => $coach,
         ]);
     }
