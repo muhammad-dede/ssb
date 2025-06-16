@@ -52,14 +52,12 @@ const timeFormat = (time) => {
         <Card>
             <CardContent class="relative">
                 <div class="flex flex-col">
-                    <h3 class="text-sm font-semibold mb-2">
-                        Siswa Belum Terdaftar
-                    </h3>
+                    <h3 class="text-sm font-semibold mb-2">Belum Terdaftar</h3>
                     <span class="text-2xl font-bold mb-3">
-                        {{ student.count_student_unregistered }}
+                        {{ student.count_unregistered ?? "0" }}
                     </span>
                     <small class="text-xs"
-                        >Total Siswa yang belum melakukan pendaftaran</small
+                        >Total Program yang belum terdaftar</small
                     >
                     <div
                         class="absolute right-0 h-full flex items-start justify-center px-6"
@@ -72,12 +70,12 @@ const timeFormat = (time) => {
         <Card>
             <CardContent class="relative">
                 <div class="flex flex-col">
-                    <h3 class="text-sm font-semibold mb-2">Siswa Terdaftar</h3>
+                    <h3 class="text-sm font-semibold mb-2">Terdaftar</h3>
                     <span class="text-2xl font-bold mb-3">
-                        {{ student.count_student_registered }}
+                        {{ student.count_registered }}
                     </span>
                     <small class="text-xs"
-                        >Total Siswa yang sudah melakukan pendaftaran</small
+                        >Total Program yang sudah Terdaftar</small
                     >
                     <div
                         class="absolute right-0 h-full flex items-start justify-center px-6"
@@ -90,11 +88,11 @@ const timeFormat = (time) => {
         <Card>
             <CardContent class="relative">
                 <div class="flex flex-col">
-                    <h3 class="text-sm font-semibold mb-2">Program Aktif</h3>
+                    <h3 class="text-sm font-semibold mb-2">Pelatihan</h3>
                     <span class="text-2xl font-bold mb-3">
-                        {{ student.count_program }}
+                        {{ student.count_training }}
                     </span>
-                    <small class="text-xs">Total Program yang aktif</small>
+                    <small class="text-xs">Total Pelatihan yang diikuti</small>
                     <div
                         class="absolute right-0 h-full flex items-start justify-center px-6"
                     >
@@ -106,11 +104,13 @@ const timeFormat = (time) => {
         <Card>
             <CardContent class="relative">
                 <div class="flex flex-col">
-                    <h3 class="text-sm font-semibold mb-2">Pelatih Aktif</h3>
+                    <h3 class="text-sm font-semibold mb-2">Pertandingan</h3>
                     <span class="text-2xl font-bold mb-3">
-                        {{ student.count_coach }}
+                        {{ student.count_match_event }}
                     </span>
-                    <small class="text-xs">Total Pelatih yang aktif</small>
+                    <small class="text-xs"
+                        >Total Pertandingan yang diikuti</small
+                    >
                     <div
                         class="absolute right-0 h-full flex items-start justify-center px-6"
                     >
@@ -140,17 +140,18 @@ const timeFormat = (time) => {
                                 :key="training.id"
                             >
                                 <TableCell>
-                                    {{ dateFormat(training.training_date) }}
+                                    {{ dateFormat(training?.training_date) }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ timeFormat(training.start_time) }} -
-                                    {{ timeFormat(training.end_time) }}
+                                    {{ timeFormat(training?.start_time) }}
+                                    -
+                                    {{ timeFormat(training?.end_time) }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ training.coach?.name ?? "NA" }}
+                                    {{ training?.coach?.name ?? "NA" }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ training.program_code }}
+                                    {{ training?.program_code }}
                                 </TableCell>
                             </TableRow>
                         </template>
@@ -189,17 +190,18 @@ const timeFormat = (time) => {
                                 :key="match_event.id"
                             >
                                 <TableCell>
-                                    {{ dateFormat(match_event.match_date) }}
+                                    {{ dateFormat(match_event?.match_date) }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ timeFormat(match_event.start_time) }} -
-                                    {{ timeFormat(match_event.end_time) }}
+                                    {{ timeFormat(match_event?.start_time) }}
+                                    -
+                                    {{ timeFormat(match_event?.end_time) }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ match_event.program_code }}
+                                    {{ match_event?.program_code }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ match_event.opponent }}
+                                    {{ match_event?.opponent }}
                                 </TableCell>
                             </TableRow>
                         </template>
