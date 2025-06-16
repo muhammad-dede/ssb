@@ -7,12 +7,14 @@ import AppLayout from "@/layouts/AppLayout.vue";
 import usePermissions from "@/composables/usePermissions";
 import Admin from "./Admin.vue";
 import Student from "./Student.vue";
+import Coach from "./Coach.vue";
 
 const { hasAnyRole } = usePermissions();
 
 const props = defineProps({
     admin: Object,
     student: Object,
+    coach: Object,
 });
 
 const breadcrumbs = [
@@ -38,6 +40,9 @@ const breadcrumbs = [
             </template>
             <template v-if="hasAnyRole('Student')">
                 <Student :student="student" />
+            </template>
+            <template v-if="hasAnyRole('Coach')">
+                <Coach :coach="coach" />
             </template>
         </MainContent>
     </AppLayout>

@@ -21,6 +21,7 @@ use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -42,6 +43,11 @@ class DashboardController extends Controller
         $count_registered = 0;
         $count_training = 0;
         $count_match_event = 0;
+        // Coach
+        $count_training_unregistered = 0;
+        $count_training_registered = 0;
+        $count_match_event_unregistered = 0;
+        $count_match_event_registered = 0;
 
         $training_schedules = [];
         $match_event_schedules = [];
@@ -97,6 +103,65 @@ class DashboardController extends Controller
                 ->whereMonth('match_date', Carbon::now()->month)
                 ->whereYear('match_date', Carbon::now()->year)
                 ->get();
+        } else if (Auth::user()->hasRole('Coach')) {
+            $coach = Auth::user()->coach;
+
+            $trainings = Training::where('status', StatusTraining::ACTIVE)
+                ->where('coach_id', $coach->id)
+                ->select('program_code', 'period_id')
+                ->distinct()
+                ->get();
+            foreach ($trainings as $training) {
+                $count_unregis = StudentProgram::where('program_code', $training->program_code)
+                    ->where('period_id', $training->period_id)
+                    ->whereNotIn('student_id', function ($query) {
+                        $query->select('student_id')->from('student_training');
+                    })
+                    ->count();
+                $count_training_unregistered += $count_unregis;
+
+                $count_regis =  StudentProgram::where('program_code', $training->program_code)
+                    ->where('period_id', $training->period_id)
+                    ->whereIn('student_id', function ($query) {
+                        $query->select('student_id')->from('student_training');
+                    })
+                    ->count();
+                $count_training_registered += $count_regis;
+            }
+
+            $match_events = MatchEvent::where('status', StatusMatchEvent::ACTIVE)
+                ->where('coach_id', $coach->id)
+                ->select('program_code', 'period_id')
+                ->distinct()
+                ->get();
+            foreach ($match_events as $training) {
+                $count_unregis = StudentProgram::where('program_code', $training->program_code)
+                    ->where('period_id', $training->period_id)
+                    ->whereNotIn('student_id', function ($query) {
+                        $query->select('student_id')->from('student_training');
+                    })
+                    ->count();
+                $count_match_event_unregistered += $count_unregis;
+
+                $count_regis =  StudentProgram::where('program_code', $training->program_code)
+                    ->where('period_id', $training->period_id)
+                    ->whereIn('student_id', function ($query) {
+                        $query->select('student_id')->from('student_training');
+                    })
+                    ->count();
+                $count_match_event_registered += $count_regis;
+            }
+
+            $training_schedules = Training::with(['coach'])->where('status', StatusTraining::ACTIVE)
+                ->whereMonth('training_date', Carbon::now()->month)
+                ->whereYear('training_date', Carbon::now()->year)
+                ->where('coach_id', $coach->id)
+                ->get();
+            $match_event_schedules = MatchEvent::with(['coach'])->where('status', StatusMatchEvent::ACTIVE)
+                ->whereMonth('match_date', Carbon::now()->month)
+                ->whereYear('match_date', Carbon::now()->year)
+                ->where('coach_id', $coach->id)
+                ->get();
         }
 
         return Inertia::render('dashboard/Index', [
@@ -115,6 +180,15 @@ class DashboardController extends Controller
                 'count_registered' => $count_registered,
                 'count_training' => $count_training,
                 'count_match_event' => $count_match_event,
+                'training_schedules' => $training_schedules,
+                'match_event_schedules' => $match_event_schedules,
+            ],
+            'coach' => [
+                'period_active' => $period_active,
+                'count_training_unregistered' => $count_training_unregistered,
+                'count_training_registered' => $count_training_registered,
+                'count_match_event_unregistered' => $count_match_event_unregistered,
+                'count_match_event_registered' => $count_match_event_registered,
                 'training_schedules' => $training_schedules,
                 'match_event_schedules' => $match_event_schedules,
             ],

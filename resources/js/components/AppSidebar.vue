@@ -152,6 +152,21 @@ const studentReportMenu = [
         permission: "student-menu",
     },
 ];
+
+const coachActivityMenu = [
+    {
+        title: "Latihan",
+        href: "/coach/training",
+        icon: Clock,
+        permission: "coach-menu",
+    },
+    {
+        title: "Pertandingan",
+        href: "/coach/match-event",
+        icon: SlidersHorizontal,
+        permission: "coach-menu",
+    },
+];
 </script>
 
 <template>
@@ -223,6 +238,12 @@ const studentReportMenu = [
                 v-if="canAny('student-menu')"
                 group-label="Laporan"
                 :items="studentReportMenu"
+            />
+            <!-- Coach -->
+            <NavMain
+                v-if="canAny('coach-menu')"
+                group-label="Aktifitas"
+                :items="coachActivityMenu"
             />
         </SidebarContent>
 
