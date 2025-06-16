@@ -143,6 +143,15 @@ const studentActivityMenu = [
         permission: "student-menu",
     },
 ];
+
+const studentReportMenu = [
+    {
+        title: "Raport",
+        href: "/student/report",
+        icon: FileBadge2,
+        permission: "student-menu",
+    },
+];
 </script>
 
 <template>
@@ -209,6 +218,11 @@ const studentActivityMenu = [
                 v-if="canAny('student-menu')"
                 group-label="Aktifitas"
                 :items="studentActivityMenu"
+            />
+            <NavMain
+                v-if="canAny('student-menu')"
+                group-label="Laporan"
+                :items="studentReportMenu"
             />
         </SidebarContent>
 

@@ -23,38 +23,26 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table/index";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import SearchInput from "@/components/SearchInput.vue";
 import FilterControl from "@/components/FilterControl.vue";
 import HeadingGroup from "@/components/HeadingGroup.vue";
 import Heading from "@/components/Heading.vue";
 
 const props = defineProps({
-    periods: Object,
-    student_trainings: Object,
-    period_id_term: Number,
+    student_programs: Object,
     search_term: String,
     per_page_term: String,
     filter_term: String,
 });
 
-const period_id = ref(props.period_id_term);
 const search = ref(props.search_term);
 const perPage = ref(props.per_page_term);
 const filter = ref(props.filter_term);
 
 const dataControl = () => {
     router.get(
-        route("student.training.index"),
+        route("student.report.index"),
         {
-            period_id: period_id.value,
             search: search.value,
             per_page: perPage.value,
             filter: filter.value,
@@ -73,75 +61,33 @@ watch(
     }, 1000)
 );
 
-watch([period_id, perPage, filter], () => {
+watch([perPage, filter], () => {
     dataControl();
 });
 
-const setTrainingDate = (training) => {
-    if (!training?.training_date) return "-";
-    const date = new Date(training?.training_date).toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-    });
-    return `${date}`;
-};
-
-const setTrainingTime = (training) => {
-    if (!training?.training_date) return "-";
-    const formatTime = (time) => {
-        if (!time) return "-";
-        const [hours, minutes] = time.split(":");
-        const dateObj = new Date();
-        dateObj.setHours(hours, minutes);
-        return dateObj.toLocaleTimeString("id-ID", {
-            hour: "2-digit",
-            minute: "2-digit",
-        });
-    };
-    const startTime = formatTime(training?.start_time);
-    const endTime = formatTime(training?.end_time);
-    return `${startTime} - ${endTime}`;
+const generatePdf = (id) => {
+    const url = route("student.report.pdf", id);
+    window.open(url, "_blank");
 };
 
 const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Latihan", href: "/student/training" },
+    { title: "Raport", href: "/student/report" },
 ];
 </script>
 
 <template>
-    <Head title="Latihan" />
+    <Head title="Raport" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <MainContent>
             <HeadingGroup>
                 <Heading
-                    title="Jadwal Latihan"
-                    description="Lihat jadwal latihan yang tersedia"
+                    title="Raport"
+                    description="Lihat dan kelola data raport yang tersedia"
                 />
             </HeadingGroup>
-            <div
-                class="flex flex-col lg:flex-row lg:justify-between items-center gap-4 mb-4"
-            >
-                <div class="grid w-full lg:grid-cols-2 lg:w-xl gap-4">
-                    <Select v-model="period_id" name="period_id">
-                        <SelectTrigger id="period_id" class="w-full">
-                            <SelectValue placeholder="Pilih Periode" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem
-                                    v-for="(period, index) in periods"
-                                    :key="index"
-                                    :value="period.id"
-                                >
-                                    {{ period.name }}
-                                </SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                    <SearchInput v-model="search" class="max-w-full" />
-                </div>
+            <div class="flex justify-between items-center gap-4 mb-4">
+                <SearchInput v-model="search" />
                 <FilterControl
                     :per-page="perPage"
                     :filter="filter"
@@ -154,37 +100,37 @@ const breadcrumbs = [
                     <TableHeader>
                         <TableRow>
                             <TableHead class="w-[10px]">No</TableHead>
-                            <TableHead>Tanggal</TableHead>
-                            <TableHead>Waktu</TableHead>
-                            <TableHead>Pelatih</TableHead>
-                            <TableHead>Lokasi</TableHead>
-                            <TableHead>Kehadiran</TableHead>
+                            <TableHead>Periode</TableHead>
+                            <TableHead>Program</TableHead>
+                            <TableHead>Rata-Rata Latihan</TableHead>
+                            <TableHead>Rata-Rata Pertandingan</TableHead>
+                            <TableHead>Total Nilai</TableHead>
                             <TableHead class="w-[10px]"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <template v-if="student_trainings.data.length > 0">
+                        <template v-if="student_programs.data.length > 0">
                             <TableRow
-                                v-for="(item, index) in student_trainings.data"
+                                v-for="(item, index) in student_programs.data"
                                 :key="item.id"
                             >
                                 <TableCell class="font-medium">
-                                    {{ student_trainings.from + index }}
+                                    {{ student_programs.from + index }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ setTrainingDate(item.training) }}
+                                    {{ item.period?.name }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ setTrainingTime(item.training) }}
+                                    {{ item.program?.name }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ item.training?.coach?.name ?? "-" }}
+                                    {{ item.report?.training?.total_score }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ item.training?.location ?? "-" }}
+                                    {{ item.report?.match_event?.total_score }}
                                 </TableCell>
-                                <TableCell>
-                                    {{ item.attendance_label ?? "-" }}
+                                <TableCell class="font-bold">
+                                    {{ item.report?.final_score }}
                                 </TableCell>
                                 <TableCell class="text-center">
                                     <DropdownMenu>
@@ -207,13 +153,18 @@ const breadcrumbs = [
                                                 <Link
                                                     :href="
                                                         route(
-                                                            'student.training.show',
+                                                            'student.report.show',
                                                             item.id
                                                         )
                                                     "
                                                 >
                                                     Detail
                                                 </Link>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                @click="generatePdf(item?.id)"
+                                            >
+                                                Cetak
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
@@ -230,7 +181,7 @@ const breadcrumbs = [
                     </TableBody>
                 </Table>
             </div>
-            <PaginationLinks :paginator="student_trainings" />
+            <PaginationLinks :paginator="student_programs" />
         </MainContent>
     </AppLayout>
 </template>

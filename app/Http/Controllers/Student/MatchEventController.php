@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Student;
 
+use App\Enums\StatusMatchEvent;
 use App\Enums\StatusPeriod;
-use App\Enums\StatusTraining;
 use App\Http\Controllers\Controller;
+use App\Models\MatchEvent;
 use App\Models\Period;
-use App\Models\StudentTraining;
-use App\Models\Training;
+use App\Models\StudentMatchEvent;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class TrainingController extends Controller
+class MatchEventController extends Controller
 {
     use HasPermissionCheck;
 
@@ -42,14 +42,14 @@ class TrainingController extends Controller
         $per_page = $request->per_page ?? "25";
         $filter = in_array(strtolower($request->filter), ['asc', 'desc']) ? strtolower($request->filter) : 'asc';
 
-        $student_trainings = StudentTraining::with([
-            'training',
-            'training.coach',
-            'studentTrainingAssessments',
-            'studentTrainingAssessments.assessment'
+        $student_match_events = StudentMatchEvent::with([
+            'matchEvent',
+            'matchEvent.coach',
+            'studentMatchEventAssessments',
+            'studentMatchEventAssessments.assessment'
         ])
-            ->whereHas('training', function ($query) use ($search) {
-                $query->where('status', StatusTraining::ACTIVE)
+            ->whereHas('matchEvent', function ($query) use ($search) {
+                $query->where('status', StatusMatchEvent::ACTIVE)
                     ->when($search, function ($q) use ($search) {
                         $q->whereHas('coach', function ($q2) use ($search) {
                             $q2->where('name', 'like', '%' . $search . '%');
@@ -60,17 +60,17 @@ class TrainingController extends Controller
             ->where('student_id', $this->student->id)
             ->when($filter, function ($query) use ($filter) {
                 $query->orderBy(
-                    Training::select('training_date')
-                        ->whereColumn('training.id', 'student_training.training_id'),
+                    MatchEvent::select('match_date')
+                        ->whereColumn('match_event.id', 'student_match_event.match_event_id'),
                     $filter
                 );
             })
             ->paginate($per_page)
             ->withQueryString();
 
-        return Inertia::render('student/training/Index', [
+        return Inertia::render('student/match-event/Index', [
             'periods' => $this->periods,
-            'student_trainings' => $student_trainings,
+            'student_match_events' => $student_match_events,
             'period_id_term' => $period_id,
             'search_term' => $search,
             'per_page_term' => $per_page,
@@ -97,23 +97,23 @@ class TrainingController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $student_training_id)
+    public function show(string $student_match_event_id)
     {
         $this->checkPermission('student-menu');
 
-        $student_training = StudentTraining::with([
-            'training',
-            'training.coach',
-            'training.coach',
-            'studentTrainingAssessments',
-            'studentTrainingAssessments.assessment'
+        $student_match_event = StudentMatchEvent::with([
+            'matchEvent',
+            'matchEvent.coach',
+            'matchEvent.coach',
+            'studentMatchEventAssessments',
+            'studentMatchEventAssessments.assessment'
         ])
-            ->where('id', $student_training_id)
+            ->where('id', $student_match_event_id)
             ->where('student_id', $this->student->id)
             ->firstOrFail();
 
-        return Inertia::render('student/training/Show', [
-            'student_training' => $student_training,
+        return Inertia::render('student/match-event/Show', [
+            'student_match_event' => $student_match_event,
         ]);
     }
 

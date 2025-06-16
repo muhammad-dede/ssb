@@ -26,7 +26,7 @@ class StudentTraining extends Model
     {
         return $this->attendance
             ? strtoupper($this->attendance->label())
-            : null;
+            : "BELUM DIISI";
     }
 
     public function student(): BelongsTo

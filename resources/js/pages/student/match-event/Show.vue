@@ -13,6 +13,7 @@ import {
     NotebookPen,
     NotebookTabs,
     FileDigit,
+    Shirt,
 } from "lucide-vue-next";
 import HeadingGroup from "@/components/HeadingGroup.vue";
 import Heading from "@/components/Heading.vue";
@@ -27,7 +28,7 @@ import { Card, CardContent } from "@/components/ui/card/index";
 import InfoItem from "@/components/InfoItem.vue";
 
 const props = defineProps({
-    student_training: Object,
+    student_match_event: Object,
 });
 
 const dateFormat = (date) => {
@@ -38,19 +39,19 @@ const dateFormat = (date) => {
 
 const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Latihan", href: "/student/training" },
-    { title: "Detail", href: "/student/training/show" },
+    { title: "Pertandingan", href: "/student/match-event" },
+    { title: "Detail", href: "/student/match-event/show" },
 ];
 </script>
 
 <template>
-    <Head title="Detail Latihan" />
+    <Head title="Detail Pertandingan" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <MainContent>
             <HeadingGroup>
                 <Heading
-                    title="Detail Latihan"
-                    description="Informasi lengkap mengenai latihan yang terdaftar"
+                    title="Detail Pertandingan"
+                    description="Informasi lengkap mengenai pertandingan yang terdaftar"
                 />
                 <DropdownMenu>
                     <DropdownMenuTrigger as-child>
@@ -60,7 +61,7 @@ const breadcrumbs = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
-                            <Link :href="route('student.training.index')">
+                            <Link :href="route('student.match-event.index')">
                                 <Undo2 class="text-yellow-500" />
                                 Kembali
                             </Link>
@@ -73,28 +74,28 @@ const breadcrumbs = [
                     <Card>
                         <CardContent>
                             <h5 class="text-sm font-bold text-gray-500 mb-4">
-                                Informasi Latihan
+                                Informasi Pertandingan
                             </h5>
                             <div class="grid divide-y divide-gray-100">
                                 <div class="flex justify-between items-center">
                                     <InfoItem
                                         label="Pelatih"
                                         :value="
-                                            student_training.training?.coach
-                                                ?.name ?? '-'
+                                            student_match_event.match_event
+                                                ?.coach?.name ?? '-'
                                         "
                                         :icon="UserCog"
                                         background
                                     />
                                     <Badge
                                         :variant="
-                                            student_training.training
+                                            student_match_event.match_event
                                                 ?.status_variant
                                         "
                                         class="py-2 px-3 rounded-full h-fit"
                                     >
                                         {{
-                                            student_training.training
+                                            student_match_event.match_event
                                                 ?.status_label
                                         }}
                                     </Badge>
@@ -103,8 +104,8 @@ const breadcrumbs = [
                                     label="Tanggal Pelatihan"
                                     :value="
                                         dateFormat(
-                                            student_training.training
-                                                ?.training_date
+                                            student_match_event.match_event
+                                                ?.match_date
                                         ) ?? '-'
                                     "
                                     :icon="Calendar"
@@ -113,17 +114,44 @@ const breadcrumbs = [
                                 <InfoItem
                                     label="Waktu Pelatihan"
                                     :value="
-                                        `${student_training.training?.start_time} - ${student_training.training?.end_time}` ??
+                                        `${student_match_event.match_event?.start_time} - ${student_match_event.match_event?.end_time}` ??
                                         '-'
                                     "
                                     :icon="Timer"
                                     background
                                 />
                                 <InfoItem
+                                    label="Lawan"
+                                    :value="
+                                        student_match_event.match_event
+                                            ?.opponent ?? '-'
+                                    "
+                                    :icon="Shirt"
+                                    background
+                                />
+                                <InfoItem
+                                    label="Skor Tim"
+                                    :value="`${
+                                        student_match_event.match_event
+                                            ?.our_score ?? '-'
+                                    }`"
+                                    :icon="FileDigit"
+                                    background
+                                />
+                                <InfoItem
+                                    label="Skor Lawan"
+                                    :value="`${
+                                        student_match_event.match_event
+                                            ?.opponent_score ?? '-'
+                                    }`"
+                                    :icon="FileDigit"
+                                    background
+                                />
+                                <InfoItem
                                     label="Lokasi"
                                     :value="
-                                        student_training.training?.location ??
-                                        '-'
+                                        student_match_event.match_event
+                                            ?.location ?? '-'
                                     "
                                     :icon="MapPin"
                                     background
@@ -131,7 +159,7 @@ const breadcrumbs = [
                                 <InfoItem
                                     label="Deskripsi"
                                     :value="
-                                        student_training.training
+                                        student_match_event.match_event
                                             ?.description ?? '-'
                                     "
                                     :icon="NotebookPen"
@@ -150,17 +178,19 @@ const breadcrumbs = [
                             <div class="grid divide-y divide-gray-100">
                                 <InfoItem
                                     label="Kehadiran"
-                                    :value="student_training.attendance_label"
+                                    :value="
+                                        student_match_event.attendance_label
+                                    "
                                     :icon="NotebookTabs"
                                     background
                                 />
                                 <template
                                     v-if="
-                                        student_training
-                                            .student_training_assessments
+                                        student_match_event
+                                            .student_match_event_assessments
                                             .length > 0
                                     "
-                                    v-for="student_assessment in student_training.student_training_assessments"
+                                    v-for="student_assessment in student_match_event.student_match_event_assessments"
                                     :key="student_assessment.id"
                                 >
                                     <InfoItem

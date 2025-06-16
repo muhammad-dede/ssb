@@ -6,11 +6,13 @@ import MainContent from "@/components/MainContent.vue";
 import AppLayout from "@/layouts/AppLayout.vue";
 import usePermissions from "@/composables/usePermissions";
 import Admin from "./Admin.vue";
+import Student from "./Student.vue";
 
 const { hasAnyRole } = usePermissions();
 
 const props = defineProps({
     admin: Object,
+    student: Object,
 });
 
 const breadcrumbs = [
@@ -31,8 +33,11 @@ const breadcrumbs = [
                     description="Lihat dan kelola data pada dashboard"
                 />
             </HeadingGroup>
-            <template v-if="hasAnyRole('Super Admin', 'Admin')">
+            <template v-if="hasAnyRole('Super Admin', 'Admin', 'Leader')">
                 <Admin :admin="admin" />
+            </template>
+            <template v-if="hasAnyRole('Student')">
+                <Student :student="student" />
             </template>
         </MainContent>
     </AppLayout>

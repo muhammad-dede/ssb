@@ -52,6 +52,8 @@ class DashboardController extends Controller
                 ->whereMonth('match_date', Carbon::now()->month)
                 ->whereYear('match_date', Carbon::now()->year)
                 ->get();
+        } else if (Auth::user()->hasRole('Student')) {
+            # code...
         }
 
         return Inertia::render('dashboard/Index', [
@@ -63,6 +65,9 @@ class DashboardController extends Controller
                 'count_coach' => $count_coach,
                 'training_schedules' => $training_schedules,
                 'match_event_schedules' => $match_event_schedules,
+            ],
+            'student' => [
+                'period_active' => $period_active,
             ],
         ]);
     }

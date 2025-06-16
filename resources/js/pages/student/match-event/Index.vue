@@ -38,7 +38,7 @@ import Heading from "@/components/Heading.vue";
 
 const props = defineProps({
     periods: Object,
-    student_trainings: Object,
+    student_match_events: Object,
     period_id_term: Number,
     search_term: String,
     per_page_term: String,
@@ -52,7 +52,7 @@ const filter = ref(props.filter_term);
 
 const dataControl = () => {
     router.get(
-        route("student.training.index"),
+        route("student.match-event.index"),
         {
             period_id: period_id.value,
             search: search.value,
@@ -77,9 +77,9 @@ watch([period_id, perPage, filter], () => {
     dataControl();
 });
 
-const setTrainingDate = (training) => {
-    if (!training?.training_date) return "-";
-    const date = new Date(training?.training_date).toLocaleDateString("id-ID", {
+const setDate = (matchEvent) => {
+    if (!matchEvent?.match_date) return "-";
+    const date = new Date(matchEvent?.match_date).toLocaleDateString("id-ID", {
         day: "numeric",
         month: "long",
         year: "numeric",
@@ -87,8 +87,8 @@ const setTrainingDate = (training) => {
     return `${date}`;
 };
 
-const setTrainingTime = (training) => {
-    if (!training?.training_date) return "-";
+const setTime = (matchEvent) => {
+    if (!matchEvent?.match_date) return "-";
     const formatTime = (time) => {
         if (!time) return "-";
         const [hours, minutes] = time.split(":");
@@ -99,25 +99,25 @@ const setTrainingTime = (training) => {
             minute: "2-digit",
         });
     };
-    const startTime = formatTime(training?.start_time);
-    const endTime = formatTime(training?.end_time);
+    const startTime = formatTime(matchEvent?.start_time);
+    const endTime = formatTime(matchEvent?.end_time);
     return `${startTime} - ${endTime}`;
 };
 
 const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Latihan", href: "/student/training" },
+    { title: "Pertandingan", href: "/student/match-event" },
 ];
 </script>
 
 <template>
-    <Head title="Latihan" />
+    <Head title="Pertandingan" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <MainContent>
             <HeadingGroup>
                 <Heading
-                    title="Jadwal Latihan"
-                    description="Lihat jadwal latihan yang tersedia"
+                    title="Jadwal Pertandingan"
+                    description="Lihat jadwal pertandingan yang tersedia"
                 />
             </HeadingGroup>
             <div
@@ -157,31 +157,40 @@ const breadcrumbs = [
                             <TableHead>Tanggal</TableHead>
                             <TableHead>Waktu</TableHead>
                             <TableHead>Pelatih</TableHead>
-                            <TableHead>Lokasi</TableHead>
+                            <TableHead>Lawan</TableHead>
+                            <TableHead>Skor</TableHead>
                             <TableHead>Kehadiran</TableHead>
                             <TableHead class="w-[10px]"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <template v-if="student_trainings.data.length > 0">
+                        <template v-if="student_match_events.data.length > 0">
                             <TableRow
-                                v-for="(item, index) in student_trainings.data"
+                                v-for="(
+                                    item, index
+                                ) in student_match_events.data"
                                 :key="item.id"
                             >
                                 <TableCell class="font-medium">
-                                    {{ student_trainings.from + index }}
+                                    {{ student_match_events.from + index }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ setTrainingDate(item.training) }}
+                                    {{ setDate(item.match_event) }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ setTrainingTime(item.training) }}
+                                    {{ setTime(item.match_event) }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ item.training?.coach?.name ?? "-" }}
+                                    {{ item.match_event?.coach?.name ?? "-" }}
                                 </TableCell>
                                 <TableCell>
-                                    {{ item.training?.location ?? "-" }}
+                                    {{ item.match_event?.opponent ?? "-" }}
+                                </TableCell>
+                                <TableCell>
+                                    {{ item.match_event?.our_score ?? "0" }} -
+                                    {{
+                                        item.match_event?.opponent_score ?? "0"
+                                    }}
                                 </TableCell>
                                 <TableCell>
                                     {{ item.attendance_label ?? "-" }}
@@ -207,7 +216,7 @@ const breadcrumbs = [
                                                 <Link
                                                     :href="
                                                         route(
-                                                            'student.training.show',
+                                                            'student.match-event.show',
                                                             item.id
                                                         )
                                                     "
@@ -222,7 +231,7 @@ const breadcrumbs = [
                         </template>
                         <template v-else>
                             <TableRow>
-                                <TableCell colspan="6" class="text-center py-6">
+                                <TableCell colspan="7" class="text-center py-6">
                                     <strong>Tidak ada data</strong>
                                 </TableCell>
                             </TableRow>
@@ -230,7 +239,7 @@ const breadcrumbs = [
                     </TableBody>
                 </Table>
             </div>
-            <PaginationLinks :paginator="student_trainings" />
+            <PaginationLinks :paginator="student_match_events" />
         </MainContent>
     </AppLayout>
 </template>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Student;
 
 use App\Enums\Attendance;
 use App\Enums\StatusPeriod;
@@ -19,22 +19,20 @@ use App\Models\Training;
 use App\Traits\HasPermissionCheck;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class ReportStudentController extends Controller
+class ReportController extends Controller
 {
     use HasPermissionCheck;
     // Models
+    protected $student;
     protected $period_active;
-    protected $periods = [];
-    protected $programs = [];
 
     public function __construct()
     {
-        // Models
+        $this->student = Auth::user()?->student;
         $this->period_active = Period::where('status', StatusPeriod::ACTIVE)->first() ?? null;
-        $this->periods = Period::orderBy('id', 'desc')->get();
-        $this->programs = Program::orderBy('code', 'asc')->get();
     }
 
     /**
@@ -42,24 +40,25 @@ class ReportStudentController extends Controller
      */
     public function index(Request $request)
     {
-        $this->checkPermission('admin.report-student.index');
+        $this->checkPermission('student-menu');
 
-        $period_id = (int) ($request->period_id ?? $this->period_active->id);
-        $program_code = $request->program_code ?? "";
         $search = $request->search;
-        $per_page = $request->per_page ?? "25";
+        $per_page = $request->per_page ?? "5";
         $filter = in_array(strtolower($request->filter), ['asc', 'desc']) ? strtolower($request->filter) : 'desc';
 
         $student_programs = StudentProgram::query()
-            ->with(['student', 'program'])
-            ->when($period_id, fn($query) => $query->where('period_id', $period_id))
-            ->when($program_code, fn($query) => $query->where('program_code', $program_code))
+            ->with(['program', 'period'])
             ->when($search, function ($query) use ($search) {
-                $query->whereHas('student', function ($q) use ($search) {
-                    $q->where('name', 'like', '%' . $search . '%');
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('program', function ($q2) use ($search) {
+                        $q2->where('name', 'like', '%' . $search . '%');
+                    })->orWhereHas('period', function ($q2) use ($search) {
+                        $q2->where('name', 'like', '%' . $search . '%');
+                    });
                 });
             })
             ->where('status', StatusStudentProgram::REGISTERED)
+            ->where('student_id', $this->student->id)
             ->orderBy('id', $filter)
             ->paginate($per_page)
             ->withQueryString();
@@ -73,12 +72,8 @@ class ReportStudentController extends Controller
             ];
         });
 
-        return Inertia::render('admin/report-student/Index', [
-            'periods' => $this->periods,
-            'programs' => $this->programs,
+        return Inertia::render('student/report/Index', [
             'student_programs' => $student_programs,
-            'period_id_term' => $period_id,
-            'program_code_terms' => $program_code,
             'search_term' => $search,
             'per_page_term' => $per_page,
             'filter_term' => $filter,
@@ -90,11 +85,18 @@ class ReportStudentController extends Controller
      */
     public function show(string $student_program_id)
     {
-        $this->checkPermission('admin.report-student.show');
+        $this->checkPermission('student-menu');
 
-        $student_program = StudentProgram::with(['student', 'period', 'program'])->findOrFail($student_program_id);
+        $student_program = StudentProgram::with([
+            'student',
+            'period',
+            'program'
+        ])
+            ->where('student_id', $this->student->id)
+            ->where('id', $student_program_id)
+            ->firstOrFail();
         $student_program->report = $this->calculateReport($student_program->student_id, $student_program->period_id, $student_program->program_code);
-        return Inertia::render('admin/report-student/Show', [
+        return Inertia::render('student/report/Show', [
             'student_program' => $student_program,
         ]);
     }
@@ -104,9 +106,16 @@ class ReportStudentController extends Controller
      */
     public function generatePdf(string $student_program_id)
     {
-        $this->checkPermission('admin.report-student.show');
+        $this->checkPermission('student-menu');
 
-        $student_program = StudentProgram::with(['student', 'period', 'program'])->findOrFail($student_program_id);
+        $student_program = StudentProgram::with([
+            'student',
+            'period',
+            'program'
+        ])
+            ->where('student_id', $this->student->id)
+            ->where('id', $student_program_id)
+            ->firstOrFail();
         $student_program->report = $this->calculateReport($student_program->student_id, $student_program->period_id, $student_program->program_code);
         $pdf = Pdf::loadView('pdf.report-student', [
             'student_program' => $student_program,
