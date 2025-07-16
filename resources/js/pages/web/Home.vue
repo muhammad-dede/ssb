@@ -1,7 +1,7 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
 import WebLayout from "@/layouts/WebLayout.vue";
-import HeroImage from "@/assets/images/hero.jpg";
+import HeroImage from "@/assets/images/hero.jpeg";
 import AboutImage from "@/assets/images/about.jpg";
 import Testimonial1Image from "@/assets/images/testimonial1.jpg";
 import Testimonial2Image from "@/assets/images/testimonial2.jpg";
@@ -33,13 +33,13 @@ import Testimonial3Image from "@/assets/images/testimonial3.jpg";
                     <div class="flex flex-col gap-4 sm:flex-row mt-4">
                         <Link
                             :href="route('register')"
-                            class="px-6 py-3 bg-white text-green-600 rounded-3xl font-semibold flex justify-center items-center"
+                            class="px-6 py-3 bg-white text-orange-600 rounded-3xl font-semibold flex justify-center items-center"
                         >
                             Bergabung ke Akademi
                         </Link>
                         <a
                             href="#program"
-                            class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-3xl font-semibold flex justify-center items-center"
+                            class="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-3xl font-semibold flex justify-center items-center"
                         >
                             Lihat Program
                         </a>
@@ -54,17 +54,21 @@ import Testimonial3Image from "@/assets/images/testimonial3.jpg";
                 class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center"
             >
                 <div class="space-y-6">
-                    <h2 class="text-3xl md:text-4xl font-bold text-green-600">
+                    <h2 class="text-3xl md:text-4xl font-bold text-orange-600">
                         Tentang Akademi Kami
                     </h2>
                     <p class="text-gray-700 text-lg leading-relaxed">
-                        Akademi Sepak Bola
-                        <strong>SSB</strong> adalah tempat di mana semangat,
-                        disiplin, dan impian bertemu dalam satu lapangan. Kami
-                        berdedikasi untuk mengembangkan bakat muda Indonesia
-                        melalui pelatihan yang terstruktur, pelatih profesional
-                        bersertifikat, dan pendekatan yang menyenangkan namun
-                        kompetitif.
+                        <strong>Sekolah Sepak Bola Singandaru</strong> didirikan
+                        pada 22 September 2002 sebagai wadah untuk menyalurkan
+                        hobi dan bakat bermain sepak bola usia dini. SSB ini
+                        berfokus pada anak-anak serta remaja yang memiliki minat
+                        di dunia sepak bola, khususnya mereka yang masih dalam
+                        usia muda. SSB Singandaru berkomitmen membentuk generasi
+                        muda yang tidak hanya terampil bermain sepak bola,
+                        tetapi juga memiliki kedisiplinan tinggi, sportivitas,
+                        dan karakter kuat. serta mencetak pemain yang siap
+                        berprestasi di tingkat lokal, nasional, bahkan
+                        internasional.
                     </p>
                     <p class="text-gray-700 text-lg leading-relaxed">
                         Dengan program yang disesuaikan untuk berbagai jenjang
@@ -95,7 +99,7 @@ import Testimonial3Image from "@/assets/images/testimonial3.jpg";
             <div class="max-w-7xl mx-auto px-4">
                 <div class="text-center mb-12">
                     <h2
-                        class="text-3xl md:text-4xl font-bold text-green-600 mb-4"
+                        class="text-3xl md:text-4xl font-bold text-orange-600 mb-4"
                     >
                         Program Unggulan
                     </h2>
@@ -108,43 +112,31 @@ import Testimonial3Image from "@/assets/images/testimonial3.jpg";
                         profesional.
                     </p>
                 </div>
-                <div class="grid gap-10 md:grid-cols-3 px-4">
+                <div class="grid gap-10 md:grid-cols-2 px-4">
                     <div
                         class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition"
                     >
-                        <h3 class="text-xl font-semibold text-green-600 mb-2">
-                            Youth Program <br />(Usia 6–12)
+                        <h3 class="text-xl font-semibold text-orange-600 mb-2">
+                            Junior Program <br />(Usia 8–12)
                         </h3>
                         <p class="text-gray-600">
-                            Pengenalan teknik dasar seperti passing, dribbling,
-                            dan shooting dengan metode bermain yang
-                            menyenangkan. Cocok untuk anak-anak yang baru mulai
-                            belajar sepak bola.
+                            Pelatihan teknik dasar seperti passing, dribbling,
+                            dan shooting dengan pendekatan yang menyenangkan dan
+                            terstruktur. Ideal untuk anak-anak yang ingin mulai
+                            serius bermain sepak bola.
                         </p>
                     </div>
                     <div
                         class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition"
                     >
-                        <h3 class="text-xl font-semibold text-green-600 mb-2">
-                            Teen Program <br />(Usia 13–17)
+                        <h3 class="text-xl font-semibold text-orange-600 mb-2">
+                            Youth Program <br />(Usia 13–18)
                         </h3>
                         <p class="text-gray-600">
-                            Pendalaman teknik dan taktik, simulasi pertandingan,
-                            dan latihan fisik yang lebih intensif. Cocok untuk
-                            remaja yang ingin tampil lebih kompetitif.
-                        </p>
-                    </div>
-                    <div
-                        class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition"
-                    >
-                        <h3 class="text-xl font-semibold text-green-600 mb-2">
-                            Adult Program <br />(Usia 18+)
-                        </h3>
-                        <p class="text-gray-600">
-                            Persiapan fisik dan mental menuju level
-                            semi-profesional atau kompetisi terbuka. Fokus pada
-                            strategi lanjutan, evaluasi performa, dan liga
-                            internal.
+                            Fokus pada pengembangan teknik lanjutan, pemahaman
+                            taktik permainan, latihan fisik yang terprogram,
+                            serta persiapan menuju level kompetitif dan
+                            turnamen.
                         </p>
                     </div>
                 </div>
@@ -155,7 +147,7 @@ import Testimonial3Image from "@/assets/images/testimonial3.jpg";
         <section id="testimoni" class="py-20 bg-white">
             <div class="max-w-7xl mx-auto px-4">
                 <h2
-                    class="text-3xl md:text-4xl font-bold text-green-600 text-center mb-12"
+                    class="text-3xl md:text-4xl font-bold text-orange-600 text-center mb-12"
                 >
                     Apa Kata Mereka
                 </h2>
@@ -222,18 +214,18 @@ import Testimonial3Image from "@/assets/images/testimonial3.jpg";
         </section>
 
         <!-- Call to Action -->
-        <section class="bg-green-600 py-16">
+        <section class="bg-orange-600 py-16">
             <div class="max-w-7xl mx-auto px-4 text-center">
                 <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
                     Siap Mewujudkan Mimpi? 🎯
                 </h2>
-                <p class="text-lg text-green-100 mb-8">
+                <p class="text-lg text-orange-100 mb-8">
                     Bergabung sekarang dan mulailah perjalanan sepak bolamu
                     bersama kami.
                 </p>
                 <Link
                     :href="route('register')"
-                    class="px-6 py-3 bg-white text-green-600 rounded-3xl font-semibold hover:bg-gray-100 transition"
+                    class="px-6 py-3 bg-white text-orange-600 rounded-3xl font-semibold hover:bg-gray-100 transition"
                 >
                     Bergabung ke Akademi
                 </Link>

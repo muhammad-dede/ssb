@@ -1,5 +1,5 @@
 <script setup>
-import AppLogoIcon from "@/components/AppLogoIcon.vue";
+import Logo from "@/components/Logo.vue";
 import { Link, usePage } from "@inertiajs/vue3";
 
 const page = usePage();
@@ -24,7 +24,7 @@ defineProps({
                 :href="route('home')"
                 class="relative z-20 flex items-center text-lg font-medium"
             >
-                <AppLogoIcon class="mr-2 size-8 fill-current text-white" />
+                <Logo />
                 {{ name }}
             </Link>
             <div v-if="quote" class="relative z-20 mt-auto">

@@ -73,13 +73,13 @@ class MasterSeeder extends Seeder
         $bank_accounts = [
             [
                 'bank_code' => '014',
-                'account_number' => '012387654567',
-                'account_holder_name' => 'RIWAN FEBRIANTO',
+                'account_number' => '2452854601',
+                'account_holder_name' => 'FATHULLOH AL HASAN',
             ],
             [
-                'bank_code' => '009',
-                'account_number' => '076543217654',
-                'account_holder_name' => 'RIWAN FEBRIANTO',
+                'bank_code' => '008',
+                'account_number' => '1630011812073',
+                'account_holder_name' => 'FATHULLOH AL HASAN',
             ],
         ];
         foreach ($bank_accounts as $key => $value) {
@@ -115,68 +115,20 @@ class MasterSeeder extends Seeder
 
         $programs = [
             [
-                'code' => 'U-13',
-                'name' => 'UNDER 13',
-                'age_min' => 10,
-                'age_max' => 13,
-                'description' => 'Tim untuk pemain usia di bawah 13 tahun, sebagai bagian awal akademi sepak bola.',
+                'code' => 'U-12',
+                'name' => 'UNDER 12',
+                'age_min' => 8,
+                'age_max' => 12,
+                'description' => 'Tim untuk pemain usia di bawah 12 tahun, sebagai bagian awal akademi sepak bola.',
                 'registration_fee' => 1000000,
             ],
             [
-                'code' => 'U-15',
-                'name' => 'UNDER 15',
-                'age_min' => 14,
-                'age_max' => 15,
-                'description' => 'Tim untuk pemain usia di bawah 15 tahun, sering kali menjadi jenjang pembinaan usia dini.',
-                'registration_fee' => 1000000,
-            ],
-            [
-                'code' => 'U-16',
-                'name' => 'UNDER 16',
-                'age_min' => 15,
-                'age_max' => 16,
-                'description' => 'Tim untuk pemain usia di bawah 16 tahun, digunakan dalam pengembangan awal talenta muda.',
+                'code' => 'U-18',
+                'name' => 'UNDER 18',
+                'age_min' => 13,
+                'age_max' => 18,
+                'description' => 'Tim untuk pemain usia di bawah 18 tahun.',
                 'registration_fee' => 1500000,
-            ],
-            [
-                'code' => 'U-17',
-                'name' => 'UNDER 17',
-                'age_min' => 16,
-                'age_max' => 17,
-                'description' => 'Tim untuk pemain usia di bawah 17 tahun, seperti Piala Dunia U-17',
-                'registration_fee' => 1500000,
-            ],
-            [
-                'code' => 'U-19',
-                'name' => 'UNDER 19',
-                'age_min' => 18,
-                'age_max' => 19,
-                'description' => 'Tim untuk pemain usia di bawah 19 tahun, digunakan dalam turnamen usia muda tingkat nasional dan internasional.',
-                'registration_fee' => 1500000,
-            ],
-            [
-                'code' => 'U-20',
-                'name' => 'UNDER 20',
-                'age_min' => 19,
-                'age_max' => 20,
-                'description' => 'Tim untuk pemain usia di bawah 20 tahun, seperti Piala Dunia U-20.',
-                'registration_fee' => 2000000,
-            ],
-            [
-                'code' => 'U-21',
-                'name' => 'UNDER 21',
-                'age_min' => 20,
-                'age_max' => 21,
-                'description' => 'Tim untuk pemain usia di bawah 21 tahun. Umumnya digunakan untuk kompetisi pemuda tingkat nasional atau internasional.',
-                'registration_fee' => 2000000,
-            ],
-            [
-                'code' => 'U-23',
-                'name' => 'UNDER 23',
-                'age_min' => 21,
-                'age_max' => 23,
-                'description' => 'Tim untuk pemain usia di bawah 23 tahun. Biasanya digunakan untuk turnamen seperti SEA Games atau Olimpiade.',
-                'registration_fee' => 2000000,
             ],
         ];
         foreach ($programs as $key => $value) {

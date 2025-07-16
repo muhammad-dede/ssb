@@ -82,7 +82,7 @@ const timeFormat = (time) => {
                     <div
                         class="absolute right-0 h-full flex items-start justify-center px-6"
                     >
-                        <ChartSpline class="size-8 text-green-500" />
+                        <ChartSpline class="size-8 text-orange-500" />
                     </div>
                 </div>
             </CardContent>

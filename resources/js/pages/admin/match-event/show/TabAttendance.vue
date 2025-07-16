@@ -117,11 +117,11 @@ const submit = () => {
                                                     .attendance ===
                                                 attendance.value
                                             "
-                                            class="size-5 text-green-500"
+                                            class="size-5 text-orange-500"
                                         />
                                         <Circle
                                             v-else
-                                            class="size-5 text-gray-400 hover:text-green-500 transition-colors"
+                                            class="size-5 text-gray-400 hover:text-orange-500 transition-colors"
                                         />
                                     </div>
                                 </TableCell>

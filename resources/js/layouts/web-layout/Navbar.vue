@@ -2,7 +2,7 @@
 import { Link, usePage } from "@inertiajs/vue3";
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { Menu, X } from "lucide-vue-next";
-import AppLogoIcon from "@/components/AppLogoIcon.vue";
+import Logo from "@/components/Logo.vue";
 
 const page = usePage();
 const name = page.props.name;
@@ -62,15 +62,13 @@ onBeforeUnmount(() => {
             <div class="flex justify-between items-center min-h-11">
                 <!-- Logo -->
                 <div class="flex items-center w-1/6">
-                    <Link :href="route('home')" class="flex items-center">
-                        <AppLogoIcon
-                            class="mr-2 size-8 fill-current text-green-600"
-                        />
+                    <Link :href="route('home')" class="flex items-center gap-2">
+                        <logo />
                         <span
                             :class="[
                                 'text-lg font-bold',
                                 isScrolled || isOpen
-                                    ? 'text-green-600'
+                                    ? 'text-orange-600'
                                     : 'text-white',
                             ]"
                         >
@@ -84,9 +82,9 @@ onBeforeUnmount(() => {
                     <a
                         href="#hero"
                         :class="[
-                            'hover:text-green-800 font-medium',
+                            'hover:text-orange-800 font-medium',
                             isScrolled || isOpen
-                                ? 'text-green-600'
+                                ? 'text-orange-600'
                                 : 'text-white',
                         ]"
                         >Beranda</a
@@ -94,9 +92,9 @@ onBeforeUnmount(() => {
                     <a
                         href="#about"
                         :class="[
-                            'hover:text-green-800 font-medium',
+                            'hover:text-orange-800 font-medium',
                             isScrolled || isOpen
-                                ? 'text-green-600'
+                                ? 'text-orange-600'
                                 : 'text-white',
                         ]"
                         >Tentang Kami</a
@@ -104,9 +102,9 @@ onBeforeUnmount(() => {
                     <a
                         href="#program"
                         :class="[
-                            'hover:text-green-800 font-medium',
+                            'hover:text-orange-800 font-medium',
                             isScrolled || isOpen
-                                ? 'text-green-600'
+                                ? 'text-orange-600'
                                 : 'text-white',
                         ]"
                         >Program</a
@@ -114,9 +112,9 @@ onBeforeUnmount(() => {
                     <a
                         href="#testimoni"
                         :class="[
-                            'hover:text-green-800 font-medium',
+                            'hover:text-orange-800 font-medium',
                             isScrolled || isOpen
-                                ? 'text-green-600'
+                                ? 'text-orange-600'
                                 : 'text-white',
                         ]"
                         >Testimoni</a
@@ -132,15 +130,15 @@ onBeforeUnmount(() => {
                         :class="[
                             'font-semibold px-5 py-2 border-2 rounded-3xl transition',
                             isScrolled || isOpen
-                                ? 'text-green-600 border-green-600 hover:bg-green-600 hover:text-white'
-                                : 'text-white border-white hover:text-green-600 hover:bg-white',
+                                ? 'text-orange-600 border-orange-600 hover:bg-orange-600 hover:text-white'
+                                : 'text-white border-white hover:text-orange-600 hover:bg-white',
                         ]"
                     >
                         Masuk
                     </Link>
                     <Link
                         :href="route('register')"
-                        class="font-semibold px-5 py-2 border-2 border-green-600 rounded-3xl transition bg-green-600 text-white hover:bg-green-700 hover:border-green-700"
+                        class="font-semibold px-5 py-2 border-2 border-orange-600 rounded-3xl transition bg-orange-600 text-white hover:bg-orange-700 hover:border-orange-700"
                     >
                         Daftar
                     </Link>
@@ -153,7 +151,7 @@ onBeforeUnmount(() => {
                         :class="[
                             'focus:outline-none',
                             isScrolled || isOpen
-                                ? 'text-green-600'
+                                ? 'text-orange-600'
                                 : 'text-white',
                         ]"
                     >
@@ -169,38 +167,38 @@ onBeforeUnmount(() => {
             <a
                 href="#hero"
                 @click="isOpen = false"
-                class="block text-green-600 hover:text-green-800 font-medium"
+                class="block text-orange-600 hover:text-orange-800 font-medium"
                 >Beranda</a
             >
             <a
                 href="#about"
                 @click="isOpen = false"
-                class="block text-green-600 hover:text-green-800 font-medium"
+                class="block text-orange-600 hover:text-orange-800 font-medium"
                 >Tentang Kami</a
             >
             <a
                 href="#program"
                 @click="isOpen = false"
-                class="block text-green-600 hover:text-green-800 font-medium"
+                class="block text-orange-600 hover:text-orange-800 font-medium"
                 >Program</a
             >
             <a
                 href="#testimoni"
                 @click="isOpen = false"
-                class="block text-green-600 hover:text-green-800 font-medium"
+                class="block text-orange-600 hover:text-orange-800 font-medium"
                 >Testimoni</a
             >
             <div class="grid space-y-5">
                 <Link
                     :href="route('login')"
-                    class="flex justify-center items-center font-semibold px-5 py-2 border-2 rounded-3xl transition text-green-600 border-green-600 hover:bg-green-600 hover:text-white"
+                    class="flex justify-center items-center font-semibold px-5 py-2 border-2 rounded-3xl transition text-orange-600 border-orange-600 hover:bg-orange-600 hover:text-white"
                     @click="isOpen = false"
                 >
                     Masuk
                 </Link>
                 <Link
                     :href="route('register')"
-                    class="flex justify-center items-center font-semibold px-5 py-2 border-2 border-green-600 rounded-3xl transition bg-green-600 text-white hover:bg-green-700 hover:border-green-700"
+                    class="flex justify-center items-center font-semibold px-5 py-2 border-2 border-orange-600 rounded-3xl transition bg-orange-600 text-white hover:bg-orange-700 hover:border-orange-700"
                     @click="isOpen = false"
                 >
                     Daftar

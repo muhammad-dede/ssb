@@ -145,7 +145,7 @@ const breadcrumbs = [
                                     )
                                 "
                             >
-                                <Pencil class="text-green-500" />
+                                <Pencil class="text-orange-500" />
                                 Ubah Data
                             </Link>
                         </DropdownMenuItem>

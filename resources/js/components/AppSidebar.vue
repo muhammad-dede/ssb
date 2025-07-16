@@ -25,7 +25,7 @@ import {
     Clock,
     FileBadge2,
 } from "lucide-vue-next";
-import AppLogo from "./AppLogo.vue";
+import Logo from "./Logo.vue";
 import usePermissions from "@/composables/usePermissions";
 
 const { canAny } = usePermissions();
@@ -176,7 +176,8 @@ const coachActivityMenu = [
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
                         <Link :href="route('dashboard')">
-                            <AppLogo />
+                            <Logo />
+                            <span class="font-bold">Singandaru</span>
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
