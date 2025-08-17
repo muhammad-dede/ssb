@@ -54,10 +54,10 @@ class DashboardController extends Controller
 
         if (Auth::user()->hasRole(['Super Admin', 'Admin', 'Leader'])) {
             $count_student_unregistered = Student::whereDoesntHave('programs', function ($query) {
-                $query->where('status', StatusProgram::ACTIVE);
+                $query->where('status', StatusStudentProgram::REGISTERED);
             })->count();
             $count_student_registered = Student::whereHas('programs', function ($query) {
-                $query->where('status', StatusProgram::ACTIVE);
+                $query->where('status', StatusStudentProgram::REGISTERED);
             })->count();
             $count_program = Program::where('status', StatusProgram::ACTIVE)->count();
             $count_coach = Coach::where('status', StatusCoach::ACTIVE)->count();

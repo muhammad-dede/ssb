@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input/index";
 import { LoaderCircle } from "lucide-vue-next";
 
 const props = defineProps({
+    match_event: Object,
     assessments: Object,
     student_match_events: Object,
 });
@@ -80,6 +81,12 @@ const submit = () => {
         },
     });
 };
+
+const dateFormat = (date) => {
+    if (!date) return "-";
+    const options = { day: "numeric", month: "long", year: "numeric" };
+    return new Date(date).toLocaleDateString("id-ID", options);
+};
 </script>
 
 <template>
@@ -90,6 +97,7 @@ const submit = () => {
                     <TableRow>
                         <TableHead class="w-[10px]">No</TableHead>
                         <TableHead>Siswa</TableHead>
+                        <TableHead>Tanggal</TableHead>
                         <template v-for="item in assessments" :key="item.code">
                             <TableHead class="w-[5%]">{{
                                 item.name
@@ -111,7 +119,9 @@ const submit = () => {
                             <TableCell class="font-semibold">
                                 {{ student_match_event.student?.name ?? "-" }}
                             </TableCell>
-
+                            <TableCell>
+                                {{ dateFormat(match_event.match_date) ?? "-" }}
+                            </TableCell>
                             <template
                                 v-for="assessment in assessments"
                                 :key="assessment.code"
@@ -119,7 +129,8 @@ const submit = () => {
                                 <TableCell>
                                     <Input
                                         type="number"
-                                        min="0"
+                                        min="10"
+                                        max="100"
                                         :readonly="!isEdit"
                                         class="border-none shadow-none"
                                         :model-value="
@@ -145,7 +156,7 @@ const submit = () => {
                     <template v-else>
                         <TableRow>
                             <TableCell
-                                :colspan="2 + assessments.length"
+                                :colspan="3 + assessments.length"
                                 class="text-center py-6"
                             >
                                 <strong>Belum ada data</strong>

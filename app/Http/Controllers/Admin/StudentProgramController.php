@@ -19,7 +19,6 @@ use App\Models\StudentProgram;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
@@ -254,8 +253,8 @@ class StudentProgramController extends Controller
         try {
             DB::beginTransaction();
             $student_program = StudentProgram::findOrFail($id);
-            if ($student_program->billing?->payment?->proof_file && Storage::disk('public')->exists($student_program->billing?->payment?->proof_file)) {
-                Storage::disk('public')->delete($student_program->billing?->payment?->proof_file);
+            if ($student_program->billing?->payment?->proof_file && file_exists(public_path($student_program->billing?->payment?->proof_file))) {
+                unlink(public_path($student_program->billing?->payment?->proof_file));
             }
             $student_program->delete();
             DB::commit();
@@ -316,15 +315,20 @@ class StudentProgramController extends Controller
                     'reference_number' => $request->reference_number,
                 ]);
                 if ($request->hasFile('proof_file')) {
-                    if ($is_edit && $existing_payment?->proof_file && Storage::disk('public')->exists($existing_payment->proof_file)) {
-                        Storage::disk('public')->delete($existing_payment->proof_file);
+                    $destinationPath = public_path('uploads/payment');
+                    if (!file_exists($destinationPath)) {
+                        mkdir($destinationPath, 0777, true);
                     }
-                    $path = Storage::disk('public')->put('payment', $request->file('proof_file'));
-                    $payment_data['proof_file'] = $path;
+                    if ($is_edit && $existing_payment?->proof_file && file_exists(public_path($existing_payment->proof_file))) {
+                        unlink(public_path($existing_payment->proof_file));
+                    }
+                    $filename = time() . '_' . $request->file('proof_file')->getClientOriginalName();
+                    $request->file('proof_file')->move($destinationPath, $filename);
+                    $payment_data['proof_file'] = 'uploads/payment/' . $filename;
                 }
             } else {
-                if ($is_edit && $existing_payment?->proof_file && Storage::disk('public')->exists($existing_payment->proof_file)) {
-                    Storage::disk('public')->delete($existing_payment->proof_file);
+                if ($is_edit && $existing_payment?->proof_file && file_exists(public_path($existing_payment->proof_file))) {
+                    unlink(public_path($existing_payment->proof_file));
                 }
                 $payment_data = array_merge($payment_data, [
                     'receiver_bank_code' => null,

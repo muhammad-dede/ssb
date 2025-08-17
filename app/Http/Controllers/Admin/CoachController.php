@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 
@@ -73,7 +72,7 @@ class CoachController extends Controller
             ->withQueryString();
 
         $coaches->getCollection()->transform(function ($coach) {
-            $coach->photo_url = $coach->photo ? asset('storage/' . $coach->photo) : null;
+            $coach->photo_url = $coach->photo ? asset($coach->photo) : null;
             return $coach;
         });
 
@@ -151,9 +150,14 @@ class CoachController extends Controller
                 'user_id' => $user->id,
             ]);
             if ($request->hasFile('photo')) {
-                $path = Storage::disk('public')->put('coach', $request->photo);
+                $destinationPath = public_path('uploads/coach');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+                $filename = time() . '_' . $request->file('photo')->getClientOriginalName();
+                $request->file('photo')->move($destinationPath, $filename);
                 $coach->update([
-                    'photo' => $path,
+                    'photo' => 'uploads/coach/' . $filename,
                 ]);
             }
             DB::commit();
@@ -172,7 +176,7 @@ class CoachController extends Controller
         $this->checkPermission('admin.coach.show');
 
         $coach = Coach::with(['user'])->findOrFail($id);
-        $coach->photo_url = asset('storage/' . $coach->photo);
+        $coach->photo_url = $coach->photo ? asset($coach->photo) : null;
         return Inertia::render('admin/coach/Show', [
             'coach' => $coach,
         ]);
@@ -186,7 +190,7 @@ class CoachController extends Controller
         $this->checkPermission('admin.coach.edit');
 
         $coach = Coach::with(['user'])->findOrFail($id);
-        $coach->photo_url = asset('storage/' . $coach->photo);
+        $coach->photo_url = $coach->photo ? asset($coach->photo) : null;
         return Inertia::render('admin/coach/Edit', [
             'status_coaches' => $this->status_coaches,
             'genders' => $this->genders,
@@ -245,12 +249,17 @@ class CoachController extends Controller
             ]);
 
             if ($request->hasFile('photo')) {
-                if ($coach->photo && Storage::disk('public')->exists($coach->photo)) {
-                    Storage::disk('public')->delete($coach->photo);
+                $destinationPath = public_path('uploads/coach');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
                 }
-                $path = Storage::disk('public')->put('coach', $request->photo);
+                if ($coach->photo && file_exists(public_path($coach->photo))) {
+                    unlink(public_path($coach->photo));
+                }
+                $filename = time() . '_' . $request->file('photo')->getClientOriginalName();
+                $request->file('photo')->move($destinationPath, $filename);
                 $coach->update([
-                    'photo' => $path,
+                    'photo' => 'uploads/coach/' . $filename,
                 ]);
             }
             DB::commit();
@@ -272,8 +281,8 @@ class CoachController extends Controller
             DB::beginTransaction();
             $coach = Coach::findOrFail($id);
             $user = User::findOrFail($coach->user_id);
-            if ($coach->photo && Storage::disk('public')->exists($coach->photo)) {
-                Storage::disk('public')->delete($coach->photo);
+            if ($coach->photo && file_exists(public_path($coach->photo))) {
+                unlink(public_path($coach->photo));
             }
             $user->delete();
             $coach->delete();

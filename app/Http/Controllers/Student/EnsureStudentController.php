@@ -88,9 +88,14 @@ class EnsureStudentController extends Controller
                 'user_id' => $user->id,
             ]);
             if ($request->hasFile('photo')) {
-                $path = Storage::disk('public')->put('student', $request->photo);
+                $destinationPath = public_path('uploads/student');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+                $filename = time() . '_' . $request->file('photo')->getClientOriginalName();
+                $request->file('photo')->move($destinationPath, $filename);
                 $student->update([
-                    'photo' => $path,
+                    'photo' => 'uploads/student/' . $filename,
                 ]);
             }
             DB::commit();

@@ -174,8 +174,13 @@ class StudentProgramController extends Controller
                     'status' => StatusPayment::PENDING,
                 ];
                 if ($request->hasFile('proof_file')) {
-                    $path = Storage::disk('public')->put('payment', $request->file('proof_file'));
-                    $payment_data['proof_file'] = $path;
+                    $destinationPath = public_path('uploads/payment');
+                    if (!file_exists($destinationPath)) {
+                        mkdir($destinationPath, 0777, true);
+                    }
+                    $filename = time() . '_' . $request->file('proof_file')->getClientOriginalName();
+                    $request->file('proof_file')->move($destinationPath, $filename);
+                    $payment_data['proof_file'] = 'uploads/payment/' . $filename;
                 }
                 $billing->payment()->create($payment_data);
             }
@@ -233,8 +238,8 @@ class StudentProgramController extends Controller
             $student_program = StudentProgram::where('student_id', $this->student?->id)
                 ->where('id', $id)
                 ->firstOrFail();;
-            if ($student_program->billing?->payment?->proof_file && Storage::disk('public')->exists($student_program->billing?->payment?->proof_file)) {
-                Storage::disk('public')->delete($student_program->billing?->payment?->proof_file);
+            if ($student_program->billing?->payment?->proof_file && file_exists(public_path($student_program->billing?->payment?->proof_file))) {
+                unlink(public_path($student_program->billing?->payment?->proof_file));
             }
             $student_program->delete();
             DB::commit();
@@ -294,11 +299,16 @@ class StudentProgramController extends Controller
                 'status' => $is_edit ? $existing_payment->status : StatusPayment::PENDING,
             ];
             if ($request->hasFile('proof_file')) {
-                if ($is_edit && $existing_payment?->proof_file && Storage::disk('public')->exists($existing_payment->proof_file)) {
-                    Storage::disk('public')->delete($existing_payment->proof_file);
+                $destinationPath = public_path('uploads/payment');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
                 }
-                $path = Storage::disk('public')->put('payment', $request->file('proof_file'));
-                $payment_data['proof_file'] = $path;
+                if ($is_edit && $existing_payment?->proof_file && file_exists(public_path($existing_payment->proof_file))) {
+                    unlink(public_path($existing_payment->proof_file));
+                }
+                $filename = time() . '_' . $request->file('proof_file')->getClientOriginalName();
+                $request->file('proof_file')->move($destinationPath, $filename);
+                $payment_data['proof_file'] = 'uploads/payment/' . $filename;
             }
             if ($is_edit) {
                 $existing_payment->update($payment_data);

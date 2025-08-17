@@ -164,12 +164,14 @@ const breadcrumbs = [
                 </TabsContent>
                 <TabsContent value="attendances">
                     <TabAttendance
+                        :training="training"
                         :attendances="attendances"
                         :student_trainings="student_trainings"
                     />
                 </TabsContent>
                 <TabsContent value="assessments">
                     <TabAssessment
+                        :training="training"
                         :assessments="assessments"
                         :student_trainings="student_trainings"
                     />

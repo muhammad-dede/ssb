@@ -7,7 +7,6 @@ use App\Enums\StatusPayment;
 use App\Enums\Variant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
 
 class Payment extends Model
 {
@@ -42,8 +41,8 @@ class Payment extends Model
 
     public function getProofFileUrlAttribute(): ?string
     {
-        return ($this->proof_file && Storage::disk('public')->exists($this->proof_file))
-            ? asset('storage/' . $this->proof_file)
+        return ($this->proof_file && file_exists(public_path($this->proof_file)))
+            ? asset($this->proof_file)
             : null;
     }
 

@@ -155,12 +155,14 @@ const breadcrumbs = [
                 </TabsContent>
                 <TabsContent value="attendances">
                     <TabAttendance
+                        :match_event="match_event"
                         :attendances="attendances"
                         :student_match_events="student_match_events"
                     />
                 </TabsContent>
                 <TabsContent value="assessments">
                     <TabAssessment
+                        :match_event="match_event"
                         :assessments="assessments"
                         :student_match_events="student_match_events"
                     />

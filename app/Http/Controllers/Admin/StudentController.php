@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Traits\HasPermissionCheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 
@@ -70,7 +69,7 @@ class StudentController extends Controller
             ->withQueryString();
 
         $students->getCollection()->transform(function ($student) {
-            $student->photo_url = $student->photo ? asset('storage/' . $student->photo) : null;
+            $student->photo_url = $student->photo ? asset($student->photo) : null;
             return $student;
         });
 
@@ -142,9 +141,14 @@ class StudentController extends Controller
                 'user_id' => $user->id,
             ]);
             if ($request->hasFile('photo')) {
-                $path = Storage::disk('public')->put('student', $request->photo);
+                $destinationPath = public_path('uploads/student');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+                $filename = time() . '_' . $request->file('photo')->getClientOriginalName();
+                $request->file('photo')->move($destinationPath, $filename);
                 $student->update([
-                    'photo' => $path,
+                    'photo' => 'uploads/student/' . $filename,
                 ]);
             }
             DB::commit();
@@ -163,7 +167,7 @@ class StudentController extends Controller
         $this->checkPermission('admin.student.show');
 
         $student = Student::with(['user', 'programPeriodActive'])->findOrFail($id);
-        $student->photo_url = asset('storage/' . $student->photo);
+        $student->photo_url = $student->photo ? asset($student->photo) : null;
         return Inertia::render('admin/student/Show', [
             'student' => $student,
         ]);
@@ -177,7 +181,7 @@ class StudentController extends Controller
         $this->checkPermission('admin.student.edit');
 
         $student = Student::with(['user'])->findOrFail($id);
-        $student->photo_url = asset('storage/' . $student->photo);
+        $student->photo_url = $student->photo ? asset($student->photo) : null;
         return Inertia::render('admin/student/Edit', [
             'dominant_foots' => $this->dominant_foots,
             'genders' => $this->genders,
@@ -224,9 +228,17 @@ class StudentController extends Controller
                 'weight_kg' => $request->weight_kg,
             ]);
             if ($request->hasFile('photo')) {
-                $path = Storage::disk('public')->put('student', $request->photo);
+                $destinationPath = public_path('uploads/student');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+                if ($student->photo && file_exists(public_path($student->photo))) {
+                    unlink(public_path($student->photo));
+                }
+                $filename = time() . '_' . $request->file('photo')->getClientOriginalName();
+                $request->file('photo')->move($destinationPath, $filename);
                 $student->update([
-                    'photo' => $path,
+                    'photo' => 'uploads/student/' . $filename,
                 ]);
             }
             $student->user()->update([
@@ -253,8 +265,8 @@ class StudentController extends Controller
             DB::beginTransaction();
             $student = Student::findOrFail($id);
             $user = User::findOrFail($student->user_id);
-            if ($student->photo && Storage::disk('public')->exists($student->photo)) {
-                Storage::disk('public')->delete($student->photo);
+            if ($student->photo && file_exists(public_path($student->photo))) {
+                unlink(public_path($student->photo));
             }
             $user->delete();
             $student->delete();

@@ -17,6 +17,7 @@ import usePermissions from "@/composables/usePermissions";
 const { can } = usePermissions();
 
 const props = defineProps({
+    match_event: Object,
     attendances: Object,
     student_match_events: Object,
 });
@@ -60,6 +61,12 @@ const submit = () => {
         },
     });
 };
+
+const dateFormat = (date) => {
+    if (!date) return "-";
+    const options = { day: "numeric", month: "long", year: "numeric" };
+    return new Date(date).toLocaleDateString("id-ID", options);
+};
 </script>
 
 <template>
@@ -70,6 +77,7 @@ const submit = () => {
                     <TableRow>
                         <TableHead class="w-[10px]">No</TableHead>
                         <TableHead>Siswa</TableHead>
+                        <TableHead>Tanggal</TableHead>
                         <template v-for="item in attendances" :key="item.value">
                             <TableHead class="w-[5%]">{{
                                 item.label
@@ -91,6 +99,9 @@ const submit = () => {
                             </TableCell>
                             <TableCell class="font-semibold">
                                 {{ student_match_event.student?.name ?? "-" }}
+                            </TableCell>
+                            <TableCell>
+                                {{ dateFormat(match_event.match_date) ?? "-" }}
                             </TableCell>
                             <template
                                 v-for="attendance in attendances"
@@ -141,7 +152,7 @@ const submit = () => {
                     <template v-else>
                         <TableRow>
                             <TableCell
-                                :colspan="3 + attendances.length"
+                                :colspan="4 + attendances.length"
                                 class="text-center py-6"
                             >
                                 <strong>Belum ada data</strong>
