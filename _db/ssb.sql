@@ -11,7 +11,7 @@
  Target Server Version : 80030 (8.0.30)
  File Encoding         : 65001
 
- Date: 16/07/2025 08:06:26
+ Date: 17/08/2025 22:59:12
 */
 
 SET NAMES utf8mb4;
@@ -38,9 +38,9 @@ CREATE TABLE `assessment`  (
 -- ----------------------------
 -- Records of assessment
 -- ----------------------------
-INSERT INTO `assessment` VALUES (1, 'AS1', 'TEKNIK DASAR', 'Latihan kontrol bola, dribbling, passing, shooting.', 40, 1, 'ACTIVE', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `assessment` VALUES (2, 'AS2', 'TAKTIK TIM', 'Pemahaman formasi, strategi bertahan dan menyerang.', 30, 2, 'ACTIVE', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `assessment` VALUES (3, 'AS3', 'FISIK & MENTAL', 'Latihan fisik, kecepatan, dan membangun karakter atlet.', 30, 3, 'ACTIVE', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
+INSERT INTO `assessment` VALUES (1, 'AS1', 'TEKNIK DASAR', 'Latihan kontrol bola, dribbling, passing, shooting.', 40, 1, 'ACTIVE', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `assessment` VALUES (2, 'AS2', 'TAKTIK TIM', 'Pemahaman formasi, strategi bertahan dan menyerang.', 30, 2, 'ACTIVE', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `assessment` VALUES (3, 'AS3', 'FISIK & MENTAL', 'Latihan fisik, kecepatan, dan membangun karakter atlet.', 30, 3, 'ACTIVE', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
 
 -- ----------------------------
 -- Table structure for bank
@@ -59,52 +59,52 @@ CREATE TABLE `bank`  (
 -- ----------------------------
 -- Records of bank
 -- ----------------------------
-INSERT INTO `bank` VALUES (1, '002', 'Bank Rakyat Indonesia (BRI)', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (2, '008', 'Bank Mandiri', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (3, '009', 'Bank Negara Indonesia (BNI)', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (4, '014', 'Bank Central Asia (BCA)', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (5, '011', 'Bank Danamon', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (6, '013', 'Permata Bank', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (7, '016', 'Bank Maybank Indonesia', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (8, '022', 'CIMB Niaga', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (9, '028', 'Citibank', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (10, '031', 'Bank HSBC Indonesia', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (11, '036', 'Bank BTPN', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (12, '037', 'Bank Artha Graha Internasional', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (13, '042', 'Bank Muamalat Indonesia', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (14, '046', 'Bank DBS Indonesia', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (15, '050', 'Standard Chartered Bank', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (16, '052', 'Bank Panin', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (17, '053', 'Bank Woori Saudara Indonesia 1906', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (18, '054', 'Bank Bukopin', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (19, '057', 'Bank Bumi Arta', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (20, '059', 'Bank Mayapada Internasional', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (21, '110', 'Bank Jabar Banten (BJB)', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (22, '111', 'Bank DKI', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (23, '112', 'Bank DIY', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (24, '113', 'Bank Jateng', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (25, '114', 'Bank Jatim', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (26, '115', 'Bank Jambi', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (27, '116', 'Bank Aceh', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (28, '117', 'Bank Sumut', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (29, '118', 'Bank Nagari', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (30, '119', 'Bank Riau Kepri', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (31, '120', 'Bank Sumsel Babel', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (32, '121', 'Bank Lampung', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (33, '122', 'Bank Kalsel', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (34, '123', 'Bank Kalbar', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (35, '124', 'Bank Kaltimtara', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (36, '125', 'Bank Kalteng', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (37, '126', 'Bank Sulselbar', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (38, '127', 'Bank SulutGo', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (39, '128', 'Bank NTB Syariah', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (40, '129', 'Bank NTT', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (41, '130', 'Bank Maluku Malut', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (42, '131', 'Bank Papua', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (43, '132', 'Bank Bengkulu', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (44, '133', 'Bank Sulteng', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (45, '134', 'Bank Sultra', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank` VALUES (46, '135', 'Bank Banten', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
+INSERT INTO `bank` VALUES (1, '002', 'Bank Rakyat Indonesia (BRI)', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (2, '008', 'Bank Mandiri', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (3, '009', 'Bank Negara Indonesia (BNI)', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (4, '014', 'Bank Central Asia (BCA)', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (5, '011', 'Bank Danamon', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (6, '013', 'Permata Bank', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (7, '016', 'Bank Maybank Indonesia', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (8, '022', 'CIMB Niaga', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (9, '028', 'Citibank', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (10, '031', 'Bank HSBC Indonesia', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (11, '036', 'Bank BTPN', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (12, '037', 'Bank Artha Graha Internasional', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (13, '042', 'Bank Muamalat Indonesia', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (14, '046', 'Bank DBS Indonesia', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (15, '050', 'Standard Chartered Bank', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (16, '052', 'Bank Panin', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (17, '053', 'Bank Woori Saudara Indonesia 1906', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (18, '054', 'Bank Bukopin', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (19, '057', 'Bank Bumi Arta', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (20, '059', 'Bank Mayapada Internasional', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (21, '110', 'Bank Jabar Banten (BJB)', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (22, '111', 'Bank DKI', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (23, '112', 'Bank DIY', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (24, '113', 'Bank Jateng', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (25, '114', 'Bank Jatim', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (26, '115', 'Bank Jambi', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (27, '116', 'Bank Aceh', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (28, '117', 'Bank Sumut', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (29, '118', 'Bank Nagari', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (30, '119', 'Bank Riau Kepri', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (31, '120', 'Bank Sumsel Babel', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (32, '121', 'Bank Lampung', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (33, '122', 'Bank Kalsel', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (34, '123', 'Bank Kalbar', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (35, '124', 'Bank Kaltimtara', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (36, '125', 'Bank Kalteng', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (37, '126', 'Bank Sulselbar', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (38, '127', 'Bank SulutGo', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (39, '128', 'Bank NTB Syariah', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (40, '129', 'Bank NTT', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (41, '130', 'Bank Maluku Malut', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (42, '131', 'Bank Papua', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (43, '132', 'Bank Bengkulu', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (44, '133', 'Bank Sulteng', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (45, '134', 'Bank Sultra', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank` VALUES (46, '135', 'Bank Banten', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
 
 -- ----------------------------
 -- Table structure for bank_account
@@ -126,8 +126,8 @@ CREATE TABLE `bank_account`  (
 -- ----------------------------
 -- Records of bank_account
 -- ----------------------------
-INSERT INTO `bank_account` VALUES (1, '014', '2452854601', 'FATHULLOH AL HASAN', 'ACTIVE', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `bank_account` VALUES (2, '008', '1630011812073', 'FATHULLOH AL HASAN', 'ACTIVE', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
+INSERT INTO `bank_account` VALUES (1, '014', '2452854601', 'FATHULLOH AL HASAN', 'ACTIVE', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `bank_account` VALUES (2, '008', '1630011812073', 'FATHULLOH AL HASAN', 'ACTIVE', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
 
 -- ----------------------------
 -- Table structure for billing
@@ -166,7 +166,6 @@ CREATE TABLE `cache`  (
 -- ----------------------------
 -- Records of cache
 -- ----------------------------
-INSERT INTO `cache` VALUES ('ssb_singandaru_cache_spatie.permission.cache', 'a:3:{s:5:\"alias\";a:4:{s:1:\"a\";s:2:\"id\";s:1:\"b\";s:4:\"name\";s:1:\"c\";s:10:\"guard_name\";s:1:\"r\";s:5:\"roles\";}s:11:\"permissions\";a:58:{i:0;a:4:{s:1:\"a\";i:1;s:1:\"b\";s:9:\"dashboard\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:5:{i:0;i:1;i:1;i:2;i:2;i:3;i:3;i:4;i:4;i:5;}}i:1;a:4:{s:1:\"a\";i:2;s:1:\"b\";s:16:\"admin.role.index\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:2;a:4:{s:1:\"a\";i:3;s:1:\"b\";s:17:\"admin.role.create\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:3;a:4:{s:1:\"a\";i:4;s:1:\"b\";s:15:\"admin.role.edit\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:4;a:4:{s:1:\"a\";i:5;s:1:\"b\";s:17:\"admin.role.delete\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:5;a:4:{s:1:\"a\";i:6;s:1:\"b\";s:16:\"admin.user.index\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:6;a:4:{s:1:\"a\";i:7;s:1:\"b\";s:17:\"admin.user.create\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:7;a:4:{s:1:\"a\";i:8;s:1:\"b\";s:15:\"admin.user.edit\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:8;a:4:{s:1:\"a\";i:9;s:1:\"b\";s:17:\"admin.user.delete\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:9;a:4:{s:1:\"a\";i:10;s:1:\"b\";s:24:\"admin.bank-account.index\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:10;a:4:{s:1:\"a\";i:11;s:1:\"b\";s:25:\"admin.bank-account.create\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:11;a:4:{s:1:\"a\";i:12;s:1:\"b\";s:23:\"admin.bank-account.edit\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:12;a:4:{s:1:\"a\";i:13;s:1:\"b\";s:25:\"admin.bank-account.delete\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:13;a:4:{s:1:\"a\";i:14;s:1:\"b\";s:19:\"admin.program.index\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:14;a:4:{s:1:\"a\";i:15;s:1:\"b\";s:20:\"admin.program.create\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:15;a:4:{s:1:\"a\";i:16;s:1:\"b\";s:18:\"admin.program.edit\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:16;a:4:{s:1:\"a\";i:17;s:1:\"b\";s:20:\"admin.program.delete\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:17;a:4:{s:1:\"a\";i:18;s:1:\"b\";s:18:\"admin.period.index\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:18;a:4:{s:1:\"a\";i:19;s:1:\"b\";s:19:\"admin.period.create\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:19;a:4:{s:1:\"a\";i:20;s:1:\"b\";s:17:\"admin.period.edit\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:20;a:4:{s:1:\"a\";i:21;s:1:\"b\";s:19:\"admin.period.delete\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:21;a:4:{s:1:\"a\";i:22;s:1:\"b\";s:17:\"admin.coach.index\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:2;i:2;i:5;}}i:22;a:4:{s:1:\"a\";i:23;s:1:\"b\";s:18:\"admin.coach.create\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:23;a:4:{s:1:\"a\";i:24;s:1:\"b\";s:16:\"admin.coach.edit\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:24;a:4:{s:1:\"a\";i:25;s:1:\"b\";s:16:\"admin.coach.show\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:2;i:2;i:5;}}i:25;a:4:{s:1:\"a\";i:26;s:1:\"b\";s:18:\"admin.coach.delete\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:26;a:4:{s:1:\"a\";i:27;s:1:\"b\";s:19:\"admin.student.index\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:2;i:2;i:5;}}i:27;a:4:{s:1:\"a\";i:28;s:1:\"b\";s:20:\"admin.student.create\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:28;a:4:{s:1:\"a\";i:29;s:1:\"b\";s:18:\"admin.student.edit\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:29;a:4:{s:1:\"a\";i:30;s:1:\"b\";s:18:\"admin.student.show\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:2;i:2;i:5;}}i:30;a:4:{s:1:\"a\";i:31;s:1:\"b\";s:20:\"admin.student.delete\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:31;a:4:{s:1:\"a\";i:32;s:1:\"b\";s:27:\"admin.student-program.index\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:2;i:2;i:5;}}i:32;a:4:{s:1:\"a\";i:33;s:1:\"b\";s:28:\"admin.student-program.create\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:33;a:4:{s:1:\"a\";i:34;s:1:\"b\";s:26:\"admin.student-program.edit\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:34;a:4:{s:1:\"a\";i:35;s:1:\"b\";s:26:\"admin.student-program.show\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:2;i:2;i:5;}}i:35;a:4:{s:1:\"a\";i:36;s:1:\"b\";s:28:\"admin.student-program.delete\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:36;a:4:{s:1:\"a\";i:37;s:1:\"b\";s:29:\"admin.student-program.payment\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:37;a:4:{s:1:\"a\";i:38;s:1:\"b\";s:20:\"admin.training.index\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:2;i:2;i:5;}}i:38;a:4:{s:1:\"a\";i:39;s:1:\"b\";s:21:\"admin.training.create\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:39;a:4:{s:1:\"a\";i:40;s:1:\"b\";s:19:\"admin.training.edit\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:40;a:4:{s:1:\"a\";i:41;s:1:\"b\";s:19:\"admin.training.show\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:2;i:2;i:5;}}i:41;a:4:{s:1:\"a\";i:42;s:1:\"b\";s:21:\"admin.training.delete\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:42;a:4:{s:1:\"a\";i:43;s:1:\"b\";s:23:\"admin.training.generate\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:43;a:4:{s:1:\"a\";i:44;s:1:\"b\";s:25:\"admin.training.attendance\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:44;a:4:{s:1:\"a\";i:45;s:1:\"b\";s:25:\"admin.training.assessment\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:45;a:4:{s:1:\"a\";i:46;s:1:\"b\";s:23:\"admin.match-event.index\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:2;i:2;i:5;}}i:46;a:4:{s:1:\"a\";i:47;s:1:\"b\";s:24:\"admin.match-event.create\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:47;a:4:{s:1:\"a\";i:48;s:1:\"b\";s:22:\"admin.match-event.edit\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:48;a:4:{s:1:\"a\";i:49;s:1:\"b\";s:22:\"admin.match-event.show\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:2;i:2;i:5;}}i:49;a:4:{s:1:\"a\";i:50;s:1:\"b\";s:24:\"admin.match-event.delete\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:50;a:4:{s:1:\"a\";i:51;s:1:\"b\";s:26:\"admin.match-event.generate\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:51;a:4:{s:1:\"a\";i:52;s:1:\"b\";s:28:\"admin.match-event.attendance\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:52;a:4:{s:1:\"a\";i:53;s:1:\"b\";s:28:\"admin.match-event.assessment\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:53;a:4:{s:1:\"a\";i:54;s:1:\"b\";s:26:\"admin.report-student.index\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:2;i:2;i:5;}}i:54;a:4:{s:1:\"a\";i:55;s:1:\"b\";s:25:\"admin.report-student.show\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:3:{i:0;i:1;i:1;i:2;i:2;i:5;}}i:55;a:4:{s:1:\"a\";i:56;s:1:\"b\";s:24:\"admin.report-student.pdf\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:56;a:4:{s:1:\"a\";i:57;s:1:\"b\";s:12:\"student-menu\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:4;}}i:57;a:4:{s:1:\"a\";i:58;s:1:\"b\";s:10:\"coach-menu\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:3;}}}s:5:\"roles\";a:5:{i:0;a:3:{s:1:\"a\";i:1;s:1:\"b\";s:11:\"Super Admin\";s:1:\"c\";s:3:\"web\";}i:1;a:3:{s:1:\"a\";i:2;s:1:\"b\";s:5:\"Admin\";s:1:\"c\";s:3:\"web\";}i:2;a:3:{s:1:\"a\";i:3;s:1:\"b\";s:5:\"Coach\";s:1:\"c\";s:3:\"web\";}i:3;a:3:{s:1:\"a\";i:4;s:1:\"b\";s:7:\"Student\";s:1:\"c\";s:3:\"web\";}i:4;a:3:{s:1:\"a\";i:5;s:1:\"b\";s:6:\"Leader\";s:1:\"c\";s:3:\"web\";}}}', 1752714175);
 
 -- ----------------------------
 -- Table structure for cache_locks
@@ -450,8 +449,8 @@ CREATE TABLE `period`  (
 -- ----------------------------
 -- Records of period
 -- ----------------------------
-INSERT INTO `period` VALUES (1, 'JANUARI-JUNI 2025', '2025-01-01', '2025-06-30', 'ACTIVE', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `period` VALUES (2, 'JULI-DESEMBER 2025', '2025-07-01', '2025-12-31', 'INACTIVE', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
+INSERT INTO `period` VALUES (1, 'JANUARI-JUNI 2025', '2025-01-01', '2025-06-30', 'ACTIVE', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `period` VALUES (2, 'JULI-DESEMBER 2025', '2025-07-01', '2025-12-31', 'INACTIVE', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
 
 -- ----------------------------
 -- Table structure for permissions
@@ -470,64 +469,64 @@ CREATE TABLE `permissions`  (
 -- ----------------------------
 -- Records of permissions
 -- ----------------------------
-INSERT INTO `permissions` VALUES (1, 'dashboard', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (2, 'admin.role.index', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (3, 'admin.role.create', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (4, 'admin.role.edit', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (5, 'admin.role.delete', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (6, 'admin.user.index', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (7, 'admin.user.create', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (8, 'admin.user.edit', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (9, 'admin.user.delete', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (10, 'admin.bank-account.index', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (11, 'admin.bank-account.create', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (12, 'admin.bank-account.edit', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (13, 'admin.bank-account.delete', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (14, 'admin.program.index', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (15, 'admin.program.create', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (16, 'admin.program.edit', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (17, 'admin.program.delete', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (18, 'admin.period.index', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (19, 'admin.period.create', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (20, 'admin.period.edit', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (21, 'admin.period.delete', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (22, 'admin.coach.index', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (23, 'admin.coach.create', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (24, 'admin.coach.edit', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (25, 'admin.coach.show', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (26, 'admin.coach.delete', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (27, 'admin.student.index', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (28, 'admin.student.create', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (29, 'admin.student.edit', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (30, 'admin.student.show', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (31, 'admin.student.delete', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (32, 'admin.student-program.index', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (33, 'admin.student-program.create', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (34, 'admin.student-program.edit', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (35, 'admin.student-program.show', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (36, 'admin.student-program.delete', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (37, 'admin.student-program.payment', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (38, 'admin.training.index', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (39, 'admin.training.create', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (40, 'admin.training.edit', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (41, 'admin.training.show', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (42, 'admin.training.delete', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (43, 'admin.training.generate', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (44, 'admin.training.attendance', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (45, 'admin.training.assessment', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (46, 'admin.match-event.index', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (47, 'admin.match-event.create', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (48, 'admin.match-event.edit', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (49, 'admin.match-event.show', 'web', '2025-07-16 01:02:07', '2025-07-16 01:02:07');
-INSERT INTO `permissions` VALUES (50, 'admin.match-event.delete', 'web', '2025-07-16 01:02:08', '2025-07-16 01:02:08');
-INSERT INTO `permissions` VALUES (51, 'admin.match-event.generate', 'web', '2025-07-16 01:02:08', '2025-07-16 01:02:08');
-INSERT INTO `permissions` VALUES (52, 'admin.match-event.attendance', 'web', '2025-07-16 01:02:08', '2025-07-16 01:02:08');
-INSERT INTO `permissions` VALUES (53, 'admin.match-event.assessment', 'web', '2025-07-16 01:02:08', '2025-07-16 01:02:08');
-INSERT INTO `permissions` VALUES (54, 'admin.report-student.index', 'web', '2025-07-16 01:02:08', '2025-07-16 01:02:08');
-INSERT INTO `permissions` VALUES (55, 'admin.report-student.show', 'web', '2025-07-16 01:02:08', '2025-07-16 01:02:08');
-INSERT INTO `permissions` VALUES (56, 'admin.report-student.pdf', 'web', '2025-07-16 01:02:08', '2025-07-16 01:02:08');
-INSERT INTO `permissions` VALUES (57, 'student-menu', 'web', '2025-07-16 01:02:08', '2025-07-16 01:02:08');
-INSERT INTO `permissions` VALUES (58, 'coach-menu', 'web', '2025-07-16 01:02:08', '2025-07-16 01:02:08');
+INSERT INTO `permissions` VALUES (1, 'dashboard', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (2, 'admin.role.index', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (3, 'admin.role.create', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (4, 'admin.role.edit', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (5, 'admin.role.delete', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (6, 'admin.user.index', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (7, 'admin.user.create', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (8, 'admin.user.edit', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (9, 'admin.user.delete', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (10, 'admin.bank-account.index', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (11, 'admin.bank-account.create', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (12, 'admin.bank-account.edit', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (13, 'admin.bank-account.delete', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (14, 'admin.program.index', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (15, 'admin.program.create', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (16, 'admin.program.edit', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (17, 'admin.program.delete', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (18, 'admin.period.index', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (19, 'admin.period.create', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (20, 'admin.period.edit', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (21, 'admin.period.delete', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (22, 'admin.coach.index', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (23, 'admin.coach.create', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (24, 'admin.coach.edit', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (25, 'admin.coach.show', 'web', '2025-08-17 15:57:34', '2025-08-17 15:57:34');
+INSERT INTO `permissions` VALUES (26, 'admin.coach.delete', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (27, 'admin.student.index', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (28, 'admin.student.create', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (29, 'admin.student.edit', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (30, 'admin.student.show', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (31, 'admin.student.delete', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (32, 'admin.student-program.index', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (33, 'admin.student-program.create', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (34, 'admin.student-program.edit', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (35, 'admin.student-program.show', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (36, 'admin.student-program.delete', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (37, 'admin.student-program.payment', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (38, 'admin.training.index', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (39, 'admin.training.create', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (40, 'admin.training.edit', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (41, 'admin.training.show', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (42, 'admin.training.delete', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (43, 'admin.training.generate', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (44, 'admin.training.attendance', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (45, 'admin.training.assessment', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (46, 'admin.match-event.index', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (47, 'admin.match-event.create', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (48, 'admin.match-event.edit', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (49, 'admin.match-event.show', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (50, 'admin.match-event.delete', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (51, 'admin.match-event.generate', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (52, 'admin.match-event.attendance', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (53, 'admin.match-event.assessment', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (54, 'admin.report-student.index', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (55, 'admin.report-student.show', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (56, 'admin.report-student.pdf', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (57, 'student-menu', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `permissions` VALUES (58, 'coach-menu', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
 
 -- ----------------------------
 -- Table structure for program
@@ -551,8 +550,8 @@ CREATE TABLE `program`  (
 -- ----------------------------
 -- Records of program
 -- ----------------------------
-INSERT INTO `program` VALUES (1, 'U-12', 'UNDER 12', 8, 12, 'Tim untuk pemain usia di bawah 12 tahun, sebagai bagian awal akademi sepak bola.', 1000000, 'ACTIVE', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `program` VALUES (2, 'U-18', 'UNDER 18', 13, 18, 'Tim untuk pemain usia di bawah 18 tahun.', 1500000, 'ACTIVE', '2025-07-16 01:02:10', '2025-07-16 01:02:10');
+INSERT INTO `program` VALUES (1, 'U-12', 'UNDER 12', 8, 12, 'Tim untuk pemain usia di bawah 12 tahun, sebagai bagian awal akademi sepak bola.', 1000000, 'ACTIVE', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `program` VALUES (2, 'U-18', 'UNDER 18', 13, 18, 'Tim untuk pemain usia di bawah 18 tahun.', 1500000, 'ACTIVE', '2025-08-17 15:57:37', '2025-08-17 15:57:37');
 
 -- ----------------------------
 -- Table structure for role_has_permissions
@@ -697,11 +696,11 @@ CREATE TABLE `roles`  (
 -- ----------------------------
 -- Records of roles
 -- ----------------------------
-INSERT INTO `roles` VALUES (1, 'Super Admin', 'web', '2025-07-16 01:02:08', '2025-07-16 01:02:08');
-INSERT INTO `roles` VALUES (2, 'Admin', 'web', '2025-07-16 01:02:08', '2025-07-16 01:02:08');
-INSERT INTO `roles` VALUES (3, 'Coach', 'web', '2025-07-16 01:02:09', '2025-07-16 01:02:09');
-INSERT INTO `roles` VALUES (4, 'Student', 'web', '2025-07-16 01:02:09', '2025-07-16 01:02:09');
-INSERT INTO `roles` VALUES (5, 'Leader', 'web', '2025-07-16 01:02:09', '2025-07-16 01:02:09');
+INSERT INTO `roles` VALUES (1, 'Super Admin', 'web', '2025-08-17 15:57:35', '2025-08-17 15:57:35');
+INSERT INTO `roles` VALUES (2, 'Admin', 'web', '2025-08-17 15:57:36', '2025-08-17 15:57:36');
+INSERT INTO `roles` VALUES (3, 'Coach', 'web', '2025-08-17 15:57:36', '2025-08-17 15:57:36');
+INSERT INTO `roles` VALUES (4, 'Student', 'web', '2025-08-17 15:57:36', '2025-08-17 15:57:36');
+INSERT INTO `roles` VALUES (5, 'Leader', 'web', '2025-08-17 15:57:36', '2025-08-17 15:57:36');
 
 -- ----------------------------
 -- Table structure for sessions
@@ -722,7 +721,6 @@ CREATE TABLE `sessions`  (
 -- ----------------------------
 -- Records of sessions
 -- ----------------------------
-INSERT INTO `sessions` VALUES ('GPdejTPSDYe8Euhmzir8XyiSg6yZZK1IxUv25Bfy', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieEN5cDZ6NjhWdnBRR2ZKR1BZMFV1NkNMSWlQRWhidG9WNHk5clp1ayI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1752627911);
 
 -- ----------------------------
 -- Table structure for student
@@ -919,8 +917,8 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, 'Super Admin', 'super.admin@ssb.com', '2025-07-16 01:02:09', '$2y$12$V1KsfywweCx5gPBinsDK1.875mEXQb35zBWpx6jjqbbNag8jSctoC', 'ACTIVE', NULL, '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `user` VALUES (2, 'Admin SSB', 'admin@ssb.com', '2025-07-16 01:02:09', '$2y$12$eQizU3wX8WXV9.0k6qgd5uugCJulElkm16LszfjuVk4tXT7ZrbB8a', 'ACTIVE', NULL, '2025-07-16 01:02:10', '2025-07-16 01:02:10');
-INSERT INTO `user` VALUES (3, 'Pimpinan SSB', 'leader@ssb.com', '2025-07-16 01:02:10', '$2y$12$ECgQGmX191/v..XgXhuHDuBH.VXyGn0z6DJgUwOy7wg/7WADCKOq.', 'ACTIVE', NULL, '2025-07-16 01:02:10', '2025-07-16 01:02:10');
+INSERT INTO `user` VALUES (1, 'Super Admin', 'super.admin@ssb.com', '2025-08-17 15:57:36', '$2y$12$zSB9Mw/dtJ.Q4XFP.bhA0.bou2EMqV.4x/qKSoRGqvA/yhi8OnIG.', 'ACTIVE', NULL, '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `user` VALUES (2, 'Admin SSB', 'admin@ssb.com', '2025-08-17 15:57:37', '$2y$12$PjuM.PlaafBMiHuE2VW/keOQXCN3GsbMMG2ouhqqQzD/tDQB.bHs2', 'ACTIVE', NULL, '2025-08-17 15:57:37', '2025-08-17 15:57:37');
+INSERT INTO `user` VALUES (3, 'Pimpinan SSB', 'leader@ssb.com', '2025-08-17 15:57:37', '$2y$12$q3HjP678FRF3K00cDC743e75l1uG4S9hnueoVVt6Gjsug.YvFgL/y', 'ACTIVE', NULL, '2025-08-17 15:57:37', '2025-08-17 15:57:37');
 
 SET FOREIGN_KEY_CHECKS = 1;
